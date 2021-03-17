@@ -1,0 +1,172 @@
+{
+  "project_info": {
+    "project_number": "390274076890",
+    "firebase_url": "https://animecartoons-d3f66.firebaseio.com",
+    "project_id": "animecartoons-d3f66",
+    "storage_bucket": "animecartoons-d3f66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390274076890:android:311cb3019998bad2",
+        "android_client_info": {
+          "package_name": "com.app.cartoons.anime.animecartoons"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390274076890-2rq1dsg5ff7okt86bgvran87d2eg94et.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.cartoons.anime.animecartoons",
+            "certificate_hash": "ee644a14e50f33d5e0d0759cc5c3115db6515775"
+          }
+        },
+        {
+          "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2pshuyYiXsjypCbqhRAKBsb05mrvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390274076890:android:11e159a1da9761b03695e3",
+        "android_client_info": {
+          "package_name": "com.app.cartoons.anime.newappcartoons"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390274076890-6kg2isp7pum8lgoffip837fsuun0rbb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.cartoons.anime.newappcartoons",
+            "certificate_hash": "31c360f8e57542372ceacf71b546e8560720cc37"
+          }
+        },
+        {
+          "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2pshuyYiXsjypCbqhRAKBsb05mrvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390274076890:android:bdfc1c05e8d221603695e3",
+        "android_client_info": {
+          "package_name": "com.app.cartoons.anime.worldcartoon2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2pshuyYiXsjypCbqhRAKBsb05mrvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390274076890:android:d4ca9a67ca5089243695e3",
+        "android_client_info": {
+          "package_name": "com.app.cartoons.anime.worldcartoons"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2pshuyYiXsjypCbqhRAKBsb05mrvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390274076890:android:5997ae1739a66fc5",
+        "android_client_info": {
+          "package_name": "com.app.world.cartoons.worldcartoonsanime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2pshuyYiXsjypCbqhRAKBsb05mrvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390274076890-93ompe6k1h21ugabuup5dv57sbipgn9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

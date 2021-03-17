@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/main"
+            android:title="الصفحة الرئيسية"
+            android:checked="true"/>
+
+        <item
+            android:id="@+id/action"
+            android:title="اكشن" />
+
+        <item
+            android:id="@+id/adventure"
+            android:title="مغامرات" />
+
+        <item
+            android:id="@+id/girls_anime"
+            android:title="كرتون بنات" />
+
+        <item
+            android:id="@+id/translated_anime"
+            android:title="انمي مترجم" />
+
+        <item
+            android:id="@+id/child_cartoon"
+            android:title="كرتون اطفال" />
+
+        <item
+            android:id="@+id/sport_cartoon"
+            android:title="كرتون رياضة" />
+
+        <item
+            android:id="@+id/new_cartoon"
+            android:title="المضاف حديثا" />
+
+        <item
+            android:id="@+id/favorite_episodes"
+            android:title="الحلقات المفضلة"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/favorite_cartoons"
+            android:title="المسلسلات المفضلة"/>
+
+        <item
+            android:id="@+id/downloads"
+            android:title="التنزيلات"/>
+
+    </group>
+
+    <group android:checkableBehavior="none"
+        >
+
+        <item
+            android:id="@+id/support"
+            android:title="دعم التطبيق"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/rate"
+            android:title="التقييم"/>
+
+        <item
+            android:id="@+id/contact_us"
+            android:title="تواصل معنا"/>
+    </group>
+
+</menu>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1B8AF1</color>
+    <color name="colorPrimaryDark">#1B8AF1</color>
+    <color name="colorAccent">#CDDC39</color>
+
+    <color name="toolbarColorPrimary">#22292e</color>
+    <color name="toolbarColorPrimaryDark">#000000</color>
+    <color name="toolbarColorAccent">#CDDC39</color>
+
+    <color name="transparentBackgroundColor">#b0000000</color>
+    <color name="transparentBackgroundColorVideo">#29000000</color>
+
+    <color name="mytransparentBackgroud">#940d0d0d</color>
+    <color name="mytransparentBackgroud2">#e1000000</color>
+    <color name="mytransparentBackgroud3">#d6ffffff</color>
+    <color name="mytransparentBackgroud4">#a0ffffff</color>
+
+    <color name="notification_color">#004950</color>
+</resources>

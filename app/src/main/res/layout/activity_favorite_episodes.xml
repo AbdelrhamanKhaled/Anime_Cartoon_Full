@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <import type="com.app.cartoons.anime.newappcartoons.model.Favorite" />
+        <import type="java.util.List" />
+
+        <variable
+            name="favoriteList"
+            type="List&lt;Favorite>"/>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layoutDirection="rtl"
+        tools:context=".activities.FavoriteEpisodeActivity">
+
+        <include
+            android:id="@+id/included_toolbar"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favorites_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:favoriteListBinding="@{favoriteList}"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:id="@+id/add_container"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            />
+
+    </LinearLayout>
+
+</layout>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">مسلسلات كرتون وانمي</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="cartoon_fragment">CartoonFragment</string>
+
+    <!--Firebase nodes-->
+    <string name="node_cartoons">cartoons</string>
+    <string name="node_playlists">playlists</string>
+    <string name="node_episodes">episodes</string>
+    <string name="node_reports">reports</string>
+    <string name="node_admob">admob</string>
+    <string name="action">أكشن</string>
+    <string name="adventure">مغامرات</string>
+    <string name="girls_anime">كرتون بنات</string>
+
+    <!--Admob-->
+    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="banner_ad_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_ad_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="native_ad_id"  translatable="false">ca-app-pub-3940256099942544/2247696110</string>
+
+    <!--Errors-->
+    <string name="err_general">حدثت مشكلة ما برجاء المحاولة في وقت لاحق</string>
+
+    <!--Shared Pref-->
+    <string name="shared_pref">mysharedPref</string>
+    <string name="error_permission_denied">تم رفض الصلاحية</string>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="ParentTheme">
+
+        <!-- Customize your theme for only lollipop and above versions. -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:colorControlHighlight">@color/colorAccent</item>
+
+    </style>
+
+</resources>
