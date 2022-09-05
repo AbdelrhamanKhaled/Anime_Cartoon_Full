@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.cartoons.anime.newappcartoons">
+    package="com.anime.rashon.speed.loyert">
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <queries>
+
+        <!-- Explicit apps you know in advance about: -->
+        <package android:name="com.mojfhr.plasjre" />
+    </queries>
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -13,39 +25,91 @@
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true">
-        <activity android:name=".activities.ServersActivity"></activity>
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activities.InformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".splashActivity"
+            android:exported="true"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.FacebookAuthActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:exported="false"
+            android:noHistory="true" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="true"
+            android:noHistory="true"></activity>
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5620187745322623~4930897287" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <activity android:name=".activities.ServersActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity
-            android:name=".activities.OfflineExoplayerActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-        <activity
             android:name=".activities.DownloadsActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity
             android:name=".activities.FavoriteCartoonsActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5620187745322623~4930897287" />
-
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:noHistory="true" />
         <activity
             android:name=".activities.MainActivity"
-            android:configChanges="orientation|screenSize|layoutDirection">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:exported="true"
+            android:launchMode="singleInstance">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".activities.RedirectActivity"
@@ -57,12 +121,8 @@
             android:name=".activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity
-            android:name=".activities.ExoplayerActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-        <activity
             android:name=".activities.FavoriteEpisodeActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
-
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@
 <layout>
 
     <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Cartoon" />
+        <import type="com.anime.rashon.speed.loyert.model.Cartoon" />
         <import type="java.util.List" />
 
         <variable

@@ -5,8 +5,11 @@
 
         <!-- Customize your theme for only lollipop and above versions. -->
         <item name="android:windowActivityTransitions">true</item>
-        <item name="android:colorControlHighlight">@color/colorAccent</item>
-
+        <item name="android:colorControlHighlight">@color/blue</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:itemBackground">@color/white</item>
     </style>
 
 </resources>

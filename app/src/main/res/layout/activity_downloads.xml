@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Download" />
-        <import type="java.util.List" />
-
-        <variable
-            name="downloadList"
-            type="List&lt;Download>"/>
-    </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -27,7 +19,6 @@
             android:id="@+id/downloads_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:downloadListBinding="@{downloadList}"
             android:layout_weight="1"/>
 
         <LinearLayout

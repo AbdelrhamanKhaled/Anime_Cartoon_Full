@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item
+        android:id="@+id/change_order"
+        android:title="ترتيب"
+        android:icon="@drawable/ic_baseline_sort_24"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/grid_or_list"
+        android:title="قائمة"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+        app:showAsAction="always"
+        />
+
     <item
         android:id="@+id/menu_empty_star"
         android:title="Add To Favourite"
@@ -21,8 +36,9 @@
     <item
         android:id="@+id/share"
         android:title="Share"
-        android:icon="@drawable/share"
-        app:showAsAction="always"
+        android:icon="@drawable/share_black"
+        android:iconTint="@color/black"
+        app:showAsAction="never"
         />
 
     <item
@@ -30,7 +46,9 @@
         android:title="Search"
         android:icon="@drawable/ic_search_white"
         app:actionViewClass="android.widget.SearchView"
+        android:iconTint="@color/black"
         app:showAsAction="always"
         />
+
 
 </menu>

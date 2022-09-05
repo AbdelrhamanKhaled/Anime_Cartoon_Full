@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Episode" />
-        <import type="java.util.List" />
-
-        <variable
-            name="episodeList"
-            type="List&lt;Episode>"/>
-    </data>
-
-
     <FrameLayout
+        android:fitsSystemWindows="true"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -20,72 +11,28 @@
 
 
         <LinearLayout
+            android:layoutDirection="rtl"
+            android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/coordinator_layout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layoutDirection="rtl"
-                tools:context=".activities.DetailsActivity">
 
-                <com.google.android.material.appbar.AppBarLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/AppTheme.AppBarOverlay">
-
-                    <com.google.android.material.appbar.CollapsingToolbarLayout
-                        android:id="@+id/collapsingToolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:fitsSystemWindows="true"
-                        android:minHeight="160dp"
-                        app:contentScrim="?attr/colorPrimary"
-                        app:expandedTitleMarginEnd="64dp"
-                        app:expandedTitleMarginStart="48dp"
-                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                        <ImageView
-                            android:id="@+id/toolbarImage"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:fitsSystemWindows="true"
-                            android:scaleType="centerCrop"
-                            app:layout_collapseMode="parallax" />
-
-                        <androidx.appcompat.widget.Toolbar
-                            android:id="@+id/toolbar"
-                            android:layout_width="match_parent"
-                            android:layout_height="?attr/actionBarSize"
-                            app:layout_collapseMode="pin"
-                            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-                    </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-                </com.google.android.material.appbar.AppBarLayout>
-
-
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:context=".activities.MainActivity">
+            <include
+                android:id="@+id/included_toolbar"
+                layout="@layout/layout_toolbar"/>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:layoutAnimation="@anim/recycle_anim"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="3"
                         android:id="@+id/episodess_recyclerview"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:episodeListBinding="@{episodeList}"/>
-
-                </LinearLayout>
-
-
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:padding= "8dp"
+                        tools:listitem="@layout/layout_recyclerepisode_item"
+                        />
 
             <LinearLayout
                 android:id="@+id/add_container"
@@ -95,7 +42,7 @@
                 android:orientation="vertical"
                 />
 
-        </LinearLayout>
+                </LinearLayout>
 
         <FrameLayout
             android:id="@+id/progressBarLayout"

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tool="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <variable
+            name="cartoon"
+            type="String"
+            />
+
+        <variable
+            name="title"
+            type="String"
+            />
+
+        <variable
+            name="thumb"
+            type="String"
+            />
+
+    </data>
+
+
+    <LinearLayout
+        android:paddingBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <androidx.cardview.widget.CardView
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:cardCornerRadius="5dp"
+            android:layout_margin="5dp"
+            app:cardBackgroundColor="#fff"
+            app:cardElevation="4dp"
+            android:layout_gravity="start"
+            >
+
+            <ImageView
+                android:id="@+id/playlistImg"
+                android:layout_width="120dp"
+                android:layout_height="140dp"
+                android:scaleType="fitXY"
+                app:imgUrl="@{thumb}" />
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:background="@drawable/title_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@{cartoon}"
+                android:textColor="@color/AnimeTextColor_1"
+                tool:text="Cartoon Name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLength="25"
+                android:maxLines="1"
+                android:text="@{title}"
+                android:textColor="@color/AnimeTextColor_2"
+                android:layout_marginBottom="4dp"
+                tool:text="Episode Name" />
+
+            <LinearLayout
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+
+                <TextView
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLength="25"
+                    android:text="8.27"
+                    android:textSize="13sp"
+                    android:textColor="@color/AnimeTextColor_2"
+                    android:drawablePadding="8dp"
+                    android:drawableEnd="@drawable/ic_star"
+                    />
+
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLength="25"
+                    android:text="مستمر"
+                    android:textSize="13sp"
+                    android:textColor="@color/AnimeTextColor_2"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/seenImg"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/unseen"
+                android:visibility="gone" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </LinearLayout>
+</layout>

@@ -1,2 +1,2 @@
-include ':nativetemplates'
 include ':app'
+include ':nativetemplatesnew'

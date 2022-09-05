@@ -2,7 +2,7 @@
 <layout>
 
     <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Favorite" />
+        <import type="com.anime.rashon.speed.loyert.model.Favorite" />
         <import type="java.util.List" />
 
         <variable

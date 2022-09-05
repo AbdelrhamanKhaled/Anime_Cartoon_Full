@@ -1,9 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+	android:paddingTop="46dp"
+	android:paddingStart="32dp"
+	android:paddingEnd="32dp"
+	android:paddingBottom="16dp"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="190dp"
-	android:background="@drawable/cover">
+	android:layout_height="wrap_content"
+	android:background="@drawable/header_background">
+
+
+	<ImageView
+		android:id="@+id/user_profile"
+		android:layout_width="75dp"
+		android:layout_height="75dp"
+		android:layout_marginTop="16dp"
+		android:layout_marginBottom="16dp"
+		android:src="@drawable/user_profile" />
+
+	<TextView
+		android:id="@+id/Username"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/user_profile"
+		android:gravity="center"
+		android:text="لم يتم تسجيل الدخول بعد" />
+
+
+	<TextView
+		android:id="@+id/Login"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/Username"
+		android:layout_marginTop="8dp"
+		android:gravity="center"
+		android:text="تسجيل الأن"
+		android:textColor="@color/blue" />
+
+
 
 	<!--<ImageView
 		android:layout_width="match_parent"

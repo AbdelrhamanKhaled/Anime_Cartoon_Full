@@ -5,12 +5,14 @@
     >
 
     <FrameLayout
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.ads.nativetemplates.TemplateView
             android:id="@+id/native_ad_template"
-            app:gnt_template_type="@layout/gnt_medium_template_view"
+            app:gnt_template_type="@layout/gnt_small_template_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

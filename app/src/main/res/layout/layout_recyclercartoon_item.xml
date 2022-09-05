@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Cartoon"/>
+        <import type="com.anime.rashon.speed.loyert.model.Cartoon"/>
 
         <variable
             name="cartoon"
@@ -11,57 +11,90 @@
             />
     </data>
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layoutDirection="rtl"
-        >
+        android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            app:cardCornerRadius="5dp"
-            app:cardBackgroundColor="#fff"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true"
+
+    <androidx.cardview.widget.CardView
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:cardCornerRadius="2dp"
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="#fff"
+        app:cardElevation="8dp"
+        android:layoutDirection="rtl"
             >
 
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-                android:layout_height="match_parent"
+        <ImageView
+            android:id="@+id/cartoonImg"
+            android:layout_width="140dp"
+            android:layout_height="160dp"
+            android:scaleType="fitXY"
+            app:imgUrl="@{cartoon.thumb}"
+            />
+
+    </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="2dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:text="@{cartoon.title}"
+            android:textColor="@color/AnimeTextColor_1"
+            tool:text="Cartoon Name" />
+
+        <LinearLayout
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layoutDirection="rtl"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+
+            <TextView
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:maxLength="25"
+                android:text="8.27"
+                android:textSize="13sp"
+                android:textColor="@color/AnimeTextColor_2"
+                android:drawablePadding="8dp"
+                android:drawableEnd="@drawable/ic_star"
+                />
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp">
 
-                    <ImageView
-                        android:id="@+id/cartoonImg"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:scaleType="fitXY"
-                        app:imgUrl="@{cartoon.thumb}"
-                        />
+            <TextView
+                android:layout_marginStart="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLength="25"
+                android:text="مستمر"
+                android:textSize="13sp"
+                android:textColor="@color/AnimeTextColor_2"
+                />
 
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    tool:text="Cartoon Name"
-                    android:gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_marginLeft="2dp"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@{cartoon.title}"
-                    android:lines="2"/>
+        </LinearLayout>
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
-
-    </FrameLayout>
 </layout>

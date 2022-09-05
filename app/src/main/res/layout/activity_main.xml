@@ -1,8 +1,9 @@
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,12 +15,14 @@
             android:layoutDirection="rtl">
 
             <FrameLayout
+                android:fitsSystemWindows="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
 
                 <!-- Page Content -->
                 <LinearLayout
+                    android:fitsSystemWindows="true"
                     android:id="@+id/main_content"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -30,6 +33,7 @@
                         layout="@layout/layout_toolbar" />
 
                     <FrameLayout
+                        android:fitsSystemWindows="true"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
@@ -63,17 +67,35 @@
 
             <!-- Navigation View -->
             <com.google.android.material.navigation.NavigationView
+                android:background="@color/white"
                 android:id="@+id/nav_view"
-                android:layout_width="260dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 app:headerLayout="@layout/layout_header"
-                app:itemTextColor="#78787b"
-                app:itemTextAppearance="@style/nav_item_appearance"
+                app:itemTextColor="@color/black"
                 app:menu="@menu/nav_menu_items" />
-
-
+<!--                app:itemTextAppearance="@style/nav_item_appearance"-->
         </androidx.drawerlayout.widget.DrawerLayout>
+
+
+        <FrameLayout
+            android:id="@+id/progressBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/mytransparentBackgroud"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/progress"
+                style="@style/SpinKitView.Large.Circle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                app:SpinKit_Color="@color/colorAccent" />
+
+        </FrameLayout>
 
     </FrameLayout>
 </layout>

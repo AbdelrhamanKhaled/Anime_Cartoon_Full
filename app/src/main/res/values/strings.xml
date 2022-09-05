@@ -14,11 +14,16 @@
     <string name="adventure">مغامرات</string>
     <string name="girls_anime">كرتون بنات</string>
 
+    <string name="movies_fragment">MoviesFragment</string>
+    <string name="latest_cartoons_fragment">LatestCartoonsFragment</string>
+    <string name="latest_episodes_fragment">LatestEpisodesFragment</string>
+    <string name="episode_dates_fragment">EpisodeDatesFragment</string>
+
     <!--Admob-->
     <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="banner_ad_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="interstitial_ad_id">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="native_ad_id"  translatable="false">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="native_ad_id" translatable="false">ca-app-pub-3940256099942544/2247696110</string>
 
     <!--Errors-->
     <string name="err_general">حدثت مشكلة ما برجاء المحاولة في وقت لاحق</string>
@@ -26,5 +31,13 @@
     <!--Shared Pref-->
     <string name="shared_pref">mysharedPref</string>
     <string name="error_permission_denied">تم رفض الصلاحية</string>
+    <string name="format_mp4">%s.mp4</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <!--Facebook-->
+    <string name="facebook_app_id">624830832178068</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">b81bdc441e9c04d1c8e063534837b699</string>
+
 
 </resources>

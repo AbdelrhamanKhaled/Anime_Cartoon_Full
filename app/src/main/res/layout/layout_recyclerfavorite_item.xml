@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import type="com.app.cartoons.anime.newappcartoons.model.Favorite"/>
+        <import type="com.anime.rashon.speed.loyert.model.Favorite"/>
 
         <variable
             name="favorite"
