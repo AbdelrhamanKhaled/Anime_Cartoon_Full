@@ -20,6 +20,7 @@ import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.adapters.LatestEpisodesAdapter;
 import com.anime.rashon.speed.loyert.databinding.FragmentLatestEpisodesBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -38,7 +39,7 @@ public class LatestEpisodesFragment extends Fragment {
 
     private FragmentLatestEpisodesBinding mBinding;
 
-    private List<Episode> episodeList = new ArrayList<>();
+    private List<EpisodeWithInfo> episodeList = new ArrayList<>();
 
     private CompositeDisposable disposable = new CompositeDisposable();
     private ApiService apiService;
@@ -51,7 +52,7 @@ public class LatestEpisodesFragment extends Fragment {
 
     }
 
-    public LatestEpisodesFragment(List<Episode> episodeList) {
+    public LatestEpisodesFragment(List<EpisodeWithInfo> episodeList) {
         this.episodeList = episodeList;
     }
 
@@ -114,18 +115,18 @@ public class LatestEpisodesFragment extends Fragment {
     private void getLatestEpisodes(){
         disposable.add(
                 apiService
-                        .latestEpisodes()
+                        .latestEpisodesWithInfo()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Episode>>() {
+                        .subscribeWith(new DisposableSingleObserver<List<EpisodeWithInfo>>() {
                             @Override
-                            public void onSuccess(List<Episode> retrivedEpisodeList) {
+                            public void onSuccess(List<EpisodeWithInfo> retrivedEpisodeList) {
 
                                 for (int i=0; i < retrivedEpisodeList.size(); i++) {
                                     if ((i+1) % 10 == 0){
                                         Log.i("ab_doa" , "Ad"  + i);
                                         // add Ad :)
-                                        retrivedEpisodeList.add(i, new Episode());
+                                        retrivedEpisodeList.add(i, new EpisodeWithInfo());
                                     }
                                 }
                                 episodeList.addAll(retrivedEpisodeList);

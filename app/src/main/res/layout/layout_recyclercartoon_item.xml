@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import type="com.anime.rashon.speed.loyert.model.Cartoon"/>
+        <import type="com.anime.rashon.speed.loyert.model.CartoonWithInfo"/>
 
         <variable
             name="cartoon"
-            type="Cartoon"
+            type="CartoonWithInfo"
             />
     </data>
 
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:maxLength="25"
-                android:text="8.27"
+                android:text="@{String.valueOf(cartoon.world_rate)}"
                 android:textSize="13sp"
                 android:textColor="@color/AnimeTextColor_2"
                 android:drawablePadding="8dp"
@@ -81,6 +81,7 @@
 
 
             <TextView
+                android:id="@+id/statues"
                 android:layout_marginStart="16dp"
                 android:maxLines="1"
                 android:ellipsize="end"

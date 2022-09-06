@@ -23,6 +23,7 @@ import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclercartoonItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclercartoonItemListBinding;
 import com.anime.rashon.speed.loyert.model.Cartoon;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +35,15 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private final String TAG = CartoonsAdapter.class.getSimpleName();
     private Activity mContext;
-    private List<Cartoon> cartoonList;
-    private List<Cartoon> cartoonListFiltered;
+    private List<CartoonWithInfo> cartoonList;
+    private List<CartoonWithInfo> cartoonListFiltered;
 
     private final int albumView = 1;
     private final int nativeAdView = 2;
 
     private boolean isGrid ;
 
-    public CartoonsAdapter(Activity mContext, List<Cartoon> cartoonList , boolean isGrid) {
+    public CartoonsAdapter(Activity mContext, List<CartoonWithInfo> cartoonList , boolean isGrid) {
         this.mContext = mContext;
         this.cartoonList = cartoonList;
         this.cartoonListFiltered = cartoonList;
@@ -85,12 +86,34 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else{
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(mContext , R.anim.anim_itemview));
             CartoonHolder cartoonHolder = (CartoonHolder) holder;
-            final Cartoon cartoon = cartoonListFiltered.get(position);
+            final CartoonWithInfo cartoon = cartoonListFiltered.get(position);
             if (isGrid) {
                 cartoonHolder.gridBinding.setCartoon(cartoon);
+                switch (cartoon.getStatus()) {
+                    case 1:
+                        cartoonHolder.gridBinding.statues.setText("مكتمل");
+                        break;
+
+                    case 2:
+                        cartoonHolder.gridBinding.statues.setText("مستمر");
+                        break;
+                    default:
+                        cartoonHolder.gridBinding.statues.setText("غير محدد");
+                }
             }
             else {
                 cartoonHolder.listBinding.setCartoon(cartoon);
+                switch (cartoon.getStatus()) {
+                    case 1:
+                        cartoonHolder.listBinding.statues.setText("مكتمل");
+                        break;
+
+                    case 2:
+                        cartoonHolder.listBinding.statues.setText("مستمر");
+                        break;
+                    default:
+                        cartoonHolder.listBinding.statues.setText("غير محدد");
+                }
             }
 
             cartoonHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +134,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return cartoonListFiltered.size();
+        return cartoonList.size();
     }
 
     @Override
@@ -121,7 +144,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             protected FilterResults performFiltering(CharSequence charSequence) {
 
                 if(TextUtils.isEmpty(charSequence)){
-                    cartoonListFiltered = cartoonList;
+                    //cartoonListFiltered = cartoonList;
                 }else{
 
                     List<Cartoon> filteredList = new ArrayList<>();
@@ -132,7 +155,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     }
 
-                    cartoonListFiltered = filteredList;
+                   // cartoonListFiltered = filteredList;
 
                 }
 
@@ -145,7 +168,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                cartoonListFiltered = (ArrayList<Cartoon>) filterResults.values;
+                //cartoonListFiltered = (ArrayList<Cartoon>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

@@ -1,16 +1,10 @@
 package com.anime.rashon.speed.loyert.model;
+import androidx.annotation.Keep;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
+@Keep
 public class CartoonWithInfo extends Cartoon {
-
-    @SerializedName("story")
-    @Expose
-    private String story;
-
-    @SerializedName("category")
-    @Expose
-    private String category;
 
     @SerializedName("world_rate")
     @Expose
@@ -20,10 +14,6 @@ public class CartoonWithInfo extends Cartoon {
     @Expose
     private String view_date;
 
-    @SerializedName("age_rate")
-    @Expose
-    private Integer age_rate;
-
     @SerializedName("status")
     @Expose
     private Integer status;
@@ -32,31 +22,13 @@ public class CartoonWithInfo extends Cartoon {
 
     }
 
-    public CartoonWithInfo(Integer id, String title, String thumb, int type, Boolean visibility, int rate, String story, String category, String world_rate, String view_date, Integer age_rate, Integer status) {
+    public CartoonWithInfo(Integer id, String title, String thumb, int type, Boolean visibility, int rate, String world_rate, String view_date, Integer status) {
         super(id, title, thumb, type, visibility, rate);
-        this.story = story;
-        this.category = category;
         this.world_rate = world_rate;
         this.view_date = view_date;
-        this.age_rate = age_rate;
         this.status = status;
     }
 
-    public String getStory() {
-        return story;
-    }
-
-    public void setStory(String story) {
-        this.story = story;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public String getWorld_rate() {
         return world_rate;
@@ -74,14 +46,6 @@ public class CartoonWithInfo extends Cartoon {
         this.view_date = view_date;
     }
 
-    public Integer getAge_rate() {
-        return age_rate;
-    }
-
-    public void setAge_rate(Integer age_rate) {
-        this.age_rate = age_rate;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -89,5 +53,6 @@ public class CartoonWithInfo extends Cartoon {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
 
 }

@@ -25,9 +25,7 @@ public class DownloadsActivity extends AppCompatActivity {
 
     SQLiteDatabaseManager sqLiteDatabaseManager;
     private List<Download> downloadList;
-
     ActivityDownloadsBinding mBinding;
-//
     DownloadsAdapter adapter;
 
     @Override

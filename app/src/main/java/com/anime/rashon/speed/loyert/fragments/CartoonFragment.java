@@ -27,6 +27,7 @@ import com.anime.rashon.speed.loyert.adapters.CartoonsAdapter;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.FragmentCartoonBinding;
 import com.anime.rashon.speed.loyert.model.Cartoon;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.github.ybq.android.spinkit.style.Circle;
@@ -58,7 +59,7 @@ public class CartoonFragment extends Fragment{
     FragmentCartoonBinding mBinding;
 
     int pageNumber = 1;
-    List<Cartoon> cartoonList = new ArrayList<>();
+    List<CartoonWithInfo> cartoonList = new ArrayList<>();
 
     private CompositeDisposable disposable = new CompositeDisposable();
     ApiService apiService;
@@ -144,12 +145,12 @@ public class CartoonFragment extends Fragment{
         mBinding.swipeRefreshLayout.setRefreshing(true);
         disposable.add(
                 apiService
-                        .getCartoons(pageNumber)
+                        .getCartoonsWithInfo(pageNumber)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
                             @Override
-                            public void onSuccess(List<Cartoon> retrievedCartoonList) {
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
                                 //Check if on refresh case
                                 if (isOnRefresh) {
                                     cartoonList.clear();
@@ -171,7 +172,7 @@ public class CartoonFragment extends Fragment{
                                 else {
                                     for (int i = 0; i < retrievedCartoonList.size(); i++) {
                                         if ((i + 1) % 10 == 0) {
-                                            retrievedCartoonList.add(i, new Cartoon());
+                                            retrievedCartoonList.add(i, new CartoonWithInfo());
                                         }
                                         if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
                                             retrievedCartoonList.remove(i);
@@ -211,74 +212,74 @@ public class CartoonFragment extends Fragment{
     }
 
     public void getCartoonsByType(int type){
-        Log.i("Ab_do" , "getCartoonsByType "+type);
-        mBinding.swipeRefreshLayout.setRefreshing(true);
-        disposable.add(
-                apiService
-                        .getCartoonsByType(pageNumber, type)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
-                            @Override
-                            public void onSuccess(List<Cartoon> retrievedCartoonList) {
-                                    Log.i("Ab_do" , "No Film");
-                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-                                        if ((i + 1) % 10 == 0) {
-                                            retrievedCartoonList.add(i, new Cartoon());
-                                        }
-                                    }
-
-                                    cartoonList.addAll(retrievedCartoonList);
-
-
-                                //--------------------//
-
-                                if(cartoonList.isEmpty()){
-                                    mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-                                }
-                                else{
-
-                                    mBinding.cartoonsRecyclerview.getAdapter().notifyItemInserted(cartoonList.size());
-                                }
-                                pageNumber++;
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                mBinding.progressBarLayout.setVisibility(View.GONE);
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-//                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
-                            }
-                        })
-        );
+//        Log.i("Ab_do" , "getCartoonsByType "+type);
+//        mBinding.swipeRefreshLayout.setRefreshing(true);
+//        disposable.add(
+//                apiService
+//                        .getCartoonsByType(pageNumber, type)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
+//                            @Override
+//                            public void onSuccess(List<Cartoon> retrievedCartoonList) {
+//                                    Log.i("Ab_do" , "No Film");
+//                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
+//                                        if ((i + 1) % 10 == 0) {
+//                                            retrievedCartoonList.add(i, new Cartoon());
+//                                        }
+//                                    }
+//
+//                                    cartoonList.addAll(retrievedCartoonList);
+//
+//
+//                                //--------------------//
+//
+//                                if(cartoonList.isEmpty()){
+//                                    mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+//                                }
+//                                else{
+//
+//                                    mBinding.cartoonsRecyclerview.getAdapter().notifyItemInserted(cartoonList.size());
+//                                }
+//                                pageNumber++;
+//                                mBinding.swipeRefreshLayout.setRefreshing(false);
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                mBinding.progressBarLayout.setVisibility(View.GONE);
+//                                mBinding.swipeRefreshLayout.setRefreshing(false);
+////                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//        );
     }
 
     public void filterAdapter(String searchQuery){
-        mBinding.swipeRefreshLayout.setRefreshing(true);
-        disposable.add(
-                apiService
-                        .searchCartoons(searchQuery)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
-                            @Override
-                            public void onSuccess(List<Cartoon> cartoonList) {
-                                CartoonFragment.this.cartoonList.clear();
-                                CartoonFragment.this.cartoonList.addAll(cartoonList);
-
-                                mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                mBinding.progressBarLayout.setVisibility(View.GONE);
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-//                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
-                            }
-                        })
-        );
+//        mBinding.swipeRefreshLayout.setRefreshing(true);
+//        disposable.add(
+//                apiService
+//                        .searchCartoons(searchQuery)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
+//                            @Override
+//                            public void onSuccess(List<Cartoon> cartoonList) {
+//                                CartoonFragment.this.cartoonList.clear();
+//                                CartoonFragment.this.cartoonList.addAll(cartoonList);
+//
+//                                mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+//                                mBinding.swipeRefreshLayout.setRefreshing(false);
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                mBinding.progressBarLayout.setVisibility(View.GONE);
+//                                mBinding.swipeRefreshLayout.setRefreshing(false);
+////                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//        );
 
 //        ((CartoonsAdapter)mBinding.cartoonsRecyclerview.getAdapter()).getFilter().filter(searchQuery);
     }

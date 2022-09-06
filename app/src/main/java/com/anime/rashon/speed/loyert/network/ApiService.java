@@ -4,6 +4,7 @@ import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
@@ -80,6 +81,9 @@ public interface ApiService {
 
     @GET("episode/latest.php")
     Single<List<Episode>> latestEpisodes();
+
+    @GET("episodeWithInfo/latest.php")
+    Single<List<EpisodeWithInfo>> latestEpisodesWithInfo();
 
     @FormUrlEncoded
     @POST("information/readOne.php")

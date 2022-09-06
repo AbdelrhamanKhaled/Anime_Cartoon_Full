@@ -41,7 +41,7 @@ public class CartoonsFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         CartoonHolder cartoonHolder = (CartoonHolder) holder;
         final Cartoon cartoon = cartoonList.get(position);
-        cartoonHolder.mBinding.setCartoon(cartoon);
+        //cartoonHolder.mBinding.setCartoon(cartoon);
 
         cartoonHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

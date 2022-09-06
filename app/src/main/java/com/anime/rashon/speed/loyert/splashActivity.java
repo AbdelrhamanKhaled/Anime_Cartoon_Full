@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
@@ -45,21 +46,21 @@ public class splashActivity extends AppCompatActivity {
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         disposable.add(
                 apiService
-                        .latestEpisodes()
+                        .latestEpisodesWithInfo()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Episode>>() {
+                        .subscribeWith(new DisposableSingleObserver<List<EpisodeWithInfo>>() {
                             @Override
-                            public void onSuccess(List<Episode> retrivedEpisodeList) {
+                            public void onSuccess(List<EpisodeWithInfo> retrivedEpisodeList) {
                                 Log.i("splash_abdo" , "onSuccess ");
                                 for (int i=0; i < retrivedEpisodeList.size(); i++) {
                                     if ((i+1) % 10 == 0){
                                         Log.i("ab_doa" , "Ad"  + i);
                                         // add Ad :)
-                                        retrivedEpisodeList.add(i, new Episode());
+                                        retrivedEpisodeList.add(i, new EpisodeWithInfo());
                                     }
                                 }
-                                List<Episode> episodeList = new ArrayList<>(retrivedEpisodeList);
+                                List<EpisodeWithInfo> episodeList = new ArrayList<>(retrivedEpisodeList);
                                 Intent intent = new Intent(getBaseContext() , MainActivity.class);
                                 intent.putExtra("list" , (Serializable) episodeList);
                                 startActivity(intent);

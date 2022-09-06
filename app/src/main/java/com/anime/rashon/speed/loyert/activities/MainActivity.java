@@ -41,6 +41,7 @@ import com.anime.rashon.speed.loyert.fragments.LatestEpisodesFragment;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.network.ApiClient;
@@ -419,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Objects.requireNonNull(getSupportActionBar()).setTitle("اخر الحلقات المضافة");
         if (getIntent().getSerializableExtra("list") !=null) {
             Log.i("ab_do2" , "list is ready");
-            List<Episode> episodes =  (List<Episode>)getIntent().getSerializableExtra("list") ;
+            List<EpisodeWithInfo> episodes =  (List<EpisodeWithInfo>)getIntent().getSerializableExtra("list") ;
             Log.i("ab_do2" , "size " + episodes.size());
             LatestEpisodesFragmentFragment = new LatestEpisodesFragment(episodes);
         }

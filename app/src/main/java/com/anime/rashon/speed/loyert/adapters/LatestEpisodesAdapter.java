@@ -21,6 +21,7 @@ import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemListBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 
 import java.util.List;
 
@@ -28,14 +29,14 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private final String TAG = LatestEpisodesAdapter.class.getSimpleName();
     private Activity mContext;
-    private List<Episode> episodeList;
+    private List<EpisodeWithInfo> episodeList;
     private SQLiteDatabaseManager sqLiteDatabaseManager;
 
     private final int albumView = 1;
     private final int nativeAdView = 2;
     boolean isGrid ;
 
-    public LatestEpisodesAdapter(Activity mContext, List<Episode> episodeList ,boolean isGrid) {
+    public LatestEpisodesAdapter(Activity mContext, List<EpisodeWithInfo> episodeList ,boolean isGrid) {
         this.mContext = mContext;
         this.episodeList = episodeList;
         this.isGrid = isGrid ;
@@ -82,7 +83,7 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         else {
 
             final EpisodeHolder episodeHolder = (EpisodeHolder) holder;
-            final Episode episode = episodeList.get(position);
+            final EpisodeWithInfo episode = episodeList.get(position);
 
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(mContext , R.anim.anim_itemview));
             if (isGrid) {
@@ -109,7 +110,7 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         /*episodeHolder.itemView.setOnClickListener(v -> ((MainActivity)mContext).startVideoActivity(position, episode, episodeHolder.mBinding.getTitle(),
                 episode.getThumb(), "", ""));*/
 
-
+                   episodeHolder.gridBinding.rate.setText(String.valueOf(episode.getWorld_rate()));
             }
             else {
                 LayoutLatestEpisodeItemListBinding listBinding = ((EpisodeHolder) holder).listBinding ;
@@ -131,6 +132,8 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else {
                     listBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.unseen));
                 }
+
+                listBinding.rate.setText(String.valueOf(episode.getWorld_rate()));
             }
             episodeHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(mContext, EpisodesActivity.class);
