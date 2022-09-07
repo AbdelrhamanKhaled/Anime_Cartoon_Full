@@ -10,12 +10,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.model.UserResponse;
+import com.anime.rashon.speed.loyert.network.ApiClient;
+import com.anime.rashon.speed.loyert.network.ApiService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +30,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -90,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void prepareSignInWithGoogle() {
         mGoogleSignInClient = GoogleAuth.getGoogleSignInClient(this);
+        //GoogleSignInOptions.Builder.requestIdToken(String)
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -118,24 +129,65 @@ public class LoginActivity extends AppCompatActivity {
             Snackbar.make(Login , "يرجي ملأ كل الحقول أولا" , Snackbar.LENGTH_SHORT).show();
             return;
         }
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Load(user);
-                        }
-                        else {
-                            // If sign in fails, display a message to the user.
-                            Snackbar.make(Login , "المعلومات الذي أدخلتها غير صحيحه يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
-                            // ...
-                        }
+        dialogUtilities.ShowDialog(this);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        CompositeDisposable disposable = new CompositeDisposable();
+        disposable.add(
+                apiService
+                        .loginWithEmail(email, password)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse userResponse) {
+                                if (!userResponse.isError()) {
+                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                    dialogUtilities.dismissDialog();
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    int code = userResponse.getCode();
+                                    if (code == Constants.USER_NOT_FOUND) {
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "هذا الحساب غير موجود ( يرجي إدخال إيميل صحيح )!" , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                    else if (code == Constants.INCORRECT_PASSWORD) {
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "كلمة السر خاطئة يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
 
-                        // ...
-                    }
-                });
+                            @Override
+                            public void onError(Throwable e) {
+                                dialogUtilities.dismissDialog();
+                                Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+//        mAuth.signInWithEmailAndPassword(email, password)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            Load(user);
+//                        }
+//                        else {
+//                            // If sign in fails, display a message to the user.
+//                            Snackbar.make(Login , "المعلومات الذي أدخلتها غير صحيحه يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+//                            // ...
+//                        }
+//
+//                        // ...
+//                    }
+//                });
     }
 
     @Override
@@ -150,7 +202,8 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d("ab_do", "firebaseAuthWithGoogle:" + account.getId());
-                firebaseAuthWithGoogle(account.getIdToken());
+                //createNewUserWithGoogle(account.getId() , account.getDisplayName());
+                //firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 dialogUtilities.dismissDialog();

@@ -388,17 +388,18 @@ public class Config {
         AdLoader adLoader = builder.build();
         AdRequest adRequest = new AdRequest.Builder().build();
         adLoader.loadAd(adRequest);*/
+        if (admob!=null && admob.getNativeAd()!=null) {
+            AdLoader adLoader = new AdLoader.Builder(context, admob.getNativeAd())
+                    .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                        @Override
+                        public void onNativeAdLoaded(@NotNull NativeAd nativeAd) {
+                            templateView.setNativeAd(nativeAd);
+                        }
+                    })
+                    .build();
 
-        AdLoader adLoader = new AdLoader.Builder(context, admob.getNativeAd())
-                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
-                    @Override
-                    public void onNativeAdLoaded(@NotNull NativeAd nativeAd) {
-                        templateView.setNativeAd(nativeAd);
-                    }
-                })
-                .build();
-
-        adLoader.loadAd(new AdRequest.Builder().build());
+            adLoader.loadAd(new AdRequest.Builder().build());
+        }
 
     }
 

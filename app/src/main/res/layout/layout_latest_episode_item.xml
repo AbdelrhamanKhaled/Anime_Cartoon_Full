@@ -119,6 +119,7 @@
 
 
             <TextView
+                android:id="@+id/statues"
                 android:layout_marginStart="16dp"
                 android:maxLines="1"
                 android:ellipsize="end"

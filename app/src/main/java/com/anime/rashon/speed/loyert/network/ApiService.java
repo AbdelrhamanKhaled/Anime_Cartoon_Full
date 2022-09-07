@@ -9,6 +9,7 @@ import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.model.Report;
+import com.anime.rashon.speed.loyert.model.UserResponse;
 
 import java.util.List;
 
@@ -93,5 +94,21 @@ public interface ApiService {
 
     @GET("episode/dates.php")
     Single<List<EpisodeDate>> episodeDates();
+
+    @FormUrlEncoded
+    @POST ("Accses/LoginWithEmail.php")
+    Single<UserResponse> loginWithEmail (
+            @Field("email") String email ,
+            @Field("password") String password
+    );
+
+
+    @FormUrlEncoded
+    @POST ("Accses/RegisterWithEmail.php")
+    Single<UserResponse> createNewUserWithEmail (
+            @Field("email") String email ,
+            @Field("password") String password ,
+            @Field("name") String name
+    );
 
 }

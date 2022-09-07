@@ -60,13 +60,10 @@
 
 
             <TextView
-                android:background="@drawable/title_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:background="@drawable/title_background"
                 android:ellipsize="end"
-                android:gravity="center"
                 android:maxLines="2"
                 android:text="@{cartoon}"
                 android:textColor="@color/AnimeTextColor_1"
@@ -75,56 +72,51 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
                 android:ellipsize="end"
-                android:gravity="center"
+                android:gravity="left"
                 android:maxLength="25"
                 android:maxLines="1"
                 android:text="@{title}"
                 android:textColor="@color/AnimeTextColor_2"
-                android:layout_marginBottom="4dp"
                 tool:text="Episode Name" />
 
             <LinearLayout
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="left"
                 android:layoutDirection="rtl"
-                android:gravity="center"
                 android:orientation="horizontal">
 
 
-
                 <TextView
+                    android:layout_marginLeft="12dp"
                     android:id="@+id/rate"
-                    android:maxLines="1"
-                    android:ellipsize="end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:maxLength="25"
-                    android:text="8.27"
-                    android:textSize="13sp"
-                    android:textColor="@color/AnimeTextColor_2"
-                    android:drawablePadding="8dp"
                     android:drawableEnd="@drawable/ic_star"
-                    />
+                    android:drawablePadding="8dp"
+                    android:ellipsize="end"
+                    android:maxLength="25"
+                    android:maxLines="1"
+                    android:text="8.27"
+                    android:textColor="@color/AnimeTextColor_2"
+                    android:textSize="13sp" />
 
 
                 <TextView
-                    android:layout_marginStart="16dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
+                    android:id="@+id/statues"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:ellipsize="end"
                     android:maxLength="25"
+                    android:maxLines="1"
                     android:text="مستمر"
-                    android:textSize="13sp"
                     android:textColor="@color/AnimeTextColor_2"
-                    />
+                    android:textSize="13sp" />
 
             </LinearLayout>
 

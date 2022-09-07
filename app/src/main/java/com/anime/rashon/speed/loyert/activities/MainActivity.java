@@ -58,6 +58,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CartoonFragment cartoonFragment ;
     boolean grid ;
     private  dialogUtilities dialogUtilities ;
+    private  Menu menu ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting Post failed, log a message
                     Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    //auth.getCurrentUser().updateProfile();
                     // ...
                 }
             };
@@ -557,6 +560,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu ;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         search_item = menu.findItem(R.id.menusearch);
 
@@ -599,15 +603,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Config.shareApp(MainActivity.this);
         }
         else if (item.getItemId() == R.id.grid_or_list) {
-            if (grid) {
-                item.setIcon(R.drawable.ic_baseline_grid_on_24);
-                item.setTitle("شبكة");
-            }
-            else {
-                item.setIcon(R.drawable.ic_baseline_format_list_bulleted_24);
-                item.setTitle("قائمة");
-            }
             grid = !grid ;
+            updateGridIcon(item);
             if (cartoonFragment!=null) {
                 cartoonFragment.initRecyclerview(grid);
             }
@@ -616,6 +613,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateGridIcon(MenuItem item) {
+        if (!grid) {
+            item.setIcon(R.drawable.ic_baseline_grid_on_24);
+            item.setTitle("شبكة");
+        }
+        else {
+            item.setIcon(R.drawable.ic_baseline_format_list_bulleted_24);
+            item.setTitle("قائمة");
+        }
     }
 
     @Override
@@ -680,25 +688,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        CartoonFragment cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
 
         int itemId = item.getItemId();//No Action
         mBinding.navView.setCheckedItem(itemId);
         if (itemId == R.id.latest_episodes) {
-            replaceLatestEpisodesFragment();}
+            cartoonFragment = null ;
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
+            replaceLatestEpisodesFragment();
+        }
         else if (itemId == R.id.anime) {
+            LatestEpisodesFragmentFragment = null ;
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
             selectedType = ALL;
             if (getSupportActionBar()!=null)
             getSupportActionBar().setTitle("المدبلج");
             replaceCartoonsFragment();
         }
         else if (itemId == R.id.films_t) {
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
             //dialogUtilities.ShowDialog(this);
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
             getFilms("الافلام المترجمه");
         }
 
         else if (itemId == R.id.films_d) {
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
             //dialogUtilities.ShowDialog(this);
             getFilms("الافلام المدبلجة");
@@ -716,6 +734,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            getSupportActionBar().setTitle(getString(R.string.girls_anime));
 //            replaceCartoonsFragment();
         else if (itemId == R.id.translation_anime) {
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
             selectedType = Config.TRANSLATED_ANIME;
             if (getSupportActionBar()!=null)
             getSupportActionBar().setTitle("المترجم");
@@ -731,6 +751,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            replaceCartoonsFragment();
        // }
         else if (itemId == R.id.new_cartoon) {
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
             selectedType = Config.NEW_ANIME;
             if (getSupportActionBar()!=null)
             getSupportActionBar().setTitle("المستمر");

@@ -11,14 +11,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.model.Information;
+import com.anime.rashon.speed.loyert.model.UserResponse;
+import com.anime.rashon.speed.loyert.network.ApiClient;
+import com.anime.rashon.speed.loyert.network.ApiService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class RegisterActivity extends AppCompatActivity {
     Button CreateAccount ;
@@ -75,7 +87,48 @@ public class RegisterActivity extends AppCompatActivity {
             Snackbar.make(CreateAccount , "يجب أن تكون كلمة المرور أطول من 6 حروف" , Snackbar.LENGTH_SHORT).show();
             return;
         }
-        SaveAuth(email , Password.getText().toString());
+        //SaveAuth(email , Password.getText().toString());
+        createNewUser(email , Password.getText().toString() , Username.getText().toString());
+    }
+
+    private void createNewUser(String email, String password, String username) {
+        dialogUtilities.ShowDialog(this);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        CompositeDisposable disposable = new CompositeDisposable();
+        disposable.add(
+                apiService
+                        .createNewUserWithEmail(email, password, username)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse userResponse) {
+                                if (!userResponse.isError()) {
+                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                    dialogUtilities.dismissDialog();
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    int code = userResponse.getCode();
+                                    if (code == Constants.USER_ALREADY_EXISTS) {
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "هذا الحساب موجود بالفعل !" , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "هناك خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dialogUtilities.dismissDialog();
+                                Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
 
     private boolean validEmail(String email) {

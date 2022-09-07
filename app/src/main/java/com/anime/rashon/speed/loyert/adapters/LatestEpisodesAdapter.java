@@ -111,6 +111,17 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 episode.getThumb(), "", ""));*/
 
                    episodeHolder.gridBinding.rate.setText(String.valueOf(episode.getWorld_rate()));
+                switch (episode.getStatus()) {
+                    case 1:
+                        episodeHolder.gridBinding.statues.setText("مكتمل");
+                        break;
+
+                    case 2:
+                        episodeHolder.gridBinding.statues.setText("مستمر");
+                        break;
+                    default:
+                        episodeHolder.gridBinding.statues.setText("غير محدد");
+                }
             }
             else {
                 LayoutLatestEpisodeItemListBinding listBinding = ((EpisodeHolder) holder).listBinding ;
@@ -134,6 +145,17 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
 
                 listBinding.rate.setText(String.valueOf(episode.getWorld_rate()));
+                switch (episode.getStatus()) {
+                    case 1:
+                        listBinding.statues.setText("مكتمل");
+                        break;
+
+                    case 2:
+                        listBinding.statues.setText("مستمر");
+                        break;
+                    default:
+                        listBinding.statues.setText("غير محدد");
+                }
             }
             episodeHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(mContext, EpisodesActivity.class);

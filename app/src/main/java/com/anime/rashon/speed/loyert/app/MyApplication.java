@@ -2,7 +2,7 @@ package com.anime.rashon.speed.loyert.app;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.onesignal.OneSignal;
+//import com.onesignal.OneSignal;
 import com.verizon.ads.VASAds;
 
 public class MyApplication extends MultiDexApplication {
@@ -12,11 +12,11 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
 
         //verizon sdk init
-        VASAds.initialize(this, VASAds.getSiteId());
+        //VASAds.initialize(this, VASAds.getSiteId());
         // OneSignal Initialization
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
+//        OneSignal.startInit(this)
+//                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+//                .unsubscribeWhenNotificationsAreDisabled(true)
+//                .init();
     }
 }
