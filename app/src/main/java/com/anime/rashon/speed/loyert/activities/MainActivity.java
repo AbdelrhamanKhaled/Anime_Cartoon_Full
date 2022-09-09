@@ -33,7 +33,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityMainBinding;
 import com.anime.rashon.speed.loyert.fragments.CartoonFragment;
@@ -44,6 +46,7 @@ import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
+import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.anime.rashon.speed.loyert.network.EpisodeDate;
@@ -90,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static int selectedType = 0;
 
     public static MenuItem search_item ;
-    FirebaseAuth auth ;
-    RewardedAd rewardedAd;
     DatabaseReference FavouriteRef;
     ValueEventListener FavouriteListener ;
     ValueEventListener SeenEpisodeslistener;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean grid ;
     private  dialogUtilities dialogUtilities ;
     private  Menu menu ;
+    private LoginUtil loginUtil ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +150,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void init() {
-        //        FirebaseDatabase.getInstance().getReference().removeValue();
-        auth = FirebaseAuth.getInstance();
+        Log.i("ab_do" , sharedPreferencesUtil.getSharedPreferences(this).getString(sharedPreferencesUtil.CURRENT_PHOTO , "no photo"));
+        Log.i("ab_do" , "User Logged is is = " + sharedPreferencesUtil.getSharedPreferences(this).getInt(sharedPreferencesUtil.USER_ID , -1));
         checkIfTheUserLodged();
         sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
         grid = true ;
@@ -157,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void checkIfTheUserLodged() {
-        FirebaseUser user = auth.getCurrentUser();
         View view = mBinding.navView.getHeaderView(0);
         TextView username, login;
         ImageView user_profile = view.findViewById(R.id.user_profile);
@@ -170,88 +171,94 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(getBaseContext() , LoginActivity.class));
             }
         });
-        if (user!=null) {
-            String name = user.getDisplayName();
-            if (name == null || name.isEmpty())
-                username.setText("لا يوجد اسم");
-            else
-                username.setText(name);
-            login.setVisibility(View.GONE);
-            Uri uri = user.getPhotoUrl();
-            if (uri != null) {
-                Glide.with(this)
-                        .load(uri)
-                        .centerCrop()
-                        .placeholder(R.drawable.user_profile)
-                        .error(R.drawable.user_profile)
-                        .into(user_profile);
-                ;
+        loginUtil = new LoginUtil(this);
+        if (loginUtil.userIsLoggedIN()) {
+            User user = loginUtil.getCurrentUser();
 
+            if (user != null) {
+                String name = user.getName();
+                if (name == null || name.isEmpty())
+                    username.setText("لا يوجد اسم");
+                else
+                    username.setText(name);
+                login.setVisibility(View.GONE);
+                Uri uri = null ;
+                if (user.getPhoto_url()!=null) {
+                    uri = Uri.parse(user.getPhoto_url());
+                }
+                if (uri != null) {
+                    Glide.with(this)
+                            .load(uri)
+                            .centerCrop()
+                            .placeholder(R.drawable.user_profile)
+                            .error(R.drawable.user_profile)
+                            .into(user_profile);
+                }
             }
         }
     }
 
     private void updateFavouriteCartoon() {
         sqLiteDatabaseManager.deleteAllFavouriteCartoons();
-        if (auth.getCurrentUser()!=null){
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            FavouriteRef = database.getReference().child("Users").child(auth.getCurrentUser().getUid()).child("FavouriteCartoon");
-            FavouriteListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("ab_do" , "onDataChange " + dataSnapshot);
-                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                        // TODO: handle the post
-                        Cartoon cartoon = postSnapshot.getValue(Cartoon.class);
-                        if (!sqLiteDatabaseManager.isCartoonFavorite(cartoon.getId()))
-                        sqLiteDatabaseManager.insertFavoriteCartoon(cartoon);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Getting Post failed, log a message
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    // ...
-                }
-            };
-            FavouriteRef.addValueEventListener(FavouriteListener);
-        }
+//        if (auth.getCurrentUser()!=null){
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            FavouriteRef = database.getReference().child("Users").child(auth.getCurrentUser().getUid()).child("FavouriteCartoon");
+//            FavouriteListener = new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Log.d("ab_do" , "onDataChange " + dataSnapshot);
+//                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+//                        // TODO: handle the post
+//                        Cartoon cartoon = postSnapshot.getValue(Cartoon.class);
+//                        if (!sqLiteDatabaseManager.isCartoonFavorite(cartoon.getId()))
+//                        sqLiteDatabaseManager.insertFavoriteCartoon(cartoon);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    // Getting Post failed, log a message
+//                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//                    // ...
+//                }
+//            };
+//            FavouriteRef.addValueEventListener(FavouriteListener);
+//        }
     }
 
 
 
     private void updateSeenEpisodes() {
         sqLiteDatabaseManager.deleteAllSeenEpisode();
-        if (auth.getCurrentUser()!=null){
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            //database.getReference().removeValue();
-            SeenEpisodesRef = database.getReference().child("Users").child(auth.getCurrentUser().getUid()).child("SeenEpisodes");
-            SeenEpisodeslistener = new ValueEventListener(){
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("ab_do" , "onDataChange " + dataSnapshot);
-                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                        // TODO: handle the post
-                        int val = postSnapshot.getValue(int.class);
-                        Log.d("ab_do" , "Val = " + val);
-                        checkTheEpisodesInDatabase(val);
-                    }
-//                    if (LatestEpisodesFragmentFragment!=null &&LatestEpisodesFragmentFragment.getAdapter()!=null)
-//                        LatestEpisodesFragmentFragment.getAdapter().notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Getting Post failed, log a message
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    //auth.getCurrentUser().updateProfile();
-                    // ...
-                }
-            };
-            SeenEpisodesRef.addValueEventListener(SeenEpisodeslistener);
-        }
+//        if (auth.getCurrentUser()!=null){
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            //database.getReference().removeValue();
+//            SeenEpisodesRef = database.getReference().child("Users").child(auth.getCurrentUser().getUid()).child("SeenEpisodes");
+//            SeenEpisodeslistener = new ValueEventListener(){
+//                @SuppressLint("NotifyDataSetChanged")
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Log.d("ab_do" , "onDataChange " + dataSnapshot);
+//                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+//                        // TODO: handle the post
+//                        int val = postSnapshot.getValue(int.class);
+//                        Log.d("ab_do" , "Val = " + val);
+//                        checkTheEpisodesInDatabase(val);
+//                    }
+////                    if (LatestEpisodesFragmentFragment!=null &&LatestEpisodesFragmentFragment.getAdapter()!=null)
+////                        LatestEpisodesFragmentFragment.getAdapter().notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    // Getting Post failed, log a message
+//                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//                    //auth.getCurrentUser().updateProfile();
+//                    // ...
+//                }
+//            };
+//            SeenEpisodesRef.addValueEventListener(SeenEpisodeslistener);
+//        }
     }
 
 
@@ -345,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mBinding.drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         Menu nav_Menu = mBinding.navView.getMenu();
-        nav_Menu.findItem(R.id.log_out).setVisible(auth.getCurrentUser() != null);
+        nav_Menu.findItem(R.id.log_out).setVisible(loginUtil.userIsLoggedIN());
         mBinding.navView.setCheckedItem(R.id.latest_episodes);
     }
 
@@ -776,11 +783,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        }
 
         else if (itemId == R.id.log_out) {
-            FirebaseAuth.getInstance().signOut();
             try {
-                GoogleSignInClient client = GoogleAuth.getGoogleSignInClient(this);
-                client.signOut();
-                LoginManager.getInstance().logOut();
+                loginUtil.signOut();
                 startActivity(getIntent());
                 finish();
                 overridePendingTransition(0, 0);

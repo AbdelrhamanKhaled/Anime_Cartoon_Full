@@ -1,33 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	android:paddingTop="46dp"
+
+<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:background="@drawable/header_background"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+<LinearLayout
+	android:paddingTop="32dp"
 	android:paddingStart="32dp"
 	android:paddingEnd="32dp"
 	android:paddingBottom="16dp"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="@drawable/header_background">
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
 
-	<ImageView
+	<de.hdodenhof.circleimageview.CircleImageView
+		android:layout_gravity="center_horizontal"
 		android:id="@+id/user_profile"
-		android:layout_width="75dp"
-		android:layout_height="75dp"
+		android:layout_width="100dp"
+		android:layout_height="100dp"
 		android:layout_marginTop="16dp"
 		android:layout_marginBottom="16dp"
-		android:src="@drawable/user_profile" />
+		android:src="@drawable/user_profile"
+		app:civ_border_color="#FF000000"
+		app:civ_border_width="1dp" />
+
 
 	<TextView
+		android:layout_gravity="center_horizontal"
 		android:id="@+id/Username"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@id/user_profile"
-		android:gravity="center"
-		android:text="لم يتم تسجيل الدخول بعد" />
+		android:maxWidth="300dp"
+		android:gravity="center_horizontal"
+		android:text="لم يتم تسجيل الدخول بعد"
+		android:textSize="15sp" />
 
 
 	<TextView
+		android:layout_gravity="center_horizontal"
 		android:id="@+id/Login"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -35,7 +51,11 @@
 		android:layout_marginTop="8dp"
 		android:gravity="center"
 		android:text="تسجيل الأن"
+		android:textSize="14sp"
 		android:textColor="@color/blue" />
+
+
+
 
 
 
@@ -77,4 +97,7 @@
 
 	</LinearLayout>-->
 
-</RelativeLayout>
+</LinearLayout>
+
+
+	</LinearLayout>

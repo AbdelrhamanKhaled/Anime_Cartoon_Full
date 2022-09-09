@@ -33,7 +33,7 @@
             android:name=".activities.InformationActivity"
             android:exported="false" />
         <activity
-            android:name=".splashActivity"
+            android:name=".activities.splashActivity"
             android:exported="true"
             android:noHistory="true">
             <intent-filter>
@@ -57,7 +57,7 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:exported="false"
-            android:noHistory="true" />
+            android:noHistory="false" />
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true"

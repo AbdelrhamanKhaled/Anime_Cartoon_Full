@@ -7,6 +7,7 @@ import android.util.Log;
 import com.anime.rashon.speed.loyert.R;
 
 public class dialogUtilities {
+
     private ProgressDialog progressDialog ;
 
     public void ShowDialog(Context context) {
@@ -30,4 +31,6 @@ public class dialogUtilities {
             Log.d("ab_do" , exception.getMessage());
         }
     }
+
+
 }

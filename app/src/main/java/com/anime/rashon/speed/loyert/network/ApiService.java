@@ -108,7 +108,16 @@ public interface ApiService {
     Single<UserResponse> createNewUserWithEmail (
             @Field("email") String email ,
             @Field("password") String password ,
-            @Field("name") String name
+            @Field("name") String name ,
+            @Field("photo_Uri") String photoUrl
     );
 
+    @FormUrlEncoded
+    @POST ("Accses/RegisterWithToken.php")
+    Single<UserResponse> createNewUserWithToken (
+            @Field("token") String token ,
+            @Field("email") String email ,
+            @Field("name") String name ,
+            @Field("photo_Uri") String photo_Uri
+    );
 }

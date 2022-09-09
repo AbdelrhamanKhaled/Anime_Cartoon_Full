@@ -2,6 +2,7 @@ package com.anime.rashon.speed.loyert.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
+import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     dialogUtilities dialogUtilities ;
+    LoginUtil loginUtil ;
     @Override
     public void onBackPressed() {
         finish();
@@ -94,13 +99,16 @@ public class LoginActivity extends AppCompatActivity {
         Google = findViewById(R.id.google);
         Facebook = findViewById(R.id.facebook);
         dialogUtilities = new dialogUtilities();
+        loginUtil = new LoginUtil(this);
         prepareSignInWithGoogle();
 
     }
 
     private void prepareSignInWithGoogle() {
-        mGoogleSignInClient = GoogleAuth.getGoogleSignInClient(this);
-        //GoogleSignInOptions.Builder.requestIdToken(String)
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken(getString(R.string.ClientID)).build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, options);
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -141,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
+                                    loginUtil.saveLoginInformation(LoginMethod.EMAIL , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
                                     Intent intent = new Intent(getBaseContext() , MainActivity.class);
                                     dialogUtilities.dismissDialog();
                                     startActivity(intent);
@@ -190,6 +199,8 @@ public class LoginActivity extends AppCompatActivity {
 //                });
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -201,8 +212,13 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("ab_do", "firebaseAuthWithGoogle:" + account.getId());
-                //createNewUserWithGoogle(account.getId() , account.getDisplayName());
+                Log.d("ab_do_google", "id Token: " + account.getIdToken());
+                Log.d("ab_do_google", "email: " + account.getEmail());
+                Log.d("ab_do_google", "username: " + account.getDisplayName());
+                Log.d("ab_do_google", "photo: " + account.getPhotoUrl());
+                Uri photo_Uri = account.getPhotoUrl() != null ?  account.getPhotoUrl() : Uri.EMPTY ;
+                createNewUserWithGoogle(account.getIdToken() ,  account.getEmail() , account.getDisplayName()
+                , photo_Uri);
                 //firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -212,25 +228,38 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            dialogUtilities.dismissDialog();
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("ab_do", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Load(user);
-                        } else {
-                            dialogUtilities.dismissDialog();
-                            // If sign in fails, display a message to the user.
-                            Log.w("ab_do", "signInWithCredential:failure", task.getException());
-                            Snackbar.make(Login , "فشل عملية تسجيل الدخول يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    private void createNewUserWithGoogle(String idToken, String email, String displayName, Uri photoUrl) {
+        dialogUtilities.ShowDialog(this);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        CompositeDisposable disposable = new CompositeDisposable();
+        disposable.add(
+                apiService
+                        .createNewUserWithToken(idToken , email, displayName, photoUrl.toString())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse userResponse) {
+                                if (!userResponse.isError()) {
+                                    loginUtil.saveLoginInformation(LoginMethod.GOOGLE , "" , photoUrl.toString() , userResponse.getUser().getId());
+                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                    dialogUtilities.dismissDialog();
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    dialogUtilities.dismissDialog();
+                                    Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dialogUtilities.dismissDialog();
+                                Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
+
 }

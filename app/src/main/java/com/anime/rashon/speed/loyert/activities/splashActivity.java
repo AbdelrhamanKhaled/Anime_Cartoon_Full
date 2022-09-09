@@ -1,4 +1,4 @@
-package com.anime.rashon.speed.loyert;
+package com.anime.rashon.speed.loyert.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.ArraySet;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;

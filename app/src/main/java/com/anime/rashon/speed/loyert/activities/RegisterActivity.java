@@ -1,21 +1,31 @@
 package com.anime.rashon.speed.loyert.activities;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
@@ -27,6 +37,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.io.IOException;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -34,9 +46,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RegisterActivity extends AppCompatActivity {
     Button CreateAccount ;
+    ImageView addPhoto;
     TextView Login ;
     EditText Username , Password , Email ;
     dialogUtilities dialogUtilities ;
+    LoginUtil loginUtil ;
+    Uri uploadedImg = null ;
+    ActivityResultLauncher<String> activityResultRegistry ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +75,14 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activityResultRegistry.launch("image/*");
+            }
+        });
+
     }
 
     private void Init() {
@@ -68,10 +92,27 @@ public class RegisterActivity extends AppCompatActivity {
         Password = findViewById(R.id.Password);
         Email = findViewById(R.id.email) ;
         dialogUtilities = new dialogUtilities();
+        addPhoto = findViewById(R.id.add_photo);
+        loginUtil = new LoginUtil(this);
+        activityResultRegistry = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri result) {
+                Log.i("ab_do" , "onActivityResult " + result);
+                if (result!=null) {
+                    uploadedImg = result ;
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
+                        bitmap = Bitmap.createScaledBitmap(bitmap , 120 , 120 , true);
+                        addPhoto.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     private void CreateAcc() {
-
         String email = Email.getText().toString();
         if (TextUtils.isEmpty(Username.getText()) || TextUtils.isEmpty(Password.getText())) {
             Snackbar.make(CreateAccount , "يرجي ملأ كل الحقول أولا" , Snackbar.LENGTH_SHORT).show();
@@ -92,18 +133,22 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createNewUser(String email, String password, String username) {
+        String img_url = "";
+        if (uploadedImg!=null) img_url = uploadedImg.toString();
         dialogUtilities.ShowDialog(this);
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         CompositeDisposable disposable = new CompositeDisposable();
+        String finalImg_url = img_url;
         disposable.add(
                 apiService
-                        .createNewUserWithEmail(email, password, username)
+                        .createNewUserWithEmail(email, password, username , finalImg_url)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
+                                    loginUtil.saveLoginInformation(LoginMethod.EMAIL , username , finalImg_url, userResponse.getUser().getId());
                                     Intent intent = new Intent(getBaseContext() , MainActivity.class);
                                     dialogUtilities.dismissDialog();
                                     startActivity(intent);
@@ -130,6 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
                         })
         );
     }
+
 
     private boolean validEmail(String email) {
         return (email.contains(".com") || email.contains(".Com") && (email.contains("yahoo") || (email.contains("hotmail") || ((email.contains("gmail")) || email.contains("Gmail"))))) ;

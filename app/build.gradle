@@ -54,6 +54,11 @@ android {
         signingConfig signingConfigs.debug
     }
     buildTypes {
+        release {
+            signingConfig signingConfigs.config
+            minifyEnabled true
+        }
+
 //        release {
 //            minifyEnabled true
 //            shrinkResources true
@@ -157,4 +162,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-crashlytics:18.2.12'
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

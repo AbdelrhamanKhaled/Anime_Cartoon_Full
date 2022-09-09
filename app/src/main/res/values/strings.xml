@@ -40,4 +40,9 @@
     <string name="facebook_client_token">b81bdc441e9c04d1c8e063534837b699</string>
 
 
+
+    <!--google Sign IN -->
+    <string name="ClientID">1060013347113-51t8rn3mjtisa1hfue802n5sk3oslnko.apps.googleusercontent.com</string>
+
+
 </resources>
