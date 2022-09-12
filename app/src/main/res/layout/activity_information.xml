@@ -189,18 +189,33 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/like"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/like" />
+
+                <ImageView
+                    android:layout_marginTop="3.5dp"
+                    android:id="@+id/dislike"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginRight="28dp"
+                    android:src="@drawable/dislike_n" />
+
 
                 <ImageView
                     android:id="@+id/add_feedback"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginRight="28dp"
                     android:src="@drawable/comment" />
 
                 <ImageView
                     android:id="@+id/add_watch_later"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginRight="28dp"
                     android:src="@drawable/clock" />
 
 
@@ -208,7 +223,7 @@
                     android:id="@+id/add_seen"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginRight="28dp"
                     android:src="@drawable/seen_done" />
 
 
@@ -216,7 +231,7 @@
                     android:id="@+id/add_favourite"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginRight="28dp"
                     android:src="@drawable/empty_star" />
 
             </LinearLayout>
@@ -292,46 +307,6 @@
         </androidx.cardview.widget.CardView>
 
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/more_info"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="4dp">
-
-            <Button
-                android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/watch_back"
-                android:drawableEnd="@drawable/like"
-                android:drawablePadding="12dp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:text="أعجبني" />
-
-            <Button
-                android:id="@+id/dislike"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="32dp"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/watch_back"
-                android:drawableEnd="@drawable/dislike_n"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:text="لم يعجبني" />
-
-        </LinearLayout>
 
 
     </RelativeLayout>
