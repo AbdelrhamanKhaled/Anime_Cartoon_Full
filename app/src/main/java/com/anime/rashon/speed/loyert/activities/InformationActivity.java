@@ -117,11 +117,11 @@ public class InformationActivity extends AppCompatActivity {
                     break;
 
                 case 2:
-                    binding.age.setText("+13 سنة");
+                    binding.age.setText("+ 13");
                     break;
 
                 case 3:
-                    binding.age.setText("+17 سنة");
+                    binding.age.setText("+ 17");
                     break;
                 default:
                     binding.age.setText("غير محدد");
@@ -155,7 +155,7 @@ public class InformationActivity extends AppCompatActivity {
         binding.category.setText(information.getCategory());
         else binding.category.setText("غير محدد");
         if (information.getWorld_rate()!=null)
-        binding.rate.setText(information.getWorld_rate());
+        binding.rate.setText("10 / " + information.getWorld_rate());
         else binding.rate.setText("غير محدد");
         if (cartoon.getThumb()!=null && !cartoon.getThumb().isEmpty()) {
             String imgUrl = cartoon.getThumb();
@@ -196,16 +196,11 @@ public class InformationActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu ;
         sqLiteDatabaseManager = new SQLiteDatabaseManager(InformationActivity.this);
-        getMenuInflater().inflate(R.menu.favorite_menu, menu);
-        if (sqLiteDatabaseManager.isCartoonFavorite(cartoon.getId())) {
-            menu.findItem(R.id.menu_empty_star).setVisible(false);
-            menu.findItem(R.id.menu_filled_star).setVisible(true);
-        }
-        menu.findItem(R.id.change_order).setVisible(false);
-        menu.findItem(R.id.grid_or_list).setVisible(false);
-        menu.findItem(R.id.menusearch).setVisible(false);
-        menu.findItem(R.id.share).setVisible(true);
-
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+//        if (sqLiteDatabaseManager.isCartoonFavorite(cartoon.getId())) {
+//            menu.findItem(R.id.menu_empty_star).setVisible(false);
+//            menu.findItem(R.id.menu_filled_star).setVisible(true);
+//        }
         return super.onCreateOptionsMenu(menu);
     }
 
