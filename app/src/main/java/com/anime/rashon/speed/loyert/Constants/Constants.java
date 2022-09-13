@@ -6,4 +6,5 @@ public interface Constants {
     int USER_ALREADY_EXISTS =  202 ;
     int USER_NOT_FOUND =  203 ;
     int INCORRECT_PASSWORD =  205 ;
+    String CARTOON_ID = "cartoon_id";
 }

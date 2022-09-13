@@ -358,8 +358,9 @@ public class ServersActivity extends AppCompatActivity {
             return;
         }
 
+
         if (Action == WATCH_ACTION)
-         Config.openExoPlayerApp(this, url);
+         Config.openExoPlayerApp(this, url , episode);
 
         else {
 

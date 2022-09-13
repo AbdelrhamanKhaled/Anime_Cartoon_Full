@@ -6,7 +6,6 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,13 +26,20 @@ import androidx.core.content.ContextCompat;
 
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.activities.InformationActivity;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.UserResponse;
+import com.anime.rashon.speed.loyert.network.ApiClient;
+import com.anime.rashon.speed.loyert.network.ApiService;
 import com.google.android.ads.nativetemplates.TemplateView;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.util.LogicUtils;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.EnqueueAction;
 import com.tonyodev.fetch2.Error;
@@ -47,6 +54,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class Config {
 
@@ -79,10 +91,15 @@ public class Config {
     private static void ShowDialog(Context context) {
         //setting up progress dialog
         progressDialog = new ProgressDialog(context);
-        progressDialog.show();
-        progressDialog.setContentView(R.layout.progress_dialog);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        try {
+            progressDialog.show();
+            progressDialog.setContentView(R.layout.progress_dialog);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }catch (Exception exception) {
+
+        }
+
     }
 
     public static void optionsDialog(Activity activity, String url, Episode episode,
@@ -110,7 +127,7 @@ public class Config {
         builder.setTitle("");
         builder.setItems(optionsArr, (dialog, which) -> {
             if(which == 0){
-                openExoPlayerApp(activity, url);
+                openExoPlayerApp(activity, url, episode);
             }
             else if(which == 1){
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -347,16 +364,104 @@ public class Config {
         }
     }
 
-    public static void openExoPlayerApp(Activity activity, String url){
+    public static void openExoPlayerApp(Activity activity, String url, Episode episode){
+        ShowDialog(activity);
         PackageManager packageManager = activity.getPackageManager();
-
         Intent intent = new Intent("android.intent.action.VIEW");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction("quick.launch.me");
         intent.putExtra("url", url);
+        if (intent.resolveActivity(packageManager) != null) {
+             // insert seen episode and increment watched cartoons
+            LoginUtil loginUtil = new LoginUtil(activity.getApplicationContext());
+            if (loginUtil.userIsLoggedIN()) {
+                insertSeenEpisode(intent , activity, episode, loginUtil);
+            }
+            else {
+                dismissDialog(activity);
+                startExoPlayer(activity, intent);
+            }
+        }
+
+
+        }
+
+    private static void insertSeenEpisode(Intent intent , Activity activity, Episode episode, LoginUtil loginUtil) {
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(activity.getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .insertSeenEpisode(loginUtil.getCurrentUser().getId(), episode.getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                     UserOptions.getUserOptions().getSeenEpisodesIds().add(episode.getId());
+                                     incrementWatchedEpisodes(intent , activity, episode, loginUtil);
+                                }
+                                else {
+                                    dismissDialog(activity);
+                                    Toast.makeText(activity, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissDialog(activity);
+                                Toast.makeText(activity, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private static void incrementWatchedEpisodes(Intent intent, Activity activity, Episode episode, LoginUtil loginUtil) {
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(activity.getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .incrementWatchedEpisodes(loginUtil.getCurrentUser().getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    dismissDialog(activity);
+                                    startExoPlayer(activity , intent);
+                                }
+                                else {
+                                    dismissDialog(activity);
+                                    Toast.makeText(activity, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissDialog(activity);
+                                Toast.makeText(activity, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private static void dismissDialog(Activity activity) {
+        try {
+            progressDialog.dismiss();
+        }catch (Exception exception) {
+
+        }
+    }
+
+    private static void startExoPlayer(Activity activity, Intent intent) {
         try {
             activity.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
+        }
+
+        catch (ActivityNotFoundException e) {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
 
             builder.setMessage("يرجى تثبيت تطبيق المشغل السريع (Quick Player) لتشغيل الفيديو");
@@ -368,8 +473,7 @@ public class Config {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
-
-        }
+    }
 
 
     private static void openExoPlayerOnPlayStore(Context activity){

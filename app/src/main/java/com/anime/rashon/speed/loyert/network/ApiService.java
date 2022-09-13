@@ -5,6 +5,7 @@ import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
+import com.anime.rashon.speed.loyert.model.Feedbacks;
 import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
@@ -72,6 +73,7 @@ public interface ApiService {
             @Query("playlistId") int playlistId
     );
 
+
     @GET("redirect/animelive.php")
     Single<Redirect> getRedirect(
     );
@@ -120,4 +122,90 @@ public interface ApiService {
             @Field("name") String name ,
             @Field("photo_Uri") String photo_Uri
     );
+
+    @GET("UserLoggedOptions/getAllFavouriteCartoons.php")
+    Single<List<CartoonWithInfo>> getAllFavouriteCartoons(
+            @Query("user_id") int userId
+    );
+
+    @GET("UserLoggedOptions/getAllWatchedCartonns.php")
+    Single<List<CartoonWithInfo>> getAllWatchedCartoons(
+            @Query("user_id") int userId
+    );
+
+    @GET("UserLoggedOptions/getAllWatchedLaterCartoons.php")
+    Single<List<CartoonWithInfo>> getAllWatchedLaterCartoons(
+            @Query("user_id") int userId
+    );
+
+    @GET("UserLoggedOptions/getAllSeenEpisodes.php")
+    Single<List<Integer>> getAllSeenEpisodes(
+            @Query("user_id") int userId
+    );
+
+    @GET("UserLoggedOptions/addFavourite.php")
+    Single<UserResponse> addFavourite(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/removeFavourite.php")
+    Single<UserResponse> deleteFavourite(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/addwatchedCartoon.php")
+    Single<UserResponse> addWatchedCartoon(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/removeWatchedCartoon.php")
+    Single<UserResponse> removeWatchedCartoon(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/addWatchedLaterCartoon.php")
+    Single<UserResponse> addWatchedLaterCartoon(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/removeWatchLater.php")
+    Single<UserResponse> removeWatchLater(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoonId
+    );
+
+
+    @GET("UserLoggedOptions/getCartoonFeedbacks.php")
+    Single<List<Feedbacks>> getFeedbacks(
+            @Query("cartoon_id") int cartoonId
+    );
+
+
+    @GET("UserLoggedOptions/insertSeenEpisode.php")
+    Single<UserResponse> insertSeenEpisode(
+            @Query("user_id") int userId,
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/incrementWatchedEpisodes.php")
+    Single<UserResponse> incrementWatchedEpisodes(
+            @Query("user_id") int userId
+    );
+
+
+    @GET("UserLoggedOptions/addCartoonFeedback.php")
+    Single<UserResponse> addCartoonFeedback(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoon_id,
+            @Query("feedback") String feedback,
+            @Query("name") String name,
+            @Query("photo_Uri") String photo_Uri
+    );
+
+
 }

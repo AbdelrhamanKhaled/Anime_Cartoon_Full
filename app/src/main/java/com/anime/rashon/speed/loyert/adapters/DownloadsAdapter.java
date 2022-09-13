@@ -55,7 +55,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 intent.putExtra("download", download);
                 mContext.startActivity(intent);*/
                 String videoUrl = download.getPath();
-                Config.openExoPlayerApp(mContext, videoUrl);
+                //Config.openExoPlayerApp(mContext, videoUrl, episode);
             }
         });
 

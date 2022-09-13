@@ -32,6 +32,7 @@ import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.adapters.EpisodesAdapter;
 import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityEpisodesBinding;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -127,6 +128,13 @@ public class EpisodesActivity extends AppCompatActivity {
         initRecyclerview(grid);
         initRetrofit();
         getEpisodes();
+    }
+
+    @Override
+    protected void onResume() {
+        if(adapter!=null)
+        adapter.notifyDataSetChanged();
+        super.onResume();
     }
 
     private void initDatabase(){
@@ -423,12 +431,7 @@ public class EpisodesActivity extends AppCompatActivity {
         startActivityForResult(intent, VIDEO_REQUEST_CODE);
         mBinding.progressBarLayout.setVisibility(View.GONE);
         // insert in the firebase that the user is watch this episode
-        if (!sqLiteDatabaseManager.isEpisodeSeen(episode.getId())) {
-        if (mAuth.getCurrentUser()!=null)
-            insertEpisodeSeenInFirebase(episode.getId());
-            sqLiteDatabaseManager.insertSeenEpisode(episode.getId());
-            mBinding.episodessRecyclerview.getAdapter().notifyItemChanged(position);
-        }
+        mBinding.episodessRecyclerview.getAdapter().notifyItemChanged(position);
     }
 
 //    private void checkIfFullWatchedCartoon() {

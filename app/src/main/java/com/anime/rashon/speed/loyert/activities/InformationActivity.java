@@ -4,23 +4,27 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityInformationBinding;
-import com.anime.rashon.speed.loyert.model.Cartoon;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Information;
+import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -31,11 +35,15 @@ import io.reactivex.schedulers.Schedulers;
 
 public class InformationActivity extends AppCompatActivity {
     ActivityInformationBinding binding ;
-    Cartoon cartoon ;
+    CartoonWithInfo cartoon ;
     private final CompositeDisposable disposable = new CompositeDisposable();
+    ApiService apiService ;
     private InformationActivity activity ;
     private Menu menu;
     SQLiteDatabaseManager sqLiteDatabaseManager ;
+    LoginUtil loginUtil ;
+    boolean canGoBack = true ;
+    boolean favourite ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +56,141 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     private void init() {
+        apiService = ApiClient.getClient(this).create(ApiService.class);
         binding.progressBarLayout.setVisibility(View.VISIBLE);
         activity = this ;
-        cartoon = (Cartoon) getIntent().getSerializableExtra("cartoon");
+        cartoon = (CartoonWithInfo) getIntent().getSerializableExtra("cartoon");
+        favourite = UserOptions.getUserOptions().getFavouriteCartoonsIds().contains(cartoon.getId());
+        binding.addFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext() , FeedbacksActivity.class).putExtra(Constants.CARTOON_ID , cartoon.getId()));
+            }
+        });
         binding.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToPlaylistActivity();
             }
         });
+        loginUtil = new LoginUtil(this);
+        handleFavouriteBtn();
+    }
+
+    private void handleFavouriteBtn() {
+        if (loginUtil.userIsLoggedIN()) {
+            if (favourite) {
+                binding.addFavourite.setImageResource(R.drawable.filled_star);
+            } else {
+                binding.addFavourite.setImageResource(R.drawable.empty_star);
+            }
+        }
+        else binding.addFavourite.setImageResource(R.drawable.empty_star);
+        binding.addFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null) {
+                    canGoBack = false ;
+                    binding.progressBarLayout.setVisibility(View.VISIBLE);
+                    List<CartoonWithInfo> favouriteCartoons = UserOptions.getUserOptions().getFavouriteCartoons();
+                    if (favourite) {
+                        // delete from favourite
+                        deleteFavourite(favouriteCartoons);
+                    }
+                    else {
+                        // add favourite
+                        addFavourite(favouriteCartoons);
+                    }
+                }
+                else {
+                    Snackbar snack = Snackbar.make(binding.getRoot() , "عفوا يرجي تسجيل الدخول أولا " , Snackbar.LENGTH_SHORT);
+                    showSnack(snack);
+                }
+            }
+        });
+    }
+
+    private void addFavourite(List<CartoonWithInfo> favouriteCartoons) {
+        binding.addFavourite.setImageResource(R.drawable.filled_star);
+        // add api call to add favourite cartoon
+        disposable.add(
+                apiService
+                        .addFavourite(loginUtil.getCurrentUser().getId() , cartoon.getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    favouriteCartoons.add(cartoon);
+                                    UserOptions.getUserOptions().setFavouriteCartoons(favouriteCartoons);
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Snackbar snack = Snackbar.make(binding.getRoot() , "تم إضافة الإنمي إلي المفضلة بنجاح" , Snackbar.LENGTH_SHORT);
+                                    showSnack(snack);
+                                    canGoBack = true ;
+                                    favourite = true ;
+                                }
+                                else {
+                                    canGoBack = true ;
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Toast.makeText(InformationActivity.this, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                canGoBack = true ;
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                Toast.makeText(InformationActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void deleteFavourite(List<CartoonWithInfo> favouriteCartoons) {
+        binding.addFavourite.setImageResource(R.drawable.empty_star);
+        disposable.add(
+                apiService
+                        .deleteFavourite(loginUtil.getCurrentUser().getId() , cartoon.getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    favouriteCartoons.remove(cartoon);
+                                    UserOptions.getUserOptions().setFavouriteCartoons(favouriteCartoons);
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Snackbar snack = Snackbar.make(binding.getRoot() , "تم إزالة الانمي من المفضلة بنجاح" , Snackbar.LENGTH_SHORT);
+                                    showSnack(snack);
+                                    canGoBack = true ;
+                                    favourite = false ;
+                                }
+                                else {
+                                    canGoBack = true ;
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Toast.makeText(InformationActivity.this, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                canGoBack = true ;
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                Toast.makeText(InformationActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void showSnack(Snackbar snack) {
+        View view = snack.getView();
+        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+        params.gravity = Gravity.CENTER;
+        view.setLayoutParams(params);
+        snack.show();
     }
 
     private void getInformation() {
@@ -205,46 +339,22 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (canGoBack)
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();//No Action
         if (itemId == android.R.id.home) {
+            if (canGoBack)
             finish();
         }
         else if (itemId == R.id.share) {
             Config.shareApp(InformationActivity.this);
         }
-        else if (itemId == R.id.menu_empty_star) {
-            menu.findItem(R.id.menu_empty_star).setVisible(false);
-            menu.findItem(R.id.menu_filled_star).setVisible(true);
-            sqLiteDatabaseManager.insertFavoriteCartoon(cartoon);
-            if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                insertCartoonIntoFirebase(cartoon);
-            setResult(RESULT_OK);
-        } else if (itemId == R.id.menu_filled_star) {
-            menu.findItem(R.id.menu_filled_star).setVisible(false);
-            menu.findItem(R.id.menu_empty_star).setVisible(true);
-            sqLiteDatabaseManager.deleteFavoriteCartoon(cartoon.getId());
-            if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                deleteCartoonFromFirebase(cartoon);
-            setResult(RESULT_OK);
-        }
         return super.onOptionsItemSelected(item);
     }
 
-    private void deleteCartoonFromFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.removeValue();
-        SQLiteDatabaseManager sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
-        List<Cartoon>  cartoons = sqLiteDatabaseManager.getCartoonsFavoriteData();
-        for (Cartoon car : cartoons) {
-            myRef.push().setValue(car);
-        }
-    }
-
-    private void insertCartoonIntoFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.push().setValue(cartoon);
-    }
 }

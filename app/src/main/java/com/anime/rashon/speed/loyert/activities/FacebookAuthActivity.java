@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
+import com.anime.rashon.speed.loyert.app.UserOptions;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -35,9 +39,12 @@ import com.google.firebase.auth.FirebaseUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -49,10 +56,15 @@ public class FacebookAuthActivity extends AppCompatActivity {
     private static final String TAG = "ab_do";
     CallbackManager callbackManager ;
     LoginUtil loginUtil ;
+    CompositeDisposable disposable ;
+    ApiService apiService ;
+    private int user_id ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ab_do" , "create");
+        disposable = new CompositeDisposable();
+        apiService = ApiClient.getClient(this).create(ApiService.class);
         loginUtil = new LoginUtil(this);
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends" , "email"));
@@ -153,6 +165,10 @@ public class FacebookAuthActivity extends AppCompatActivity {
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
                                     loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , name , photo_url , userResponse.getUser().getId());
+                                    user_id = loginUtil.getCurrentUser().getId();
+                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS)
+                                    loadFavouriteCartoons();
+                                    else
                                     Load();
                                 }
                                 else {
@@ -182,4 +198,93 @@ public class FacebookAuthActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    private void loadWatchLaterCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedLaterCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchLaterCartoons(retrievedCartoonList);
+                                loadSeenEpisodes();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadSeenEpisodes();
+                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadSeenEpisodes() {
+        disposable.add(
+                apiService
+                        .getAllSeenEpisodes(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
+                            @Override
+                            public void onSuccess(List<Integer> retrievedEpisodesIdsList) {
+                                UserOptions.getUserOptions().setSeenEpisodesIds(retrievedEpisodesIdsList);
+                                Load();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Load();
+                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadWatchedCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchedCartoons(retrievedCartoonList);
+                                loadWatchLaterCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchLaterCartoons();
+                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadFavouriteCartoons() {
+        disposable.add(
+                apiService
+                        .getAllFavouriteCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setFavouriteCartoons(retrievedCartoonList);
+                                loadWatchedCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchedCartoons();
+                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
 }

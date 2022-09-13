@@ -6,7 +6,6 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-
     <queries>
 
         <!-- Explicit apps you know in advance about: -->
@@ -61,7 +60,8 @@
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true"
-            android:noHistory="true"/>
+            android:noHistory="true" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5620187745322623~4930897287" />
@@ -87,10 +87,10 @@
             android:noHistory="true" />
         <activity
             android:name=".activities.MainActivity"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:exported="true"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -111,6 +111,7 @@
         <activity
             android:name=".activities.FavoriteEpisodeActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
+        <activity android:name=".activities.FeedbacksActivity" />
     </application>
 
 </manifest>

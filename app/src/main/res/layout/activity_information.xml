@@ -1,333 +1,331 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:scrollbars="none"
-    android:layoutDirection="rtl"
-    android:background="@color/white"
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<ScrollView
+    android:scrollbars="none"
+    android:layoutDirection="rtl"
+    android:background="@color/white"
+    android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
 
-<LinearLayout
-    android:layoutDirection="rtl"
-    android:fitsSystemWindows="true"
-    android:id="@+id/main_content"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
- >
-
-    <include
-        android:id="@+id/included_toolbar"
-        layout="@layout/layout_toolbar" />
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:layoutDirection="rtl"
+        android:orientation="vertical">
 
+        <include
+            android:id="@+id/included_toolbar"
+            layout="@layout/layout_toolbar" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <ImageView
-            android:id="@+id/background"
-            android:layout_width="match_parent"
-            android:layout_height="340dp"
-            android:alpha="0.1" />
 
         <RelativeLayout
-            android:id="@+id/info"
+            android:paddingBottom="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/background"
+                android:layout_width="match_parent"
+                android:layout_height="340dp"
+                android:alpha="0.1" />
+
+            <RelativeLayout
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/img_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardBackgroundColor="#fff"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="8dp">
+
+                    <ImageView
+                        android:id="@+id/img"
+                        android:layout_width="120dp"
+                        android:layout_height="180dp"
+                        android:scaleType="fitXY" />
+
+                </androidx.cardview.widget.CardView>
+
+
+                <LinearLayout
+                    android:id="@+id/info_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toStartOf="@id/img_container"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="17sp"
+                        tools:text="مسلسل توم وجيري" />
+
+
+                    <TextView
+                        android:id="@+id/statues"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textColor="#6C6C6C"
+                        tools:text="مكتمل" />
+
+
+                    <TextView
+                        android:id="@+id/year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/AnimeTextColor_1"
+                        tools:text="1970" />
+
+
+                    <TextView
+                        android:id="@+id/age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/AnimeTextColor_1"
+                        tools:text="+13" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/info_container"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="32dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/watch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/watch_back"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:text="مشاهدة المسلسل" />
+
+                    <Button
+                        android:id="@+id/statics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/watch_back"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:text="الإحصائيات" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rate_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_container"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="55dp"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_star_2"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        tools:text="8.16 / 10" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_above="@id/more_info"
+                    android:layout_below="@id/rate_container"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/like"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:src="@drawable/like" />
+
+                    <ImageView
+                        android:id="@+id/dislike"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_marginTop="3.5dp"
+                        android:layout_marginRight="28dp"
+                        android:src="@drawable/dislike_n" />
+
+
+                    <ImageView
+                        android:id="@+id/add_feedback"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="28dp"
+                        android:src="@drawable/comment" />
+
+                    <ImageView
+                        android:id="@+id/add_watch_later"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="28dp"
+                        android:src="@drawable/clock" />
+
+
+                    <ImageView
+                        android:id="@+id/add_seen"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="28dp"
+                        android:src="@drawable/seen_done" />
+
+
+                    <ImageView
+                        android:id="@+id/add_favourite"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginRight="28dp"
+                        android:src="@drawable/empty_star" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/img_container"
-                android:layout_width="wrap_content"
+                android:id="@+id/more_info"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_below="@id/info"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="-8dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="16dp"
                 android:foreground="?android:attr/selectableItemBackground"
+                android:layoutDirection="rtl"
                 app:cardBackgroundColor="#fff"
-                app:cardCornerRadius="2dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
-                <ImageView
-                    android:id="@+id/img"
-                    android:layout_width="120dp"
-                    android:layout_height="180dp"
-                    android:scaleType="fitXY" />
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/title_background"
+                            android:textColor="@color/AnimeTextColor_1"
+                            tools:text="أكشن , رعب , إثارة" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="القصة :"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/story"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|start"
+                            android:layout_marginTop="8dp"
+                            android:gravity="start"
+                            android:textColor="@color/AnimeTextColor_1" />
+
+                        <ImageView
+                            android:id="@+id/show_more"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:src="@drawable/ic_baseline_more_horiz_24"
+                            android:visibility="gone" />
+
+
+                    </LinearLayout>
+
+                </ScrollView>
             </androidx.cardview.widget.CardView>
 
 
-            <LinearLayout
-                android:id="@+id/info_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toStartOf="@id/img_container"
-                android:gravity="end"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    tools:text="مسلسل توم وجيري" />
-
-
-                <TextView
-                    android:id="@+id/statues"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center"
-                    android:textColor="#6C6C6C"
-                    tools:text="مكتمل" />
-
-
-                <TextView
-                    android:id="@+id/year"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/AnimeTextColor_1"
-                    tools:text="1970" />
-
-
-                <TextView
-                    android:id="@+id/age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/AnimeTextColor_1"
-                    tools:text="+13" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/info_container"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="32dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/watch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/watch_back"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:text="مشاهدة المسلسل" />
-
-                <Button
-                    android:id="@+id/statics"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/watch_back"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:text="الإحصائيات" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/rate_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/img_container"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="55dp"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_star_2"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    tools:text="8.16 / 10" />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/actions"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_above="@id/more_info"
-                android:layout_below="@id/rate_container"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/like"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/like" />
-
-                <ImageView
-                    android:layout_marginTop="3.5dp"
-                    android:id="@+id/dislike"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:layout_marginRight="28dp"
-                    android:src="@drawable/dislike_n" />
-
-
-                <ImageView
-                    android:id="@+id/add_feedback"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="28dp"
-                    android:src="@drawable/comment" />
-
-                <ImageView
-                    android:id="@+id/add_watch_later"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="28dp"
-                    android:src="@drawable/clock" />
-
-
-                <ImageView
-                    android:id="@+id/add_seen"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="28dp"
-                    android:src="@drawable/seen_done" />
-
-
-                <ImageView
-                    android:id="@+id/add_favourite"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="28dp"
-                    android:src="@drawable/empty_star" />
-
-            </LinearLayout>
-
         </RelativeLayout>
+    </LinearLayout>
 
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/more_info"
-            android:layout_below="@id/info"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            app:cardCornerRadius="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="-8dp"
-            app:cardBackgroundColor="#fff"
-            app:cardElevation="12dp"
-            android:layoutDirection="rtl"
-            >
-
-            <ScrollView
-                android:scrollbars="none"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
-
-                <TextView
-                    tools:text="أكشن , رعب , إثارة"
-                    android:background="@drawable/title_background"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/category"
-                    android:layout_marginBottom="8dp"
-                    android:textColor="@color/AnimeTextColor_1"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="القصة :"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"/>
-
-                <TextView
-                    android:gravity="start"
-                    android:id="@+id/story"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|start"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/AnimeTextColor_1" />
-
-                <ImageView
-                    android:visibility="gone"
-                    android:layout_marginTop="2dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_more_horiz_24"
-                    android:id="@+id/show_more"/>
-
-
-            </LinearLayout>
-
-            </ScrollView>
-        </androidx.cardview.widget.CardView>
-
-
-
-
-    </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/progressBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/mytransparentBackgroud"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <com.github.ybq.android.spinkit.SpinKitView
-                android:id="@+id/progress"
-                style="@style/SpinKitView.Large.Circle"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                app:SpinKit_Color="@color/colorAccent" />
-
-        </FrameLayout>
-    </FrameLayout>
-</LinearLayout>
 </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/progressBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/mytransparentBackgroud"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/progress"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorAccent" />
+
+    </FrameLayout>
+</FrameLayout>

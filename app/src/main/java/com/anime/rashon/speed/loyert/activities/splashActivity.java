@@ -8,10 +8,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
+import com.anime.rashon.speed.loyert.app.UserOptions;
+import com.anime.rashon.speed.loyert.databinding.ActivitySplashBinding;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.network.ApiClient;
@@ -28,23 +34,132 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class splashActivity extends AppCompatActivity {
-
+    UserOptions userOptions ;
+    ActivitySplashBinding binding ;
+    CompositeDisposable disposable ;
+    ApiService apiService ;
+    private int user_id ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_splash);
+        binding = ActivitySplashBinding.inflate(getLayoutInflater());
+        userOptions = UserOptions.getUserOptions();
+        setContentView(binding.getRoot());
         Glide.with(this)
                 .asGif()
                 .load(R.raw.wave_2)
                 .centerCrop()
-                .into((ImageView) findViewById(R.id.splash_img));
+                .into(binding.splashImg);
         init();
     }
     public void  init () {
-        CompositeDisposable disposable = new CompositeDisposable();
-        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        disposable = new CompositeDisposable();
+        apiService = ApiClient.getClient(this).create(ApiService.class);
+        LoginUtil loginUtil = new LoginUtil(this);
+        if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null) {
+            // display loading text , load (favourite , later , watched )
+            binding.msg.setVisibility(View.VISIBLE);
+            binding.msg.setAnimation(AnimationUtils.loadAnimation(this , R.anim.fade_text));
+            user_id = loginUtil.getCurrentUser().getId();
+            loadFavouriteCartoons();
+        }
+        else {
+            binding.msg.setVisibility(View.GONE);
+            loadLatestEpisodes();
+        }
+    }
+
+    private void loadWatchLaterCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedLaterCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchLaterCartoons(retrievedCartoonList);
+                                loadSeenEpisodes();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadSeenEpisodes();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadSeenEpisodes() {
+        disposable.add(
+                apiService
+                        .getAllSeenEpisodes(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
+                            @Override
+                            public void onSuccess(List<Integer> retrievedEpisodesIdsList) {
+                                UserOptions.getUserOptions().setSeenEpisodesIds(retrievedEpisodesIdsList);
+                                loadLatestEpisodes();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadLatestEpisodes();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadWatchedCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchedCartoons(retrievedCartoonList);
+                                loadWatchLaterCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchLaterCartoons();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadFavouriteCartoons() {
+        disposable.add(
+                apiService
+                        .getAllFavouriteCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setFavouriteCartoons(retrievedCartoonList);
+                                loadWatchedCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchedCartoons();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadLatestEpisodes() {
         disposable.add(
                 apiService
                         .latestEpisodesWithInfo()
@@ -70,6 +185,7 @@ public class splashActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                Log.i("splash_abdo" , "error " + e.getMessage());
+                               Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );

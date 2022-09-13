@@ -16,6 +16,7 @@ import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.EpisodesActivity;
 import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemListBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
@@ -98,7 +99,7 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     episodeHolder.gridBinding.setTitle("الحلقة " + (position + 1));
                 }
 
-                if (sqLiteDatabaseManager.isEpisodeSeen(episode.getId())) {
+                if (UserOptions.getUserOptions().getSeenEpisodesIds().contains(episode.getId())) {
                     episodeHolder.gridBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.eye));
                 } else {
                     episodeHolder.gridBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.unseen));
@@ -115,7 +116,7 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     episodeHolder.listBinding.setTitle("الحلقة " + (position + 1));
                 }
 
-                if (sqLiteDatabaseManager.isEpisodeSeen(episode.getId())) {
+                if (UserOptions.getUserOptions().getSeenEpisodesIds().contains(episode.getId())) {
                     episodeHolder.listBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.eye));
                 } else {
                     episodeHolder.listBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.unseen));

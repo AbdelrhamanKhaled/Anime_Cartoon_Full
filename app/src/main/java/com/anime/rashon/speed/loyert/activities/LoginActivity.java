@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
@@ -18,6 +19,8 @@ import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
+import com.anime.rashon.speed.loyert.app.UserOptions;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -35,6 +38,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.List;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -50,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     dialogUtilities dialogUtilities ;
     LoginUtil loginUtil ;
+    CompositeDisposable disposable ;
+    ApiService apiService ;
+    private int user_id ;
+    UserOptions userOptions ;
     @Override
     public void onBackPressed() {
         finish();
@@ -92,6 +101,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void init() {
+        userOptions = UserOptions.getUserOptions();
+        disposable = new CompositeDisposable();
+        apiService = ApiClient.getClient(this).create(ApiService.class);
         Login = findViewById(R.id.Login);
         Register = findViewById(R.id.Register);
         Email = findViewById(R.id.email);
@@ -150,10 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
                                     loginUtil.saveLoginInformation(LoginMethod.EMAIL , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
-                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
-                                    dialogUtilities.dismissDialog();
-                                    startActivity(intent);
-                                    finish();
+                                    user_id = userResponse.getUser().getId();
+                                    loadFavouriteCartoons();
                                 }
                                 else {
                                     int code = userResponse.getCode();
@@ -199,6 +209,12 @@ public class LoginActivity extends AppCompatActivity {
 //                });
     }
 
+    private void loginCompleted() {
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        dialogUtilities.dismissDialog();
+        startActivity(intent);
+        finish();
+    }
 
 
     @Override
@@ -242,10 +258,11 @@ public class LoginActivity extends AppCompatActivity {
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
                                     loginUtil.saveLoginInformation(LoginMethod.GOOGLE , "" , photoUrl.toString() , userResponse.getUser().getId());
-                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
-                                    dialogUtilities.dismissDialog();
-                                    startActivity(intent);
-                                    finish();
+                                    user_id = userResponse.getUser().getId();
+                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS)
+                                    loadFavouriteCartoons();
+                                    else
+                                    loginCompleted();
                                 }
                                 else {
                                     dialogUtilities.dismissDialog();
@@ -257,6 +274,94 @@ public class LoginActivity extends AppCompatActivity {
                             public void onError(Throwable e) {
                                 dialogUtilities.dismissDialog();
                                 Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadWatchLaterCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedLaterCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchLaterCartoons(retrievedCartoonList);
+                                loadSeenEpisodes();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadSeenEpisodes();
+                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadSeenEpisodes() {
+        disposable.add(
+                apiService
+                        .getAllSeenEpisodes(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
+                            @Override
+                            public void onSuccess(List<Integer> retrievedEpisodesIdsList) {
+                                UserOptions.getUserOptions().setSeenEpisodesIds(retrievedEpisodesIdsList);
+                                loginCompleted();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loginCompleted();
+                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadWatchedCartoons() {
+        disposable.add(
+                apiService
+                        .getAllWatchedCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setWatchedCartoons(retrievedCartoonList);
+                                loadWatchLaterCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchLaterCartoons();
+                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadFavouriteCartoons() {
+        disposable.add(
+                apiService
+                        .getAllFavouriteCartoons(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                UserOptions.getUserOptions().setFavouriteCartoons(retrievedCartoonList);
+                                loadWatchedCartoons();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                loadWatchedCartoons();
+                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
