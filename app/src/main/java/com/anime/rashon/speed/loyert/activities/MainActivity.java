@@ -9,8 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -22,26 +25,35 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
+import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
+import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityMainBinding;
 import com.anime.rashon.speed.loyert.fragments.CartoonFragment;
 import com.anime.rashon.speed.loyert.fragments.LatestEpisodesFragment;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Cartoon;
+import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Playlist;
@@ -51,6 +63,9 @@ import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.anime.rashon.speed.loyert.network.EpisodeDate;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.MediaStoreSignature;
+import com.bumptech.glide.signature.ObjectKey;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -67,7 +82,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -100,19 +118,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SQLiteDatabaseManager sqLiteDatabaseManager ;
     CartoonFragment cartoonFragment ;
     boolean grid ;
-    private  dialogUtilities dialogUtilities ;
     private  Menu menu ;
     private LoginUtil loginUtil ;
+    ActivityResultLauncher<String> activityResultRegistry ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        initRetrofit();
         //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
         initToolbar();
         initNavDrawer();
-        initRetrofit();
         getRedirect(savedInstanceState);
         updateSeenEpisodes();
         updateFavouriteCartoon();
@@ -126,42 +144,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });*/
     }
 
-    private void test() {
-        disposable.add(
-                apiService
-                        .episodeDates()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<EpisodeDate>>() {
-                            @Override
-                            public void onSuccess(List<EpisodeDate> episodeDateList) {
-                                for (int i=0; i<episodeDateList.size(); i++) {
-                                    Log.i("ab_dob" , episodeDateList.get(i).getName());
-                                    Log.i("ab_dob" , episodeDateList.get(i).getImg());
-                                    Log.i("ab_dob" , String.valueOf(episodeDateList.get(i).getDay()));
-                                    Log.i("ab_dob" , "----------------------------------");
-                                }
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                            }
-                        })
-        ) ;
-    }
-
     private void init() {
         Log.i("ab_do" , sharedPreferencesUtil.getSharedPreferences(this).getString(sharedPreferencesUtil.CURRENT_PHOTO , "no photo"));
         Log.i("ab_do" , "User Logged is is = " + sharedPreferencesUtil.getSharedPreferences(this).getInt(sharedPreferencesUtil.USER_ID , -1));
         checkIfTheUserLodged();
         sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
         grid = true ;
-        dialogUtilities = new dialogUtilities();
     }
 
     private void checkIfTheUserLodged() {
         View view = mBinding.navView.getHeaderView(0);
         TextView username, login;
         ImageView user_profile = view.findViewById(R.id.user_profile);
+        initUploadPhotoRegister(user_profile);
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("ab_do" , "ClickedProfile");
+                activityResultRegistry.launch("image/jpeg");
+            }
+        });
         username = view.findViewById(R.id.Username);
         login = view.findViewById(R.id.Login);
         username.setTextColor(getResources().getColor(R.color.black));
@@ -182,20 +184,106 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 else
                     username.setText(name);
                 login.setVisibility(View.GONE);
-                Uri uri = null ;
-                if (user.getPhoto_url()!=null) {
-                    uri = Uri.parse(user.getPhoto_url());
-                }
-                if (uri != null) {
-                    Glide.with(this)
-                            .load(uri)
-                            .centerCrop()
-                            .placeholder(R.drawable.user_profile)
-                            .error(R.drawable.user_profile)
-                            .into(user_profile);
-                }
+                loadImageFromServer(user_profile);
             }
         }
+    }
+
+    private void initUploadPhotoRegister(ImageView img) {
+        activityResultRegistry = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri result) {
+                Log.i("ab_do" , "onActivityResult " + result);
+                if (result!=null) {
+                    try {
+                        if (mBinding!=null && mBinding.progressBarLayout != null)
+                            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
+                        Bitmap uploadedPhotoBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
+                        // add api call to save user img :) and get the url of the saved img !
+                        String base64Img = ImgUtilities.getBase64Image(uploadedPhotoBitmap);
+                        disposable.add(
+                                apiService
+                                        .changeUserImg(base64Img , loginUtil.getCurrentUser().getId())
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribeWith(new DisposableSingleObserver<String>() {
+                                            @Override
+                                            public void onSuccess(String imgUrl) {
+                                                if (mBinding!=null && mBinding.progressBarLayout != null)
+                                                    mBinding.progressBarLayout.setVisibility(View.GONE);
+                                                if (imgUrl.contains("null")) {
+                                                    Log.i("ab_do" , "null");
+                                                    Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else {
+                                                    Uri uri = Uri.parse(imgUrl);
+                                                    if (uri != null) {
+                                                        Glide.with(MainActivity.this)
+                                                                .load(uri)
+                                                                .onlyRetrieveFromCache(false)
+                                                                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                                                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                                                .skipMemoryCache(true)
+                                                                .centerCrop()
+                                                                .placeholder(R.drawable.user_profile)
+                                                                .error(R.drawable.user_profile)
+                                                                .into(img);
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(Throwable e) {
+                                                if (mBinding!=null && mBinding.progressBarLayout != null)
+                                                    mBinding.progressBarLayout.setVisibility(View.GONE);
+                                                Log.i("ab_do" , "onError " + e.getMessage());
+                                                Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                        );
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void loadImageFromServer(ImageView user_profile) {
+        disposable.add(
+                apiService
+                        .getUserImg(loginUtil.getCurrentUser().getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<String>() {
+                            @Override
+                            public void onSuccess(String imgURl) {
+                                if (mBinding!=null && mBinding.progressBarLayout != null)
+                                    mBinding.progressBarLayout.setVisibility(View.GONE);
+
+                                Uri uri = Uri.parse(imgURl);
+                                if (uri != null) {
+                                    Glide.with(MainActivity.this)
+                                            .load(uri)
+                                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                                            .onlyRetrieveFromCache(false)
+                                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                            .skipMemoryCache(true)
+                                            .centerCrop()
+                                            .placeholder(R.drawable.user_profile)
+                                            .error(R.drawable.user_profile)
+                                            .into(user_profile);
+                                }
+                            }
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
+                                if (mBinding!=null && mBinding.progressBarLayout != null)
+                                    mBinding.progressBarLayout.setVisibility(View.GONE);
+                            }
+                        })
+        );
     }
 
     private void updateFavouriteCartoon() {

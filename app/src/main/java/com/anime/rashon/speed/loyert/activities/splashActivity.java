@@ -1,25 +1,25 @@
 package com.anime.rashon.speed.loyert.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.collection.ArraySet;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
-import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivitySplashBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
-import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
+import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;

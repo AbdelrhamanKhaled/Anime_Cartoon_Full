@@ -81,7 +81,7 @@ public class LoginUtil {
 
     }
 
-    private String getLoginMethod () {
+    public String getLoginMethod () {
         SharedPreferences sharedPreferences = sharedPreferencesUtil.getSharedPreferences(context);
         return sharedPreferences.getString(sharedPreferencesUtil.LOGIN_METHOD , "");
     }

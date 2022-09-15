@@ -114,6 +114,16 @@ public interface ApiService {
             @Field("photo_Uri") String photoUrl
     );
 
+
+    @FormUrlEncoded
+    @POST ("Accses/RegisterWithEmail.php")
+    Single<UserResponse> createNewUserWithEmail_2 (
+            @Field("email") String email ,
+            @Field("password") String password ,
+            @Field("name") String name ,
+            @Field("photo_Uri") byte[] photoUrl
+    );
+
     @FormUrlEncoded
     @POST ("Accses/RegisterWithToken.php")
     Single<UserResponse> createNewUserWithToken (
@@ -126,6 +136,12 @@ public interface ApiService {
     @GET("UserLoggedOptions/getAllFavouriteCartoons.php")
     Single<List<CartoonWithInfo>> getAllFavouriteCartoons(
             @Query("user_id") int userId
+    );
+
+
+    @GET("Accses/getUserImg.php")
+    Single<String> getUserImg(
+            @Query("id") int userId
     );
 
     @GET("UserLoggedOptions/getAllWatchedCartonns.php")
@@ -206,6 +222,20 @@ public interface ApiService {
             @Query("name") String name,
             @Query("photo_Uri") String photo_Uri
     );
+
+    @FormUrlEncoded
+    @POST ("Uploaded_Images/uploadImg.php")
+    Single<String> saveUserImg(
+            @Field("image") String base64Img,
+            @Field("user_id") int id);
+
+
+    @FormUrlEncoded
+    @POST ("Uploaded_Images/changeUserImg.php")
+    Single<String> changeUserImg(
+            @Field("image") String base64Img,
+            @Field("user_id") int id);
+
 
 
 }

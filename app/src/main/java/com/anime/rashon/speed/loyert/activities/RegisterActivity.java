@@ -4,7 +4,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.ProgressDialog;
+
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,14 +24,14 @@ import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
-import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
-import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -52,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
     dialogUtilities dialogUtilities ;
     LoginUtil loginUtil ;
     Uri uploadedImg = null ;
+    Bitmap uploadedPhotoBitmap;
     ActivityResultLauncher<String> activityResultRegistry ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +82,25 @@ public class RegisterActivity extends AppCompatActivity {
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activityResultRegistry.launch("image/*");
+                activityResultRegistry.launch("image/jpeg");
             }
         });
 
     }
+
+//    public String getMimeType(Uri uri) {
+//        String mimeType = null;
+//        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+//            ContentResolver cr = getApplicationContext().getContentResolver();
+//            mimeType = cr.getType(uri);
+//        } else {
+//            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+//                    .toString());
+//            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+//                    fileExtension.toLowerCase());
+//        }
+//        return mimeType;
+//    }
 
     private void Init() {
         CreateAccount = findViewById(R.id.CreateAccount);
@@ -99,11 +116,16 @@ public class RegisterActivity extends AppCompatActivity {
             public void onActivityResult(Uri result) {
                 Log.i("ab_do" , "onActivityResult " + result);
                 if (result!=null) {
+                   // Log.i("ab_do" , "mimeType = " + getMimeType(result));
                     uploadedImg = result ;
                     try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
-                        bitmap = Bitmap.createScaledBitmap(bitmap , 120 , 120 , true);
-                        addPhoto.setImageBitmap(bitmap);
+                        uploadedPhotoBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
+                        // uploadedPhotoBitmap = Bitmap.createScaledBitmap(uploadedPhotoBitmap, 120 , 120 , true);
+                        //addPhoto.setImageBitmap(uploadedPhotoBitmap);
+                        Glide.with(getBaseContext())
+                                .load(result)
+                                .centerCrop()
+                                .into(addPhoto);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -133,26 +155,19 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createNewUser(String email, String password, String username) {
-        String img_url = "";
-        if (uploadedImg!=null) img_url = uploadedImg.toString();
         dialogUtilities.ShowDialog(this);
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         CompositeDisposable disposable = new CompositeDisposable();
-        String finalImg_url = img_url;
         disposable.add(
                 apiService
-                        .createNewUserWithEmail(email, password, username , finalImg_url)
+                        .createNewUserWithEmail(email, password, username , "")
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
-                                    loginUtil.saveLoginInformation(LoginMethod.EMAIL , username , finalImg_url, userResponse.getUser().getId());
-                                    Intent intent = new Intent(getBaseContext() , MainActivity.class);
-                                    dialogUtilities.dismissDialog();
-                                    startActivity(intent);
-                                    finish();
+                                    saveUserImg(userResponse.getUser().getId(), username , LoginMethod.EMAIL);
                                 }
                                 else {
                                     int code = userResponse.getCode();
@@ -174,6 +189,47 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         })
         );
+    }
+
+    private void saveUserImg(int user_id, String username , LoginMethod loginMethod) {
+        // add api call to save user img :) and get the url of the saved img !
+        if (uploadedPhotoBitmap==null) {
+            load("", loginMethod, username, user_id);
+            return;
+        }
+        String base64Img = ImgUtilities.getBase64Image(uploadedPhotoBitmap);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        CompositeDisposable disposable = new CompositeDisposable();
+        disposable.add(
+                apiService
+                        .saveUserImg(base64Img , user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<String>() {
+                            @Override
+                            public void onSuccess(String imgUrl) {
+                                if (imgUrl.contains("null")) {
+                                    Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
+                                }
+                                load(imgUrl, loginMethod, username, user_id);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dialogUtilities.dismissDialog();
+                                Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
+                                load("", loginMethod, username, user_id);
+                            }
+                        })
+        );
+    }
+
+    private void load(String imgUrl, LoginMethod loginMethod, String username, int user_id) {
+        loginUtil.saveLoginInformation(loginMethod, username, imgUrl, user_id);
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        dialogUtilities.dismissDialog();
+        startActivity(intent);
+        finish();
     }
 
 
