@@ -23,7 +23,7 @@ public class ImgUtilities {
 
     public static String getBase64Image(Bitmap bmp){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
         byte[] imageBytes = outputStream.toByteArray();
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }

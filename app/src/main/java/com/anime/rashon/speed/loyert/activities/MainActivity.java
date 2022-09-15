@@ -184,7 +184,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 else
                     username.setText(name);
                 login.setVisibility(View.GONE);
-                loadImageFromServer(user_profile);
+                Uri uri = Uri.parse(loginUtil.getCurrentUser().getPhoto_url());
+                if (uri != null && !uri.toString().isEmpty()) {
+                    Glide.with(MainActivity.this)
+                            .load(uri)
+                            .centerCrop()
+                            .placeholder(R.drawable.user_profile)
+                            .error(R.drawable.user_profile)
+                            .into(user_profile);
+                }
             }
         }
     }
@@ -203,27 +211,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String base64Img = ImgUtilities.getBase64Image(uploadedPhotoBitmap);
                         disposable.add(
                                 apiService
-                                        .changeUserImg(base64Img , loginUtil.getCurrentUser().getId())
+                                        .changeUserImg(base64Img , loginUtil.getCurrentUser().getId() , getUserSavedImgName())
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribeWith(new DisposableSingleObserver<String>() {
                                             @Override
                                             public void onSuccess(String imgUrl) {
+                                                // update photo url in shared Preference
                                                 if (mBinding!=null && mBinding.progressBarLayout != null)
                                                     mBinding.progressBarLayout.setVisibility(View.GONE);
-                                                if (imgUrl.contains("null")) {
+                                                if (imgUrl==null || imgUrl.contains("null") || imgUrl.isEmpty()) {
                                                     Log.i("ab_do" , "null");
                                                     Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
                                                 }
                                                 else {
+                                                    sharedPreferencesUtil.updateCurrentPhoto(getBaseContext() , imgUrl);
                                                     Uri uri = Uri.parse(imgUrl);
-                                                    if (uri != null) {
+                                                    if (uri != null&& !uri.toString().isEmpty()) {
                                                         Glide.with(MainActivity.this)
                                                                 .load(uri)
-                                                                .onlyRetrieveFromCache(false)
-                                                                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                                                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                                                .skipMemoryCache(true)
                                                                 .centerCrop()
                                                                 .placeholder(R.drawable.user_profile)
                                                                 .error(R.drawable.user_profile)
@@ -250,40 +256,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void loadImageFromServer(ImageView user_profile) {
-        disposable.add(
-                apiService
-                        .getUserImg(loginUtil.getCurrentUser().getId())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<String>() {
-                            @Override
-                            public void onSuccess(String imgURl) {
-                                if (mBinding!=null && mBinding.progressBarLayout != null)
-                                    mBinding.progressBarLayout.setVisibility(View.GONE);
-
-                                Uri uri = Uri.parse(imgURl);
-                                if (uri != null) {
-                                    Glide.with(MainActivity.this)
-                                            .load(uri)
-                                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                                            .onlyRetrieveFromCache(false)
-                                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                            .skipMemoryCache(true)
-                                            .centerCrop()
-                                            .placeholder(R.drawable.user_profile)
-                                            .error(R.drawable.user_profile)
-                                            .into(user_profile);
-                                }
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
-                                if (mBinding!=null && mBinding.progressBarLayout != null)
-                                    mBinding.progressBarLayout.setVisibility(View.GONE);
-                            }
-                        })
-        );
+    private String getUserSavedImgName() {
+        String img_url = loginUtil.getCurrentUser().getPhoto_url();
+        String [] strings = img_url.split("/");
+        return strings[strings.length-1];
     }
 
     private void updateFavouriteCartoon() {

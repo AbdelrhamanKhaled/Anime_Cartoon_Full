@@ -164,12 +164,15 @@ public class FacebookAuthActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
-                                    loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , name , photo_url , userResponse.getUser().getId());
-                                    user_id = loginUtil.getCurrentUser().getId();
-                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS)
-                                    loadFavouriteCartoons();
-                                    else
-                                    Load();
+                                    user_id = userResponse.getUser().getId();
+                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS) {
+                                        loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
+                                        loadFavouriteCartoons();
+                                    }
+                                    else {
+                                        loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , name , photo_url , userResponse.getUser().getId());
+                                        Load();
+                                    }
                                 }
                                 else {
                                     facebookFailure(null);

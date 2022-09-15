@@ -48,27 +48,35 @@ public class LoginUtil {
         if (loginMethod.equals(LoginMethod.EMAIL.name())) {
             User user = new User();
             user.setName(getUsername());
-            user.setPhoto_url(getPhotoUrl());
+            user.setPhoto_url(getCurrentPhotoUrl());
             user.setId(getId());
             return user ;
         }
 
         else if (loginMethod.equals(LoginMethod.GOOGLE.name())) {
             User user = GoogleAuth.getCurrentUserFromGoogleAccount(context);
-            if (user!=null)
-            user.setId(getId());
+            if (user!=null) {
+                user.setId(getId());
+                user.setPhoto_url(getCurrentPhotoUrl());
+            }
             return user ;
         }
 
         else if (loginMethod.equals(LoginMethod.FACEBOOK.name())) {
             User user = new User();
             user.setName(getUsernameFromFacebook());
-            user.setPhoto_url(getPhotoUrlFromFacebook());
+            user.setPhoto_url(getCurrentPhotoUrl());
             user.setId(getId());
             return user ;
         }
         return null ;
     }
+
+    private String getCurrentPhotoUrl() {
+        SharedPreferences sharedPreferences = sharedPreferencesUtil.getSharedPreferences(context);
+        return sharedPreferences.getString(sharedPreferencesUtil.CURRENT_PHOTO , "");
+    }
+
 
     private String getPhotoUrlFromFacebook() {
         SharedPreferences sharedPreferences = sharedPreferencesUtil.getSharedPreferences(context);

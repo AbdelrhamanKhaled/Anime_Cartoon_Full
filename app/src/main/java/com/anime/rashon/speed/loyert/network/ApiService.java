@@ -116,15 +116,6 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST ("Accses/RegisterWithEmail.php")
-    Single<UserResponse> createNewUserWithEmail_2 (
-            @Field("email") String email ,
-            @Field("password") String password ,
-            @Field("name") String name ,
-            @Field("photo_Uri") byte[] photoUrl
-    );
-
-    @FormUrlEncoded
     @POST ("Accses/RegisterWithToken.php")
     Single<UserResponse> createNewUserWithToken (
             @Field("token") String token ,
@@ -234,7 +225,9 @@ public interface ApiService {
     @POST ("Uploaded_Images/changeUserImg.php")
     Single<String> changeUserImg(
             @Field("image") String base64Img,
-            @Field("user_id") int id);
+            @Field("user_id") int id,
+            @Field("old_img") String imgName
+    );
 
 
 

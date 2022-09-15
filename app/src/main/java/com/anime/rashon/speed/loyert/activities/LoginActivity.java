@@ -257,12 +257,15 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
-                                    loginUtil.saveLoginInformation(LoginMethod.GOOGLE , "" , photoUrl.toString() , userResponse.getUser().getId());
                                     user_id = userResponse.getUser().getId();
-                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS)
-                                    loadFavouriteCartoons();
-                                    else
-                                    loginCompleted();
+                                    if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS) {
+                                        loginUtil.saveLoginInformation(LoginMethod.GOOGLE , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
+                                        loadFavouriteCartoons();
+                                    }
+                                    else {
+                                        loginUtil.saveLoginInformation(LoginMethod.GOOGLE , "" , photoUrl.toString() , userResponse.getUser().getId());
+                                        loginCompleted();
+                                    }
                                 }
                                 else {
                                     dialogUtilities.dismissDialog();
