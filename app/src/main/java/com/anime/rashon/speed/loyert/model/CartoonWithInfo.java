@@ -1,8 +1,12 @@
 package com.anime.rashon.speed.loyert.model;
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Objects;
+
 @Keep
 public class CartoonWithInfo extends Cartoon {
 
@@ -54,5 +58,16 @@ public class CartoonWithInfo extends Cartoon {
         this.status = status;
     }
 
-
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        /* Check if o is an instance of Complex or not
+          "null instanceof [type]" also returns false */
+        if (!(obj instanceof CartoonWithInfo)) {
+            return false;
+        }
+        return Objects.equals(((CartoonWithInfo) obj).getId(), this.getId());
+    }
 }

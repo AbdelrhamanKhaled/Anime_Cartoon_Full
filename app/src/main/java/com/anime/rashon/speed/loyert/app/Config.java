@@ -374,7 +374,7 @@ public class Config {
         if (intent.resolveActivity(packageManager) != null) {
              // insert seen episode and increment watched cartoons
             LoginUtil loginUtil = new LoginUtil(activity.getApplicationContext());
-            if (loginUtil.userIsLoggedIN()) {
+            if (loginUtil.userIsLoggedIN() && !UserOptions.getUserOptions().getSeenEpisodesIds().contains(episode.getId())) {
                 insertSeenEpisode(intent , activity, episode, loginUtil);
             }
             else {
@@ -382,9 +382,25 @@ public class Config {
                 startExoPlayer(activity, intent);
             }
         }
+        else {
+            installExoPlayerDialog(activity);
+        }
 
 
         }
+
+    private static void installExoPlayerDialog(Activity activity) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
+
+        builder.setMessage("يرجى تثبيت تطبيق المشغل السريع (Quick Player) لتشغيل الفيديو");
+        builder.setCancelable(true);
+        builder.setPositiveButton("حسنا", (dialog, which) -> openExoPlayerOnPlayStore(activity));
+
+        builder.setNegativeButton("الغاء", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
     private static void insertSeenEpisode(Intent intent , Activity activity, Episode episode, LoginUtil loginUtil) {
         CompositeDisposable disposable = new CompositeDisposable();
@@ -462,16 +478,7 @@ public class Config {
         }
 
         catch (ActivityNotFoundException e) {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
-
-            builder.setMessage("يرجى تثبيت تطبيق المشغل السريع (Quick Player) لتشغيل الفيديو");
-            builder.setCancelable(true);
-            builder.setPositiveButton("حسنا", (dialog, which) -> openExoPlayerOnPlayStore(activity));
-
-            builder.setNegativeButton("الغاء", (dialog, which) -> dialog.dismiss());
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+            installExoPlayerDialog(activity);
         }
     }
 
@@ -520,6 +527,10 @@ public class Config {
     public static final int SPORT_ANIME = 7;
     public static final int NEW_ANIME = 8;
     public static final int FILMS = 9;
+    public static final int FAVOURITE = 10;
+    public static final int WATCHED = 11;
+    public static final int WATCH_LATER = 12;
+    public static final int MOST_VIEWED = 13;
     public static final String CHANNEL_ID = "animeCartoonNotification";
 
     public static Admob admob;

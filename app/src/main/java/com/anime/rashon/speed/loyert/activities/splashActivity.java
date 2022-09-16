@@ -58,7 +58,7 @@ public class splashActivity extends AppCompatActivity {
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         LoginUtil loginUtil = new LoginUtil(this);
-        if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null) {
+        if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!= null) {
             // display loading text , load (favourite , later , watched )
             binding.msg.setVisibility(View.VISIBLE);
             binding.msg.setAnimation(AnimationUtils.loadAnimation(this , R.anim.fade_text));
@@ -86,8 +86,7 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadSeenEpisodes();
-                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -108,8 +107,7 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadLatestEpisodes();
-                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -130,8 +128,7 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchLaterCartoons();
-                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -152,8 +149,7 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchedCartoons();
-                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );

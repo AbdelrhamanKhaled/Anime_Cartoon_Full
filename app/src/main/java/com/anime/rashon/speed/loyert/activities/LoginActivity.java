@@ -297,8 +297,8 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadSeenEpisodes();
-                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadSeenEpisodes();
+                                Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -319,8 +319,8 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loginCompleted();
-                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loginCompleted();
+                                Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -341,8 +341,8 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchLaterCartoons();
-                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadWatchLaterCartoons();
+                                Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -363,8 +363,8 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchedCartoons();
-                                //Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadWatchedCartoons();
+                                Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );

@@ -1,16 +1,14 @@
 package com.anime.rashon.speed.loyert.activities;
 
 import static com.anime.rashon.speed.loyert.app.Config.ALL;
-import static com.anime.rashon.speed.loyert.app.Config.FILMS;
 import static com.anime.rashon.speed.loyert.app.Config.admob;
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,59 +31,36 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
-import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
-import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
-import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
-import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityMainBinding;
 import com.anime.rashon.speed.loyert.fragments.CartoonFragment;
 import com.anime.rashon.speed.loyert.fragments.LatestEpisodesFragment;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Cartoon;
-import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
-import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
-import com.anime.rashon.speed.loyert.network.EpisodeDate;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.signature.MediaStoreSignature;
-import com.bumptech.glide.signature.ObjectKey;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -514,7 +489,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void replaceCartoonsFragment(){
-//        Objects.requireNonNull(getSupportActionBar()).setTitle("قائمة الانيميات");
         cartoonFragment = new CartoonFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_fragment, cartoonFragment, getString(R.string.cartoon_fragment));
@@ -535,6 +509,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void resetTitleAndSelection(){
         getSupportActionBar().setTitle(getString(R.string.app_name));
+        selectedType = ALL ;
         mBinding.navView.getMenu().getItem(0).setChecked(true);
     }
 
@@ -658,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }else{
                     searchCase = false;
                     if (cartoonFragment!=null)
-                    cartoonFragment.sortByCategory(selectedType);
+                    cartoonFragment.checkCartoonType(selectedType);
                 }
                 return true;
             }
@@ -711,7 +686,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mBinding.navView.getMenu().getItem(0).setChecked(true);
             CartoonFragment cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
             assert cartoonFragment != null;
-            cartoonFragment.sortByCategory(ALL);
+            cartoonFragment.checkCartoonType(ALL);
             Objects.requireNonNull(getSupportActionBar()).setTitle(getString(R.string.app_name));
         }
         else{
@@ -781,6 +756,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
             //dialogUtilities.ShowDialog(this);
+            if(mBinding.progressBarLayout!=null)
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
             getFilms("الافلام المترجمه");
         }
@@ -788,52 +764,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else if (itemId == R.id.films_d) {
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
+            if(mBinding.progressBarLayout!=null)
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
             //dialogUtilities.ShowDialog(this);
             getFilms("الافلام المدبلجة");
         }
-//        else if (itemId == R.id.action) {
-//            selectedType = Config.ACTION;
-//            getSupportActionBar().setTitle(getString(R.string.action));
-//            replaceCartoonsFragment();
-//        } else if (itemId == R.id.adventure) {
-//            selectedType = Config.ADVENTURE;
-//            getSupportActionBar().setTitle(getString(R.string.adventure));
-//            replaceCartoonsFragment();
-//        } else if (itemId == R.id.girls_anime) {
-//            selectedType = Config.GIRLSANIME;
-//            getSupportActionBar().setTitle(getString(R.string.girls_anime));
-//            replaceCartoonsFragment();
+
+        else if (itemId == R.id.most_viewed) {
+            openCartoonFragment(Config.MOST_VIEWED, "الأكثر المشاهدة");
+        }
+
+        else if (itemId == R.id.see_later) {
+            openCartoonFragment(Config.WATCH_LATER, "المشاهدة لاحقا");
+        }
+
+        else if (itemId == R.id.animeSeen) {
+            openCartoonFragment(Config.WATCHED, "تمت مشاهدته");
+        }
+
+
+        else if (itemId == R.id.favourite) {
+            openCartoonFragment(Config.FAVOURITE, "المفضلة");
+        }
+
         else if (itemId == R.id.translation_anime) {
-            grid = true ;
-            updateGridIcon(menu.findItem(R.id.grid_or_list));
-            selectedType = Config.TRANSLATED_ANIME;
-            if (getSupportActionBar()!=null)
-            getSupportActionBar().setTitle("المترجم");
-            replaceCartoonsFragment();
+            openCartoonFragment( Config.TRANSLATED_ANIME , "المترجم");
         }
-//        } else if (itemId == R.id.child_cartoon) {
-//            selectedType = Config.CHILD_ANIME;
-//            getSupportActionBar().setTitle("كرتون اطفال");
-//            replaceCartoonsFragment();
-//        } else if (itemId == R.id.sport_cartoon) {
-//            selectedType = Config.SPORT_ANIME;
-//            getSupportActionBar().setTitle("كرتون رياضة");
-//            replaceCartoonsFragment();
-       // }
+
         else if (itemId == R.id.new_cartoon) {
-            grid = true ;
-            updateGridIcon(menu.findItem(R.id.grid_or_list));
-            selectedType = Config.NEW_ANIME;
-            if (getSupportActionBar()!=null)
-            getSupportActionBar().setTitle("المستمر");
-            replaceCartoonsFragment();
+            openCartoonFragment( Config.NEW_ANIME , "المستمر");
         }
-//        else if (itemId == R.id.favorite_episodes) {
-//            startActivity(new Intent(MainActivity.this, FavoriteEpisodeActivity.class));
-//        } else if (itemId == R.id.favorite_cartoons) {
-//            startActivity(new Intent(MainActivity.this, FavoriteCartoonsActivity.class));
-//        } else if (itemId == R.id.downloads) {
+
+//        else if (itemId == R.id.downloads) {
 //            startActivity(new Intent(MainActivity.this, DownloadsActivity.class));
 //        } else if (itemId == R.id.support) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/m_c_w_a")));
@@ -863,6 +825,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getAdmobData();
         hideDrawer();
         return true;
+    }
+
+    private void openCartoonFragment(int type, String s) {
+        selectedType = type;
+        grid = true;
+        updateGridIcon(menu.findItem(R.id.grid_or_list));
+        //dialogUtilities.ShowDialog(this);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(s);
+        replaceCartoonsFragment();
     }
 
     public void getFilms(String action){

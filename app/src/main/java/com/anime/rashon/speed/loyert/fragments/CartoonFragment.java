@@ -1,30 +1,40 @@
 package com.anime.rashon.speed.loyert.fragments;
 
+import static com.anime.rashon.speed.loyert.app.Config.ACTION;
+import static com.anime.rashon.speed.loyert.app.Config.ADVENTURE;
+import static com.anime.rashon.speed.loyert.app.Config.ALL;
+import static com.anime.rashon.speed.loyert.app.Config.CHILD_ANIME;
+import static com.anime.rashon.speed.loyert.app.Config.FAVOURITE;
+import static com.anime.rashon.speed.loyert.app.Config.FILMS;
+import static com.anime.rashon.speed.loyert.app.Config.GIRLSANIME;
+import static com.anime.rashon.speed.loyert.app.Config.MOST_VIEWED;
+import static com.anime.rashon.speed.loyert.app.Config.NEW_ANIME;
+import static com.anime.rashon.speed.loyert.app.Config.SPORT_ANIME;
+import static com.anime.rashon.speed.loyert.app.Config.TRANSLATED_ANIME;
+import static com.anime.rashon.speed.loyert.app.Config.WATCHED;
+import static com.anime.rashon.speed.loyert.app.Config.WATCH_LATER;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
-
-import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.activities.PlayListsActivity;
 import com.anime.rashon.speed.loyert.adapters.CartoonsAdapter;
-import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.FragmentCartoonBinding;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
@@ -42,51 +52,37 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.anime.rashon.speed.loyert.app.Config.ACTION;
-import static com.anime.rashon.speed.loyert.app.Config.ADVENTURE;
-import static com.anime.rashon.speed.loyert.app.Config.ALL;
-import static com.anime.rashon.speed.loyert.app.Config.CHILD_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.FILMS;
-import static com.anime.rashon.speed.loyert.app.Config.GIRLSANIME;
-import static com.anime.rashon.speed.loyert.app.Config.NEW_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.SPORT_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.TRANSLATED_ANIME;
-
 public class CartoonFragment extends Fragment{
 
-    private final String TAG = CartoonFragment.class.getSimpleName();
 
     FragmentCartoonBinding mBinding;
 
     int pageNumber = 1;
     List<CartoonWithInfo> cartoonList = new ArrayList<>();
 
-    private CompositeDisposable disposable = new CompositeDisposable();
+    private final CompositeDisposable disposable = new CompositeDisposable();
     ApiService apiService;
 
     boolean isOnRefresh = false;
 
-    private int lastAdPosition = 0;
     private CartoonsAdapter adapter;
 
     Fragment current ;
+
+    int user_id ;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCartoonBinding.inflate(inflater);
-
         initRecyclerview(true);
         initSwipeRefreshLayout();
         initRetrofit();
-//        getAllCartoons();
-
-
         return mBinding.getRoot();
     }
 
-    public void initRecyclerview(boolean isGrid){
+    public void initRecyclerview(boolean isGrid) {
         adapter = new CartoonsAdapter(getActivity(), cartoonList , isGrid);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -112,7 +108,8 @@ public class CartoonFragment extends Fragment{
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         current = this ;
-        sortByCategory(MainActivity.selectedType);
+        user_id = new LoginUtil(getActivity()).getCurrentUser().getId();
+        checkCartoonType(MainActivity.selectedType);
     }
 
     private void initProgressBar(){
@@ -130,22 +127,76 @@ public class CartoonFragment extends Fragment{
             @Override
             public void onRefresh() {
                 if(cartoonList != null){
+                    cartoonList.clear();
                     isOnRefresh = true;
                     pageNumber = 1;
-                    getAllCartoons();
-                    ((MainActivity)getActivity()).getAdmobData();
+                    checkCartoonType(MainActivity.selectedType);
+                    //getAllCartoons();
+                   // ((MainActivity)getActivity()).getAdmobData();
                 }
-
-                ((MainActivity)getActivity()).resetTitleAndSelection();
+//                ((MainActivity)getActivity()).resetTitleAndSelection();
             }
         });
     }
 
-    public void getAllCartoons(){
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (MainActivity.selectedType==FAVOURITE) {
+            if(cartoonList!=null) cartoonList.clear();
+            getFavouriteCartoons();
+        }
+        else if (MainActivity.selectedType==WATCH_LATER) {
+            if(cartoonList!=null) cartoonList.clear();
+            getWatchLaterCartoons();
+        }
+        else if (MainActivity.selectedType==WATCHED) {
+            if(cartoonList!=null) cartoonList.clear();
+            getWatchedCartoons();
+        }
+    }
+
+    public void getFavouriteCartoons() {
+        List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getFavouriteCartoons());
+        for (int i = 0; i < retrievedCartoonList.size(); i++) {
+            if ((i + 1) % 10 == 0) {
+                retrievedCartoonList.add(i, new CartoonWithInfo());
+            }
+        }
+        cartoonList.addAll(retrievedCartoonList);
+        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        mBinding.swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void getWatchedCartoons(){
+        List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getWatchedCartoons());
+        for (int i = 0; i < retrievedCartoonList.size(); i++) {
+            if ((i + 1) % 10 == 0) {
+                retrievedCartoonList.add(i, new CartoonWithInfo());
+            }
+        }
+        cartoonList.addAll(retrievedCartoonList);
+        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        mBinding.swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void getWatchLaterCartoons(){
+        List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getWatchLaterCartoons());
+        for (int i = 0; i < retrievedCartoonList.size(); i++) {
+            if ((i + 1) % 10 == 0) {
+                retrievedCartoonList.add(i, new CartoonWithInfo());
+            }
+        }
+        cartoonList.addAll(retrievedCartoonList);
+        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        mBinding.swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void getMostViewedCartoons(){
         mBinding.swipeRefreshLayout.setRefreshing(true);
         disposable.add(
                 apiService
-                        .getCartoonsWithInfo(pageNumber)
+                        .getMostViewedCartoons()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
@@ -156,48 +207,25 @@ public class CartoonFragment extends Fragment{
                                     cartoonList.clear();
                                     isOnRefresh = false;
                                 }
-
-                                if (MainActivity.selectedType == FILMS) {
-                                    Log.i("Ab_do", "Yes Film");
-                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-//
-                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
-                                            Log.i("Ab_do", "catch Film");
-                                            Cartoon cartoon = retrievedCartoonList.get(i);
-                                            goToPlaylist(cartoon);
-                                            break;
-                                        }
+                                for (int i = 0; i < retrievedCartoonList.size(); i++) {
+                                    if ((i + 1) % 10 == 0) {
+                                        retrievedCartoonList.add(i, new CartoonWithInfo());
+                                    }
+                                    if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
+                                        retrievedCartoonList.remove(i);
+                                        break;
                                     }
                                 }
-                                else {
-                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-                                        if ((i + 1) % 10 == 0) {
-                                            retrievedCartoonList.add(i, new CartoonWithInfo());
-                                        }
-                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
-                                            retrievedCartoonList.remove(i);
-                                        }
-                                    }
 
-                                    cartoonList.addAll(retrievedCartoonList);
-
-
-                                    //--------------------//
-                                    if (cartoonList.isEmpty()) {
-                                        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-                                    } else {
-                                        mBinding.cartoonsRecyclerview.getAdapter().notifyItemInserted(cartoonList.size());
-                                    }
-                                    pageNumber++;
-                                    mBinding.swipeRefreshLayout.setRefreshing(false);
-                                }
+                                cartoonList.addAll(retrievedCartoonList);
+                                mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+                                mBinding.swipeRefreshLayout.setRefreshing(false);
                             }
-
                             @Override
                             public void onError(Throwable e) {
                                 mBinding.progressBarLayout.setVisibility(View.GONE);
                                 mBinding.swipeRefreshLayout.setRefreshing(false);
-//                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -284,7 +312,7 @@ public class CartoonFragment extends Fragment{
 //        ((CartoonsAdapter)mBinding.cartoonsRecyclerview.getAdapter()).getFilter().filter(searchQuery);
     }
 
-    public void sortByCategory(int categoryId){
+    public void checkCartoonType(int categoryId){
 
         cartoonList.clear();
 //        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
@@ -297,6 +325,22 @@ public class CartoonFragment extends Fragment{
 
             case ACTION: //Action Cartoons
                 getCartoonsByType(ACTION);
+                break;
+
+            case FAVOURITE:
+                getFavouriteCartoons();
+                break;
+
+            case WATCH_LATER:
+                getWatchLaterCartoons();
+                break;
+
+            case WATCHED:
+                getWatchedCartoons();
+                break;
+
+            case MOST_VIEWED:
+                getMostViewedCartoons();
                 break;
 
             case GIRLSANIME: //Girls Cartoons
@@ -328,6 +372,63 @@ public class CartoonFragment extends Fragment{
                 break;
             default: //No Action
         }
+    }
+
+
+    public void getAllCartoons() {
+        mBinding.swipeRefreshLayout.setRefreshing(true);
+        disposable.add(
+                apiService
+                        .getCartoonsWithInfo(pageNumber)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                Log.i("ab_do" , "new Response");
+                                //Check if on refresh case
+                                if (isOnRefresh) {
+                                    cartoonList.clear();
+                                    isOnRefresh = false;
+                                }
+
+                                if (MainActivity.selectedType == FILMS) {
+                                    Log.i("Ab_do", "Yes Film");
+                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
+//
+                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
+                                            Log.i("Ab_do", "catch Film");
+                                            Cartoon cartoon = retrievedCartoonList.get(i);
+                                            goToPlaylist(cartoon);
+                                            break;
+                                        }
+                                    }
+                                }
+                                else {
+                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
+                                        if ((i + 1) % 10 == 0) {
+                                            retrievedCartoonList.add(i, new CartoonWithInfo());
+                                        }
+                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
+                                            retrievedCartoonList.remove(i);
+                                        }
+                                    }
+
+                                    cartoonList.addAll(retrievedCartoonList);
+                                    mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+                                    pageNumber++;
+                                    mBinding.swipeRefreshLayout.setRefreshing(false);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                mBinding.progressBarLayout.setVisibility(View.GONE);
+                                mBinding.swipeRefreshLayout.setRefreshing(false);
+//                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
 
     //--------Override Methods------//

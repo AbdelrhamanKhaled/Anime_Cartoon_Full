@@ -217,8 +217,8 @@ public class FacebookAuthActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadSeenEpisodes();
-                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadSeenEpisodes();
+                                Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -239,8 +239,8 @@ public class FacebookAuthActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Load();
-                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Load();
+                                Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -261,8 +261,8 @@ public class FacebookAuthActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchLaterCartoons();
-                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadWatchLaterCartoons();
+                                Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -283,8 +283,8 @@ public class FacebookAuthActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                loadWatchedCartoons();
-                                //Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //loadWatchedCartoons();
+                                Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );

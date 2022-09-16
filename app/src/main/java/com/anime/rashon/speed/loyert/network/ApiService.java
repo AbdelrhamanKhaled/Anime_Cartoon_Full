@@ -40,6 +40,7 @@ public interface ApiService {
             @Query("type") int type
     );
 
+
     @FormUrlEncoded
     @POST("playlist/read.php")
     Single<List<Playlist>> getPlaylists(
@@ -127,6 +128,11 @@ public interface ApiService {
     @GET("UserLoggedOptions/getAllFavouriteCartoons.php")
     Single<List<CartoonWithInfo>> getAllFavouriteCartoons(
             @Query("user_id") int userId
+    );
+
+
+    @GET("cartoon_with_info/getMostViewedCartoons.php")
+    Single<List<CartoonWithInfo>> getMostViewedCartoons(
     );
 
 

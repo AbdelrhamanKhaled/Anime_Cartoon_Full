@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -110,6 +111,7 @@ public class InformationActivity extends AppCompatActivity {
         });
     }
 
+
     private void addFavourite(List<CartoonWithInfo> favouriteCartoons) {
         binding.addFavourite.setImageResource(R.drawable.filled_star);
         // add api call to add favourite cartoon
@@ -159,7 +161,8 @@ public class InformationActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UserResponse response) {
                                 if (!response.isError()) {
-                                    favouriteCartoons.remove(cartoon);
+                                    boolean del = favouriteCartoons.remove(cartoon);
+                                    Log.i("ab_do" , "item is Deleted "  + del);
                                     UserOptions.getUserOptions().setFavouriteCartoons(favouriteCartoons);
                                     binding.progressBarLayout.setVisibility(View.GONE);
                                     Snackbar snack = Snackbar.make(binding.getRoot() , "تم إزالة الانمي من المفضلة بنجاح" , Snackbar.LENGTH_SHORT);
