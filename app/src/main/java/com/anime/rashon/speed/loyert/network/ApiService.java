@@ -198,6 +198,20 @@ public interface ApiService {
             @Query("cartoon_id") int cartoonId
     );
 
+    @GET("UserLoggedOptions/getUserLikesOnCartoonFeedback.php")
+    Single<List<Integer>> getFeedbacksLikesIds(
+            @Query("user_id") int userID ,
+            @Query("cartoon_id") int cartoonId
+    );
+
+
+    @GET("UserLoggedOptions/getUserDislikesOnCartoonFeedback.php")
+    Single<List<Integer>> getFeedbacksDisLikesIds(
+            @Query("user_id") int userID ,
+            @Query("cartoon_id") int cartoonId
+    );
+
+
 
     @GET("UserLoggedOptions/insertSeenEpisode.php")
     Single<UserResponse> insertSeenEpisode(

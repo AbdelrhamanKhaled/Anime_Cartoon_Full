@@ -56,7 +56,7 @@
             android:icon="@drawable/binoculars"
             android:id="@+id/see_later"
             android:checkable="true"
-            android:title="المشاهدة لاحقا" />
+            android:title="قائمتي" />
 
     <item
         android:icon="@drawable/seen_done"

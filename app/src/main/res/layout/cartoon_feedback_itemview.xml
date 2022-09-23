@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layoutDirection="rtl"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layoutDirection="rtl"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_img_ImageView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/user_profile" />
+
+        <TextView
+            android:id="@+id/usernameTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_toStartOf="@id/user_img_ImageView"
+            android:layout_toEndOf="@id/dateTxtView"
+            android:ellipsize="start"
+            android:gravity="end"
+            android:textAlignment="@id/user_img_ImageView"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="عبدالرحمن خالد" />
+
+
+        <TextView
+            android:id="@+id/dateTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            tools:text="منذ 4 أشهر" />
+
+        <TextView
+            android:id="@+id/feedbackTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dateTxtView"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_toStartOf="@id/user_img_ImageView"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:textSize="16sp"
+            tools:text="السلام عليكم ورحمة الله وبركاته احببت ان أضيف هذا التعليق الجميل لحضراتكم" />
+
+        <ImageView
+            android:id="@+id/reportImgView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/actions_container"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_baseline_report_problem_24" />
+
+        <LinearLayout
+            android:id="@+id/actions_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/feedbackTxtView"
+            android:layout_alignEnd="@id/usernameTxtView"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/reportImgView"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dislikesTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="48dp"
+                android:drawableEnd="@drawable/ic_baseline_thumb_down_24"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                tools:text="12" />
+
+
+            <TextView
+                android:id="@+id/likesTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_thumb_up_24"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                tools:text="30" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray" />
+
+</LinearLayout>
+

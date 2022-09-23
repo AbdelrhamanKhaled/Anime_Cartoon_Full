@@ -115,7 +115,6 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         cartoonHolder.listBinding.statues.setText("غير محدد");
                 }
             }
-
             cartoonHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -183,7 +182,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return albumView;
     }
 
-    public static class CartoonHolder extends RecyclerView.ViewHolder{
+    public class CartoonHolder extends RecyclerView.ViewHolder{
 
         LayoutRecyclercartoonItemBinding gridBinding;
         LayoutRecyclercartoonItemListBinding listBinding ;
@@ -191,11 +190,29 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public CartoonHolder(LayoutRecyclercartoonItemBinding binding) {
             super(binding.getRoot());
             gridBinding = binding ;
+//            CartoonWithInfo cartoon = cartoonListFiltered.get(getBindingAdapterPosition());
+//            gridBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(mContext, InformationActivity.class);
+//                    intent.putExtra("cartoon", cartoon);
+//                    mContext.startActivity(intent);
+//                }
+//            });
         }
 
         public CartoonHolder(LayoutRecyclercartoonItemListBinding binding) {
             super(binding.getRoot());
             listBinding = binding ;
+//            CartoonWithInfo cartoon = cartoonListFiltered.get(getBindingAdapterPosition());
+//            listBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(mContext, InformationActivity.class);
+//                    intent.putExtra("cartoon", cartoon);
+//                    mContext.startActivity(intent);
+//                }
+//            });
         }
     }
 

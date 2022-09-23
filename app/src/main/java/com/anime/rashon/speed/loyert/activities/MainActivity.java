@@ -37,6 +37,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
+import com.anime.rashon.speed.loyert.Utilites.LoginDialog;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private  Menu menu ;
     private LoginUtil loginUtil ;
     ActivityResultLauncher<String> activityResultRegistry ;
+    LoginDialog loginDialog ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkIfTheUserLodged();
         sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
         grid = true ;
+        loginDialog = new LoginDialog(this);
     }
 
     private void checkIfTheUserLodged() {
@@ -136,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 Log.i("ab_do" , "ClickedProfile");
+                if (loginUtil.userIsLoggedIN()&&loginUtil.getCurrentUser()!=null)
                 activityResultRegistry.launch("image/jpeg");
             }
         });
@@ -736,14 +740,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         int itemId = item.getItemId();//No Action
-        mBinding.navView.setCheckedItem(itemId);
         if (itemId == R.id.latest_episodes) {
+            mBinding.navView.setCheckedItem(itemId);
             cartoonFragment = null ;
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
             replaceLatestEpisodesFragment();
         }
         else if (itemId == R.id.anime) {
+            mBinding.navView.setCheckedItem(itemId);
             LatestEpisodesFragmentFragment = null ;
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
@@ -753,6 +758,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             replaceCartoonsFragment();
         }
         else if (itemId == R.id.films_t) {
+            mBinding.navView.setCheckedItem(itemId);
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
             //dialogUtilities.ShowDialog(this);
@@ -762,6 +768,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         else if (itemId == R.id.films_d) {
+            mBinding.navView.setCheckedItem(itemId);
             grid = true ;
             updateGridIcon(menu.findItem(R.id.grid_or_list));
             if(mBinding.progressBarLayout!=null)
@@ -771,28 +778,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         else if (itemId == R.id.most_viewed) {
-            openCartoonFragment(Config.MOST_VIEWED, "الأكثر المشاهدة");
+            mBinding.navView.setCheckedItem(itemId);
+            openCartoonFragment(Config.MOST_VIEWED, "الأكثر المشاهدة" , itemId);
         }
 
         else if (itemId == R.id.see_later) {
-            openCartoonFragment(Config.WATCH_LATER, "المشاهدة لاحقا");
+            if(loginUtil.userIsLoggedIN())
+            openCartoonFragment(Config.WATCH_LATER, "قائمتي" , itemId);
+            else {
+                loginDialog.showDialog();
+                hideDrawer();
+                return false ;
+            }
         }
 
         else if (itemId == R.id.animeSeen) {
-            openCartoonFragment(Config.WATCHED, "تمت مشاهدته");
+            if(loginUtil.userIsLoggedIN())
+            openCartoonFragment(Config.WATCHED,  "تمت مشاهدته" , itemId);
+             else {
+                 loginDialog.showDialog();
+                hideDrawer();
+                 return false ;
+            }
         }
 
 
         else if (itemId == R.id.favourite) {
-            openCartoonFragment(Config.FAVOURITE, "المفضلة");
+            if(loginUtil.userIsLoggedIN())
+            openCartoonFragment(Config.FAVOURITE, "المفضلة" ,  itemId);
+            else {
+                loginDialog.showDialog();
+                hideDrawer();
+                return false ;
+            }
         }
 
         else if (itemId == R.id.translation_anime) {
-            openCartoonFragment( Config.TRANSLATED_ANIME , "المترجم");
+            openCartoonFragment( Config.TRANSLATED_ANIME , "المترجم" , itemId);
         }
 
         else if (itemId == R.id.new_cartoon) {
-            openCartoonFragment( Config.NEW_ANIME , "المستمر");
+            openCartoonFragment( Config.NEW_ANIME , "المستمر" ,  itemId);
         }
 
 //        else if (itemId == R.id.downloads) {
@@ -827,7 +853,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void openCartoonFragment(int type, String s) {
+    private void openCartoonFragment(int type, String s , int item_id) {
+        mBinding.navView.setCheckedItem(item_id);
         selectedType = type;
         grid = true;
         updateGridIcon(menu.findItem(R.id.grid_or_list));

@@ -32,7 +32,7 @@
             android:id="@+id/cartoonImg"
             android:layout_width="140dp"
             android:layout_height="160dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             app:imgUrl="@{cartoon.thumb}"
             />
 

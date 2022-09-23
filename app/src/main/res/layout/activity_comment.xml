@@ -8,6 +8,25 @@
     tools:context=".activities.FeedbacksActivity">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/included_toolbar"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/cartoon_feedback_itemview"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/recycleView"
+            />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/progressBarLayout"
@@ -15,7 +34,7 @@
         android:layout_height="match_parent"
         android:background="@color/mytransparentBackgroud"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/progress"

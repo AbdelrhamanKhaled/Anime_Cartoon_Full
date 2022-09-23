@@ -22,11 +22,13 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class FeedbacksActivity extends AppCompatActivity {
-    int user_id ;
+    int user_id , cartoon_id ;
     CompositeDisposable disposable ;
     ApiService apiService ;
     ActivityCommentBinding binding ;
     List<Feedbacks> loaded_feedbacks = new ArrayList<>();
+    List<Integer> feedbackLikesIDs = new ArrayList<>();
+    List<Integer> feedbackDisLikesIDs = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +43,10 @@ public class FeedbacksActivity extends AppCompatActivity {
         user_id = new LoginUtil(this).getCurrentUser().getId();
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
+        cartoon_id = getIntent().getIntExtra(Constants.CARTOON_ID , -1);
     }
 
     private void loadFeedbacks() {
-        int cartoon_id = getIntent().getIntExtra(Constants.CARTOON_ID , -1);
         disposable.add(
                 apiService
                         .getFeedbacks(cartoon_id)
@@ -53,8 +55,8 @@ public class FeedbacksActivity extends AppCompatActivity {
                         .subscribeWith(new DisposableSingleObserver<List<Feedbacks>>() {
                             @Override
                             public void onSuccess(List<Feedbacks> feedbacks) {
-                                binding.progressBarLayout.setVisibility(View.GONE);
                                 loaded_feedbacks = feedbacks ;
+                                loadFeedbackLikesIDS();
                             }
 
                             @Override
@@ -65,5 +67,49 @@ public class FeedbacksActivity extends AppCompatActivity {
                         })
         );
 
+    }
+
+    private void loadFeedbackLikesIDS() {
+        disposable.add(
+                apiService
+                        .getFeedbacksLikesIds(user_id , cartoon_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
+                            @Override
+                            public void onSuccess(List<Integer> ids) {
+                                feedbackLikesIDs = ids;
+                                loadFeedbackDisLikesIDS();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                Toast.makeText(FeedbacksActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void loadFeedbackDisLikesIDS() {
+        disposable.add(
+                apiService
+                        .getFeedbacksDisLikesIds(user_id , cartoon_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
+                            @Override
+                            public void onSuccess(List<Integer> ids) {
+                                feedbackDisLikesIDs = ids;
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                Toast.makeText(FeedbacksActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
 }

@@ -83,6 +83,7 @@ public class CartoonFragment extends Fragment{
     }
 
     public void initRecyclerview(boolean isGrid) {
+        mBinding.cartoonsRecyclerview.setHasFixedSize(true);
         adapter = new CartoonsAdapter(getActivity(), cartoonList , isGrid);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -108,7 +109,8 @@ public class CartoonFragment extends Fragment{
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         current = this ;
-        user_id = new LoginUtil(getActivity()).getCurrentUser().getId();
+        LoginUtil loginUtil = new LoginUtil(getActivity()) ;
+        user_id = loginUtil.getCurrentUser() != null ? loginUtil.getCurrentUser().getId() : -1 ;
         checkCartoonType(MainActivity.selectedType);
     }
 
