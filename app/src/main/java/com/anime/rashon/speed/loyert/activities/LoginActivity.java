@@ -119,7 +119,9 @@ public class LoginActivity extends AppCompatActivity {
     private void prepareSignInWithGoogle() {
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-                .requestIdToken(getString(R.string.ClientID)).build();
+                .requestIdToken(getString(R.string.ClientID))
+                .requestServerAuthCode(getString(R.string.ClientID))
+                .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, options);
         mAuth = FirebaseAuth.getInstance();
     }
@@ -132,10 +134,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Load(currentUser);
-        }
     }
 
     private void Load(FirebaseUser firebaseUser) {

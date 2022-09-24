@@ -5,7 +5,7 @@ import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
-import com.anime.rashon.speed.loyert.model.Feedbacks;
+import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
@@ -94,6 +94,8 @@ public interface ApiService {
     Single<Information> getCartoonInformation(
             @Field("cartoon_id") int cartoonId
     );
+
+
 
     @GET("episode/dates.php")
     Single<List<EpisodeDate>> episodeDates();
@@ -194,7 +196,7 @@ public interface ApiService {
 
 
     @GET("UserLoggedOptions/getCartoonFeedbacks.php")
-    Single<List<Feedbacks>> getFeedbacks(
+    Single<List<Feedback>> getFeedbacks(
             @Query("cartoon_id") int cartoonId
     );
 
@@ -234,6 +236,36 @@ public interface ApiService {
             @Query("photo_Uri") String photo_Uri
     );
 
+    @GET("UserLoggedOptions/likeFeedback.php")
+    Single<UserResponse> likeFeedback(
+            @Query("user_id") int userId,
+            @Query("feedback_id") int feedback_id
+    );
+
+    @GET("UserLoggedOptions/dislikeFeedback.php")
+    Single<UserResponse> dislikeFeedback(
+            @Query("user_id") int userId,
+            @Query("feedback_id") int feedback_id
+    );
+
+    @GET("UserLoggedOptions/removeLikeFeedback.php")
+    Single<UserResponse> removeLike(
+            @Query("user_id") int userId,
+            @Query("feedback_id") int feedback_id
+    );
+
+    @GET("UserLoggedOptions/removeFeedback.php")
+    Single<UserResponse> removeFeedback(
+            @Query("feedback_id") int feedback_id
+    );
+
+    @GET("UserLoggedOptions/removeDislikeFeedback.php")
+    Single<UserResponse> removeDisLike(
+            @Query("user_id") int userId,
+            @Query("feedback_id") int feedback_id
+    );
+
+
     @FormUrlEncoded
     @POST ("Uploaded_Images/uploadImg.php")
     Single<String> saveUserImg(
@@ -248,6 +280,16 @@ public interface ApiService {
             @Field("user_id") int id,
             @Field("old_img") String imgName
     );
+
+
+    @GET("UserLoggedOptions/makeReport.php")
+    Single<UserResponse> makeFeedbackReport(
+            @Query("user_id") int userId,
+            @Query("feedback_id") int feedback_id,
+            @Query("description") String description
+    );
+
+
 
 
 

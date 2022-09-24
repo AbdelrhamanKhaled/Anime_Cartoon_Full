@@ -4,7 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class UserResponse{
-
+    @SerializedName("id")
+    @Expose
+    private int returned_id ;
     @SerializedName("user_info")
     @Expose
     private User user;
@@ -29,12 +31,20 @@ public class UserResponse{
     public UserResponse() {
     }
 
-
-    public UserResponse(User user, String message, int code, boolean error) {
+    public UserResponse(int returned_id, User user, String message, int code, boolean error) {
+        this.returned_id = returned_id;
         this.user = user;
         this.message = message;
         this.code = code;
         this.error = error;
+    }
+
+    public int getReturned_id() {
+        return returned_id;
+    }
+
+    public void setReturned_id(int returned_id) {
+        this.returned_id = returned_id;
     }
 
     public User getUser() {
