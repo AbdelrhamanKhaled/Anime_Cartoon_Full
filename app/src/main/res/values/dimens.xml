@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="server_btn_dim">30dp</dimen>
+    <dimen name="power_on_off_dim">32dp</dimen>
+</resources>

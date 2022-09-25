@@ -29,6 +29,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".LeaderboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.InformationActivity"
             android:exported="false" />
         <activity
@@ -112,6 +115,7 @@
             android:name=".activities.FavoriteEpisodeActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity android:name=".activities.FeedbacksActivity" />
+        <activity android:name=".activities.LeaderboardActivity" />
     </application>
 
 </manifest>

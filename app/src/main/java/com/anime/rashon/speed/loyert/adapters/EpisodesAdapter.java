@@ -17,8 +17,6 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.EpisodesActivity;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
-import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemBinding;
-import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemListBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclerepisodeItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclerepisodeItemListBinding;

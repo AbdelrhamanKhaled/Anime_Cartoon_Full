@@ -17,10 +17,12 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.GoogleAuth;
 import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
+import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -59,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     ApiService apiService ;
     private int user_id ;
     UserOptions userOptions ;
+    View decor_View ;
     @Override
     public void onBackPressed() {
         finish();
@@ -67,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        decor_View = getWindow().getDecorView();
+        Utilities.hideNavBar(decor_View);
         setContentView(R.layout.activity_login);
         init();
         setListeners();
@@ -159,6 +164,12 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UserResponse userResponse) {
                                 if (!userResponse.isError()) {
+                                    if (userResponse.getUser().getIs_blocked() == User.IS_BLOCKED) {
+                                        loginUtil.signOut();
+                                        dialogUtilities.dismissDialog();
+                                        Snackbar.make(Login , "تم حظر هذا الحساب ! لا يمكنك تسجيل الدخول" , Snackbar.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                     loginUtil.saveLoginInformation(LoginMethod.EMAIL , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
                                     user_id = userResponse.getUser().getId();
                                     loadFavouriteCartoons();
@@ -207,6 +218,10 @@ public class LoginActivity extends AppCompatActivity {
 //                });
     }
 
+    private void checkIfUserBlocked(int is_blocked) {
+
+    }
+
     private void loginCompleted() {
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         dialogUtilities.dismissDialog();
@@ -243,7 +258,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void createNewUserWithGoogle(String idToken, String email, String displayName, Uri photoUrl) {
-        dialogUtilities.ShowDialog(this);
+        Utilities.hideNavBar(decor_View);
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         CompositeDisposable disposable = new CompositeDisposable();
         disposable.add(
@@ -257,6 +272,12 @@ public class LoginActivity extends AppCompatActivity {
                                 if (!userResponse.isError()) {
                                     user_id = userResponse.getUser().getId();
                                     if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS) {
+                                        if (userResponse.getUser().getIs_blocked() == User.IS_BLOCKED) {
+                                            loginUtil.signOut();
+                                            dialogUtilities.dismissDialog();
+                                            Snackbar.make(Login , "تم حظر هذا الحساب ! لا يمكنك تسجيل الدخول" , Snackbar.LENGTH_SHORT).show();
+                                            return;
+                                        }
                                         loginUtil.saveLoginInformation(LoginMethod.GOOGLE , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
                                         loadFavouriteCartoons();
                                     }

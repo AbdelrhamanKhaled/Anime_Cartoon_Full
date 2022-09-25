@@ -72,6 +72,12 @@
             android:title="المفضلة" />
 
     <item
+        android:icon="@drawable/score"
+        android:id="@+id/leaderboard"
+        android:checkable="true"
+        android:title="أبرز المساهمين" />
+
+    <item
         android:icon="@drawable/down_arrow"
         android:id="@+id/anime_downloads"
         android:title="التحميلات"

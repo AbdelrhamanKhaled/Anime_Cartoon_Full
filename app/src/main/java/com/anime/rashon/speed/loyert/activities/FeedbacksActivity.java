@@ -1,17 +1,20 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
+import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.adapters.CartoonFeedbacksAdapter;
@@ -41,6 +44,7 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
     LoginUtil loginUtil ;
     CartoonFeedbacksAdapter feedbacksAdapter ;
     private boolean isRefresh = false;
+    boolean desc = true ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +97,7 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
         // add api call to save the feedback :)
         disposable.add(
                 apiService
-                        .addCartoonFeedback(user_id , cartoon_id , feedback,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url())
+                        .addCartoonFeedback(user_id , cartoon_id , feedback,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , String.valueOf(System.currentTimeMillis()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
@@ -123,8 +127,9 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
     }
 
     private void addNewFeedbackToAdapter(int returned_id, String feedback) {
-        Feedback _feedback = new Feedback(returned_id , cartoon_id , user_id , feedback , loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , 0 , 0);
-        feedbacksAdapter.addFeedback(_feedback);
+        Feedback _feedback = new Feedback(returned_id , cartoon_id , user_id , feedback , loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , 0 , 0 , String.valueOf(System.currentTimeMillis()));
+        int pos = desc ? 0 : loaded_feedbacks.size() ;
+        feedbacksAdapter.addFeedback(pos , _feedback);
     }
 
     private void showSnackMsg (String s) {
@@ -147,26 +152,51 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
     }
 
     private void loadFeedbacks() {
-        disposable.add(
-                apiService
-                        .getFeedbacks(cartoon_id)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<Feedback>>() {
-                            @Override
-                            public void onSuccess(List<Feedback> feedbacks) {
-                                loaded_feedbacks.clear();
-                                loaded_feedbacks = feedbacks;
-                                loadFeedbackLikesIDS();
-                            }
+        if (desc) {
+            disposable.add(
+                    apiService
+                            .getFeedbacksDesc(cartoon_id)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<Feedback>>() {
+                                @Override
+                                public void onSuccess(List<Feedback> feedbacks) {
+                                    loaded_feedbacks.clear();
+                                    loaded_feedbacks = feedbacks;
+                                    loadFeedbackLikesIDS();
+                                }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                binding.progressBarLayout.setVisibility(View.GONE);
-                                Toast.makeText(FeedbacksActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-        );
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.i("ab_do" , "onError " + e.getMessage());
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Toast.makeText(FeedbacksActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+            );
+        }
+        else {
+            disposable.add(
+                    apiService
+                            .getFeedbacksAsc(cartoon_id)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<Feedback>>() {
+                                @Override
+                                public void onSuccess(List<Feedback> feedbacks) {
+                                    loaded_feedbacks.clear();
+                                    loaded_feedbacks = feedbacks;
+                                    loadFeedbackLikesIDS();
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    binding.progressBarLayout.setVisibility(View.GONE);
+                                    Toast.makeText(FeedbacksActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+            );
+        }
 
     }
 
@@ -232,6 +262,12 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
             finish();
             return true;
         }
+        else if (item.getItemId() == R.id.change_order) {
+            desc = !desc ;
+            binding.progressBarLayout.setVisibility(View.VISIBLE);
+            loadFeedbacks();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -270,4 +306,13 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
          binding.progressBarLayout.setVisibility(View.VISIBLE);
          sendReport(user_id , feedback_id , description);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.feedback_menu , menu) ;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+
 }

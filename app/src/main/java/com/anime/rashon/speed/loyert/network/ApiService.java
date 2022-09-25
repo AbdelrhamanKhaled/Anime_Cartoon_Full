@@ -10,10 +10,12 @@ import com.anime.rashon.speed.loyert.model.Information;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.model.Report;
+import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -195,8 +197,13 @@ public interface ApiService {
     );
 
 
-    @GET("UserLoggedOptions/getCartoonFeedbacks.php")
-    Single<List<Feedback>> getFeedbacks(
+    @GET("UserLoggedOptions/getCartoonFeedbacksAsc.php")
+    Single<List<Feedback>> getFeedbacksAsc(
+            @Query("cartoon_id") int cartoonId
+    );
+
+    @GET("UserLoggedOptions/getCartoonFeedbacksDesc.php")
+    Single<List<Feedback>> getFeedbacksDesc(
             @Query("cartoon_id") int cartoonId
     );
 
@@ -233,7 +240,8 @@ public interface ApiService {
             @Query("cartoon_id") int cartoon_id,
             @Query("feedback") String feedback,
             @Query("name") String name,
-            @Query("photo_Uri") String photo_Uri
+            @Query("photo_Uri") String photo_Uri,
+            @Query("time") String time
     );
 
     @GET("UserLoggedOptions/likeFeedback.php")
@@ -290,7 +298,13 @@ public interface ApiService {
     );
 
 
+    @GET("UserLoggedOptions/getBlockStatues.php")
+    Single<Integer> getUserBlockedStatue(
+            @Query("user_id") int userId
+    );
 
 
+    @GET("Leaderboard/getLeaderboard.php")
+    Single<List<User>> getLeaderboard();
 
 }

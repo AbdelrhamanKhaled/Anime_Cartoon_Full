@@ -15,10 +15,12 @@ import android.widget.Toast;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivitySplashBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
+import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -39,9 +41,12 @@ public class splashActivity extends AppCompatActivity {
     CompositeDisposable disposable ;
     ApiService apiService ;
     private int user_id ;
+    LoginUtil loginUtil ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View decor_View = getWindow().getDecorView();
+        Utilities.hideNavBar(decor_View);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
@@ -57,18 +62,54 @@ public class splashActivity extends AppCompatActivity {
     public void  init () {
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
-        LoginUtil loginUtil = new LoginUtil(this);
+        loginUtil = new LoginUtil(this);
         if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!= null) {
             // display loading text , load (favourite , later , watched )
             binding.msg.setVisibility(View.VISIBLE);
             binding.msg.setAnimation(AnimationUtils.loadAnimation(this , R.anim.fade_text));
             user_id = loginUtil.getCurrentUser().getId();
-            loadFavouriteCartoons();
+            // check first is not blocked
+            checkIfUserIsNotBlocked();
         }
         else {
             binding.msg.setVisibility(View.GONE);
             loadLatestEpisodes();
         }
+    }
+
+    private void checkIfUserIsNotBlocked() {
+        disposable.add(
+                apiService
+                        .getUserBlockedStatue(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Integer>() {
+                            @Override
+                            public void onSuccess(Integer statue) {
+                                Log.i("ab_do" , "Statue = " + statue);
+                               if (statue == User.IS_BLOCKED) {
+                                   // sign out the user
+                                   Log.i("ab_do" , "user is blocked");
+                                   loginUtil.signOut();
+                                   loadLatestEpisodes();
+                               }
+                               else if (statue == User.IS_NOT_BLOCKED) {
+                                   // load normally
+                                   loadFavouriteCartoons();
+                               }
+                               else {
+                                   Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                   loadLatestEpisodes();
+                               }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do" , "error get block statue " + e.getMessage());
+                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
 
     private void loadWatchLaterCartoons() {

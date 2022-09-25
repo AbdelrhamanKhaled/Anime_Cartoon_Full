@@ -15,6 +15,7 @@ import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
+import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -166,6 +167,11 @@ public class FacebookAuthActivity extends AppCompatActivity {
                                 if (!userResponse.isError()) {
                                     user_id = userResponse.getUser().getId();
                                     if (userResponse.getCode() == Constants.USER_ALREADY_EXISTS) {
+                                        if (userResponse.getUser().getIs_blocked() == User.IS_BLOCKED) {
+                                            loginUtil.signOut();
+                                            Toast.makeText(FacebookAuthActivity.this, "تم حظر هذا الحساب ! لا يمكنك تسجيل الدخول", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
                                         loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
                                         loadFavouriteCartoons();
                                     }

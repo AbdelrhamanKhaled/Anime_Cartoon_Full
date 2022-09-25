@@ -73,6 +73,8 @@ public class ReportDialog {
     }
 
     public void setUser_id(int user_id) {
+        String s = "Gg";
+
         this.user_id = user_id;
     }
 }

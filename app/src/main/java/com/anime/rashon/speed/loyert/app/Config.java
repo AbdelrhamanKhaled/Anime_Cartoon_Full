@@ -111,12 +111,12 @@ public class Config {
             return;
         }
 
-        if (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/")) {
+        if (url!=null && (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/"))) {
             Toast.makeText(activity.getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/")) {
+        if (episode.getVideo()!=null && (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/"))) {
             Toast.makeText(activity.getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
             return;
         }

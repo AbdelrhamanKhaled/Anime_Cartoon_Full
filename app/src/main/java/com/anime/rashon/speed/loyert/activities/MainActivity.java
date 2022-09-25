@@ -61,8 +61,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initRetrofit();
         //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
+        Log.i("ab_do" , " time = " + System.currentTimeMillis());
         initToolbar();
         initNavDrawer();
         getRedirect(savedInstanceState);
@@ -120,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         });*/
     }
+
 
     private void init() {
         Log.i("ab_do" , sharedPreferencesUtil.getSharedPreferences(this).getString(sharedPreferencesUtil.CURRENT_PHOTO , "no photo"));
@@ -819,6 +825,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else if (itemId == R.id.new_cartoon) {
             openCartoonFragment( Config.NEW_ANIME , "المستمر" ,  itemId);
+        }
+
+        else if (itemId == R.id.leaderboard) {
+            startActivity(new Intent(getBaseContext() , LeaderboardActivity.class));
         }
 
 //        else if (itemId == R.id.downloads) {

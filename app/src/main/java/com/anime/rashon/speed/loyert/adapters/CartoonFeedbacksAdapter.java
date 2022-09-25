@@ -20,8 +20,12 @@ import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -68,9 +72,9 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
         notifyDataSetChanged();
     }
 
-    public void addFeedback(Feedback feedback) {
-        this.feedbacks.add(feedback);
-        notifyItemChanged(feedbacks.size() - 1);
+    public void addFeedback(int pos , Feedback feedback) {
+        this.feedbacks.add(pos , feedback);
+        notifyDataSetChanged();
     }
 
     public class feedbackHolder extends RecyclerView.ViewHolder {
@@ -111,6 +115,12 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
                 binding.deleteImgView.setVisibility(View.GONE);
                 binding.reportImgView.setVisibility(View.VISIBLE);
             }
+            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+            String ago = prettyTime.format(new Date(Long.parseLong(feedback.getTime())));
+            if (ago.contains("بعض")) {
+                ago = ago.replace( "بعض" , "منذ");
+            }
+            binding.dateTxtView.setText(ago);
             setListeners(feedback , pos);
         }
 

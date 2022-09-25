@@ -26,6 +26,7 @@ import com.inside4ndroid.jresolver.Jresolver;
 import com.inside4ndroid.jresolver.Model.Jmodel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
@@ -41,9 +42,11 @@ public class ServersActivity extends AppCompatActivity {
     boolean server4 = true;
     boolean server5 = true;
     boolean server6 = true;
-    int WATCH_ACTION = 100 ;
-    int DOWNLOAD_ACTION = 101 ;
-    int Action = -1 ;
+    int WATCH_ACTION = 100;
+    int DOWNLOAD_ACTION = 101;
+    int Action = -1;
+    int current_pos = -1;
+    List<Episode> episodeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,42 +62,42 @@ public class ServersActivity extends AppCompatActivity {
         mBinding.play1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer1();
             }
         });
         mBinding.play2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer2();
             }
         });
         mBinding.play3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer3();
             }
         });
         mBinding.play4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer4();
             }
         });
         mBinding.play5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer5();
             }
         });
         mBinding.play6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = WATCH_ACTION ;
+                Action = WATCH_ACTION;
                 openServer6();
             }
         });
@@ -102,91 +105,123 @@ public class ServersActivity extends AppCompatActivity {
         mBinding.download1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer1();
             }
         });
         mBinding.download2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer2();
             }
         });
         mBinding.download3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer3();
             }
         });
         mBinding.download4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer4();
             }
         });
         mBinding.download5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer5();
             }
         });
         mBinding.download6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action = DOWNLOAD_ACTION ;
+                Action = DOWNLOAD_ACTION;
                 openServer6();
+            }
+        });
+        mBinding.back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (current_pos == 0) return;
+                current_pos -= 1;
+                checkServers();
+            }
+        });
+        mBinding.next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (current_pos >= episodeList.size() - 1) return;
+                current_pos += 1;
+                checkServers();
             }
         });
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         setSupportActionBar(mBinding.includedToolbar.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setTitle(episode.getTitle());
-        getSupportActionBar().setTitle("إختيار سيرفير");
+        updateToolbarTitle();
     }
 
-    private void getIntentData(){
+    private void updateToolbarTitle() {
+        String title = "الحلقة  " + (current_pos+1) ;
+        if (getSupportActionBar()!=null)
+        getSupportActionBar().setTitle(title);
+    }
+
+    private void getIntentData() {
         episode = (Episode) getIntent().getSerializableExtra("episode");
+        current_pos = getIntent().getIntExtra("current_pos", -1);
+        episodeList = (List<Episode>) getIntent().getSerializableExtra("episodeList");
+        updateBackNextBtn();
     }
 
-    private void checkSeversAvailability(){
-        if(episode.getVideo() == null || episode.getVideo().isEmpty()) {
+    private void updateBackNextBtn() {
+        mBinding.back.setEnabled(current_pos > 0);
+        mBinding.next.setEnabled(current_pos < episodeList.size() - 1);
+    }
+
+    private void checkSeversAvailability() {
+        Log.i("ab_do" , "checkSeversAvailability");
+        mBinding.progressBarLayout.setVisibility(View.GONE);
+        if (episode.getVideo() == null || episode.getVideo().isEmpty()) {
             //mBinding.llServer1.setVisibility(View.GONE);
             mBinding.llServer1.setEnabled(false);
             mBinding.active1.setImageResource(R.drawable.not_active);
             server1 = false;
         }
 
-        if(episode.getVideo1() == null || episode.getVideo1().isEmpty()){
+        if (episode.getVideo1() == null || episode.getVideo1().isEmpty()) {
             mBinding.llServer2.setEnabled(false);
             mBinding.active2.setImageResource(R.drawable.not_active);
             server2 = false;
         }
 
-        if(episode.getVideo2() == null || episode.getVideo2().isEmpty()){
+        if (episode.getVideo2() == null || episode.getVideo2().isEmpty()) {
             mBinding.llServer3.setEnabled(false);
             mBinding.active3.setImageResource(R.drawable.not_active);
             server3 = false;
         }
 
-        if(episode.getVideo3() == null || episode.getVideo3().isEmpty()){
+        if (episode.getVideo3() == null || episode.getVideo3().isEmpty()) {
             mBinding.llServer4.setEnabled(false);
             mBinding.active4.setImageResource(R.drawable.not_active);
             server4 = false;
         }
 
-        if(episode.getVideo4() == null || episode.getVideo4().isEmpty()){
+        if (episode.getVideo4() == null || episode.getVideo4().isEmpty()) {
             mBinding.llServer5.setEnabled(false);
             mBinding.active5.setImageResource(R.drawable.not_active);
             server5 = false;
         }
 
-        if(episode.getVideo5() == null || episode.getVideo5().isEmpty()){
+        if (episode.getVideo5() == null || episode.getVideo5().isEmpty()) {
             mBinding.llServer6.setEnabled(false);
             mBinding.active6.setImageResource(R.drawable.not_active);
             server6 = false;
@@ -198,21 +233,21 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     public void openServer2() {
-        if(episode.getVideo1().isEmpty())
+        if (episode.getVideo1().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(2, episode.getVideo1(), episode.getjResolver1());
     }
 
     public void openServer3() {
-        if(episode.getVideo2().isEmpty())
+        if (episode.getVideo2().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(3, episode.getVideo2(), episode.getjResolver2());
     }
 
     public void openServer4() {
-        if(episode.getVideo3().isEmpty())
+        if (episode.getVideo3().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(4, episode.getVideo3(), episode.getjResolver3());
@@ -221,7 +256,7 @@ public class ServersActivity extends AppCompatActivity {
 
     public void openServer5() {
 
-        if(episode.getVideo4().isEmpty())
+        if (episode.getVideo4().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(5, episode.getVideo4(), episode.getjResolver4());
@@ -238,34 +273,33 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     public void openServer6() {
-        if(episode.getVideo4().isEmpty())
+        if (episode.getVideo4().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(5, episode.getVideo4(), episode.getjResolver3());
 
     }
 
-    private void serverClicked (int serverNumber, String videoUrl, int needsXGetter){
-        Log.i("ab_do" , "openVideoPlayer");
+    private void serverClicked(int serverNumber, String videoUrl, int needsXGetter) {
+        Log.i("ab_do", "openVideoPlayer");
         episode.setError(false);
-        if(!isNetworkConnected(ServersActivity.this)) {
+        if (!isNetworkConnected(ServersActivity.this)) {
             Toast.makeText(ServersActivity.this, "من فضلك تأكد من اتصالك بالانترنت", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             //Check if needs xgetter
-            if(needsXGetter == 1){ //Needs extractions
-                Log.i("ab_do" , "needsXGetter");
+            if (needsXGetter == 1) { //Needs extractions
+                Log.i("ab_do", "needsXGetter");
                 Jresolver jresolver = new Jresolver(this);
                 jresolver.onFinish(new Jresolver.OnTaskCompleted() {
 
                     @Override
                     public void onTaskCompleted(ArrayList<Jmodel> vidURL, boolean multiple_quality) {
-                        if (multiple_quality){
+                        if (multiple_quality) {
                             //This video you can choose qualities
                             CharSequence[] qualities = new CharSequence[vidURL.size()];
                             CharSequence[] urls = new CharSequence[vidURL.size()];
 
-                            for (int i=0; i<vidURL.size(); i++){
+                            for (int i = 0; i < vidURL.size(); i++) {
 //                            String url = model.getUrl();
                                 qualities[i] = vidURL.get(i).getQuality();
                                 urls[i] = vidURL.get(i).getUrl();
@@ -275,7 +309,7 @@ public class ServersActivity extends AppCompatActivity {
                             builder.setCancelable(true);
                             builder.setTitle("اختار جودة الحلقة");
                             builder.setItems(qualities, (dialog, which) -> {
-                                handleAction(serverNumber , urls[which].toString() , Action);
+                                handleAction(serverNumber, urls[which].toString(), Action);
                             });
 
                             AlertDialog dialog = builder.create();
@@ -287,12 +321,10 @@ public class ServersActivity extends AppCompatActivity {
 
                             dialog.show();
 
-                        }
-
-                        else {
+                        } else {
                             //If single
                             String url = vidURL.get(0).getUrl();
-                            handleAction(serverNumber, url , Action);
+                            handleAction(serverNumber, url, Action);
                         }
                     }
 
@@ -307,83 +339,176 @@ public class ServersActivity extends AppCompatActivity {
 
                 jresolver.find(videoUrl);
 
+            } else {
+                handleAction(serverNumber, videoUrl, Action);
             }
-            else
-                {
-                    handleAction(serverNumber, videoUrl , Action);
-                }
 //        mBinding.progressBarLayout.setVisibility(View.GONE);
         }
     }
 
     private void updateServerStatues(int serverNumber) {
         switch (serverNumber) {
-            case 1 :
+            case 1:
                 mBinding.active1.setImageResource(R.drawable.not_active);
                 break;
-            case 2 :
+            case 2:
                 mBinding.active2.setImageResource(R.drawable.not_active);
                 break;
-            case 3 :
+            case 3:
                 mBinding.active3.setImageResource(R.drawable.not_active);
                 break;
-            case 4 :
+            case 4:
                 mBinding.active4.setImageResource(R.drawable.not_active);
                 break;
-            case 5 :
+            case 5:
                 mBinding.active5.setImageResource(R.drawable.not_active);
                 break;
-            case 6 :
+            case 6:
                 mBinding.active6.setImageResource(R.drawable.not_active);
                 break;
         }
     }
 
     private void handleAction(int serverNumber, String url, int Action) {
+
         if (episode.isError()) {
             updateServerStatues(serverNumber);
-            Toast.makeText(getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/")) {
             updateServerStatues(serverNumber);
-            Toast.makeText(getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/")) {
             updateServerStatues(serverNumber);
-            Toast.makeText(getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
 
         if (Action == WATCH_ACTION)
-         Config.openExoPlayerApp(this, url , episode);
+            Config.openExoPlayerApp(this, url, episode);
 
         else {
 
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}
-                            , 1);
-                }
-                else {
-                    Config.startDownloadingEpisode(this, url, episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
-                }
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}
+                        , 1);
+            } else {
+                Config.startDownloadingEpisode(this, url, episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
             }
+        }
     }
+
+    private void checkServers() {
+        updateToolbarTitle();
+        updateBackNextBtn();
+        mBinding.progressBarLayout.setVisibility(View.VISIBLE);
+        episode = episodeList.get(current_pos);
+        if (episode == null) return;
+        Log.i("ab_do", "checkServers" + episode.getVideo());
+        if (
+                episode.getVideo1() == null &&
+                        episode.getVideo2()== null &&
+                        episode.getVideo3()== null &&
+                        episode.getVideo4()== null ||
+                        episode.getVideo1().isEmpty() && (
+                                episode.getVideo2().isEmpty() &&
+                                episode.getVideo3().isEmpty() &&
+                                episode.getVideo4().isEmpty() )
+        ) {
+
+//            startVideoPlayer(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
+//            Config.optionsDialog(this, episode.getVideo(), episode, playlistTitle, cartoonTitle);
+            checkjResolver(episode.getVideo(), episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
+        }
+        else {
+            checkSeversAvailability();
+        }
+    }
+
+    private void checkjResolver(String url, Episode episode,
+                                String playlistTitle, String cartoonTitle) {
+        episode.setError(false);
+        //Check if needs jResolver
+        if (episode.getjResolver() == 1) { //Needs extractions
+            Log.i("ab_do", "Needs extractions " + episode.getVideo());
+            Jresolver jresolver = new Jresolver(this);
+            jresolver.onFinish(new Jresolver.OnTaskCompleted() {
+
+                @Override
+                public void onTaskCompleted(ArrayList<Jmodel> vidURL, boolean multiple_quality) {
+                    if (multiple_quality) {
+                        //This video you can choose qualities
+                        CharSequence[] qualities = new CharSequence[vidURL.size()];
+                        CharSequence[] urls = new CharSequence[vidURL.size()];
+
+                        for (int i = 0; i < vidURL.size(); i++) {
+//                            String url = model.getUrl();
+                            qualities[i] = vidURL.get(i).getQuality();
+                            urls[i] = vidURL.get(i).getUrl();
+                        }
+
+                        mBinding.progressBarLayout.setVisibility(View.GONE);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ServersActivity.this);
+                        builder.setCancelable(true);
+                        builder.setTitle("اختار جودة الحلقة");
+                        builder.setItems(qualities, (dialog, which) -> {
+                            Config.optionsDialog(ServersActivity.this, urls[which].toString(), episode, playlistTitle, cartoonTitle);
+                        });
+
+                        AlertDialog dialog = builder.create();
+
+                        dialog.setOnShowListener(dlg -> {
+
+                            Objects.requireNonNull(dialog.getWindow()).getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL); // set title and message direction to RTL
+                        });
+
+                        dialog.show();
+
+                    } else {
+                        //If single
+                        String url = vidURL.get(0).getUrl();
+
+                        Config.optionsDialog(ServersActivity.this, url, episode, playlistTitle, cartoonTitle);
+                    }
+                    episode.setError(false);
+                }
+
+                @Override
+                public void onError() {
+                    //Error
+                    episode.setError(true);
+                    mBinding.progressBarLayout.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
+                }
+            });
+            jresolver.find(episode.getVideo());
+
+        }
+        else {
+            Log.i("ab_do", "no Needs extractions " + episode.getVideo());
+            mBinding.progressBarLayout.setVisibility(View.GONE);
+            Config.optionsDialog(this, episode.getVideo(), episode, playlistTitle, cartoonTitle);
+        }
+    }
+
 
     //=======================Override Methods=================//
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 101) {
             if (resultCode == RESULT_OK) {
-                Log.i("ab_do" ,"FromDownloader ");
+                Log.i("ab_do", "FromDownloader ");
                 if (data == null) return;
                 String path = data.getStringExtra("animePath");
                 String name = data.getStringExtra("animeName");
@@ -392,10 +517,11 @@ public class ServersActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(item.getItemId() == android.R.id.home)
+        if (item.getItemId() == android.R.id.home)
             finish();
 
         return super.onOptionsItemSelected(item);

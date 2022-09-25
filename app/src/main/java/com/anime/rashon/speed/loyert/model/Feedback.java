@@ -28,11 +28,22 @@ public class Feedback {
     @SerializedName("dislikes")
     @Expose
     private int dislikes;
+    @SerializedName("time")
+    @Expose
+    private String time;
 
     public Feedback() {
     }
 
-    public Feedback(Integer feedbackId, int cartoonId, int userID, String feedback, String username, String photo_Uri, int likes, int dislikes) {
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Feedback(Integer feedbackId, int cartoonId, int userID, String feedback, String username, String photo_Uri, int likes, int dislikes, String time) {
         this.feedbackId = feedbackId;
         this.cartoonId = cartoonId;
         this.userID = userID;
@@ -41,6 +52,11 @@ public class Feedback {
         this.photo_Uri = photo_Uri;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.time = time;
+    }
+
+    public void setFeedbackId(Integer feedbackId) {
+        this.feedbackId = feedbackId;
     }
 
 
