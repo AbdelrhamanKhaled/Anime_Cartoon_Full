@@ -451,8 +451,18 @@ public class InformationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (canGoBack)
+        if (canGoBack) {
+            doFinish();
+        }
         super.onBackPressed();
+    }
+
+    private void doFinish() {
+        if (isTaskRoot()) {
+            // it`s the last activity now so just start the main Activity
+            startActivity(new Intent(getBaseContext() , MainActivity.class));
+        }
+        finish();
     }
 
     @Override
@@ -460,7 +470,7 @@ public class InformationActivity extends AppCompatActivity {
         int itemId = item.getItemId();//No Action
         if (itemId == android.R.id.home) {
             if (canGoBack)
-            finish();
+                doFinish();
         }
         else if (itemId == R.id.share) {
             Config.shareApp(InformationActivity.this);

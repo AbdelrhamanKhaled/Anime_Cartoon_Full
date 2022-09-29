@@ -98,9 +98,9 @@ public class EpisodesActivity extends AppCompatActivity {
     private InterstitialAd beforeInterstitialAd = null;
     private InterstitialAd afterInterstitialAd = null;
     private boolean grid ;
-    int ASC = 1 ;
-    int DESC = 2 ;
-    int order ;
+    static int ASC = 1 ;
+    static int DESC = 2 ;
+    static int order ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,7 +333,7 @@ public class EpisodesActivity extends AppCompatActivity {
 
     private void checkServers(final int position, final Episode episode, final String episodeTitle, final String thumb,
                               final String playlistTitle, final String cartoonTitle){
-        Log.i("ab_do" , "checkServers"+ episode.getVideo());
+        //Log.i("ab_do" , "checkServers"+ episode.getVideo());
         if(episode.getVideo1().isEmpty() &&
                 episode.getVideo2().isEmpty() &&
                 episode.getVideo3().isEmpty() &&
@@ -461,6 +461,7 @@ public class EpisodesActivity extends AppCompatActivity {
         intent.putExtra("cartoonTitle", cartoonTitle);
         intent.putExtra("episodeList" , (Serializable) episodeList);
         intent.putExtra("current_pos" , position);
+        intent.putExtra("is_reversed" , order == DESC);
         startVideoPlayerActivity(position, episode, intent);
     }
 
@@ -534,62 +535,53 @@ public class EpisodesActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.favorite_menu, menu);
 
-        //Favorite Function
         this.menu = menu;
+        menu.findItem(R.id.menusearch).setVisible(false);
+        menu.findItem(R.id.menu_empty_star).setVisible(false);
+        menu.findItem(R.id.menu_filled_star).setVisible(false);
         if (getIntent().getStringExtra("title")!=null) {
             // films so remove favourite :)
-            menu.findItem(R.id.menu_empty_star).setVisible(false);
-            menu.findItem(R.id.menu_filled_star).setVisible(false);
             menu.findItem(R.id.change_order).setVisible(false);
             menu.findItem(R.id.grid_or_list).setVisible(false);
-            menu.findItem(R.id.menusearch).setVisible(true);
             menu.findItem(R.id.share).setVisible(false);
         }
-        else {
-            menu.findItem(R.id.change_order).setVisible(true);
-            menu.findItem(R.id.menusearch).setVisible(false);
-            if (sqLiteDatabaseManager.isCartoonFavorite(cartoon.getId())) {
-                menu.findItem(R.id.menu_empty_star).setVisible(false);
-                menu.findItem(R.id.menu_filled_star).setVisible(true);
-            }
-        }
         //Search Function
-        MenuItem search_item = menu.findItem(R.id.menusearch);
-        searchView = (android.widget.SearchView) search_item.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                if(!TextUtils.isEmpty(s)){
-                    searchCase = true;
-                    searchEpisode(s);
-                }else{
-                    searchCase = false;
-                    episodeList.clear();
-                    pageNumber = 1;
-                    Objects.requireNonNull(mBinding.episodessRecyclerview.getAdapter()).notifyDataSetChanged();
-                    getEpisodes();
-                }
-                hideSoftKeyboard();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                if(!TextUtils.isEmpty(s)){
-                    searchCase = true;
-                    searchEpisode(s);
-                }
-                else{
-                    searchCase = false;
-                    episodeList.clear();
-                    pageNumber = 1;
-                    Objects.requireNonNull(mBinding.episodessRecyclerview.getAdapter()).notifyDataSetChanged();
-                    getEpisodes();
-                }
-                return true;
-            }
-        });
+//        MenuItem search_item = menu.findItem(R.id.menusearch);
+//        searchView = (android.widget.SearchView) search_item.getActionView();
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String s) {
+//                if(!TextUtils.isEmpty(s)){
+//                    searchCase = true;
+//                    searchEpisode(s);
+//                }else{
+//                    searchCase = false;
+//                    episodeList.clear();
+//                    pageNumber = 1;
+//                    Objects.requireNonNull(mBinding.episodessRecyclerview.getAdapter()).notifyDataSetChanged();
+//                    getEpisodes();
+//                }
+//                hideSoftKeyboard();
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String s) {
+//                if(!TextUtils.isEmpty(s)){
+//                    searchCase = true;
+//                    searchEpisode(s);
+//                }
+//                else{
+//                    searchCase = false;
+//                    episodeList.clear();
+//                    pageNumber = 1;
+//                    Objects.requireNonNull(mBinding.episodessRecyclerview.getAdapter()).notifyDataSetChanged();
+//                    getEpisodes();
+//                }
+//                return true;
+//            }
+//        });
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -737,14 +729,14 @@ public class EpisodesActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
 
             case PERMISSIONS_REQUEST_STORAGE:
 
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, getString(R.string.error_permission_denied), Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
 
                 }
                 break;

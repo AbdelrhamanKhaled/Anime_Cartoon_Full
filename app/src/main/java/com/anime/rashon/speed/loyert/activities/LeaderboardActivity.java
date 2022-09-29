@@ -47,7 +47,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     private void initToolbar() {
         setSupportActionBar(binding.includedToolbar.toolbar);
         if (getSupportActionBar()!= null) {
-            getSupportActionBar().setTitle("أبرز المساهمين");
+            getSupportActionBar().setTitle("أبرز المستخدمين");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }

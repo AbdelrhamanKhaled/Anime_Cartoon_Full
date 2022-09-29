@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
@@ -47,6 +48,7 @@ public class LatestEpisodesFragment extends Fragment {
     private int lastAdPosition = 0;
 
     LatestEpisodesAdapter adapter;
+    boolean isOnRefresh = true;
 
     public LatestEpisodesFragment() {
 
@@ -62,14 +64,31 @@ public class LatestEpisodesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentLatestEpisodesBinding.inflate(inflater);
-
+        initSwipeRefreshLayout();
         initRecyclerview(true);
         initRetrofit();
-        if (episodeList.size() == 0)
-        getLatestEpisodes();
+        if (episodeList.size() == 0) {
+            mBinding.swipeRefreshLayout.setRefreshing(true);
+            isOnRefresh = true ;
+            getLatestEpisodes();
+        }
         else Log.i("ab_do" , "goDirect");
 
         return mBinding.getRoot();
+    }
+
+    private void initSwipeRefreshLayout(){
+        mBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mBinding.swipeRefreshLayout.setRefreshing(true);
+                if(episodeList != null) {
+                    episodeList.clear();
+                    isOnRefresh = true ;
+                }
+                getLatestEpisodes();
+            }
+        });
     }
 
     private void initRetrofit() {
@@ -123,6 +142,7 @@ public class LatestEpisodesFragment extends Fragment {
                             public void onSuccess(List<EpisodeWithInfo> retrivedEpisodeList) {
 
                                 for (int i=0; i < retrivedEpisodeList.size(); i++) {
+                                    Log.i("ab_do" , "onSuccess refresh " + retrivedEpisodeList.size());
                                     if ((i+1) % 10 == 0){
                                         Log.i("ab_doa" , "Ad"  + i);
                                         // add Ad :)
@@ -132,6 +152,8 @@ public class LatestEpisodesFragment extends Fragment {
                                 episodeList.addAll(retrivedEpisodeList);
                                 adapter.notifyDataSetChanged();
                                 mBinding.progressBarLayout.setVisibility(View.GONE);
+                                if (isOnRefresh)
+                                mBinding.swipeRefreshLayout.setRefreshing(false);
                             }
 
                             @Override

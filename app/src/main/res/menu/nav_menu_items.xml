@@ -75,7 +75,7 @@
         android:icon="@drawable/score"
         android:id="@+id/leaderboard"
         android:checkable="true"
-        android:title="أبرز المساهمين" />
+        android:title="أبرز المستخدمين" />
 
     <item
         android:icon="@drawable/down_arrow"

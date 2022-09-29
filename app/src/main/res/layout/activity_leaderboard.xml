@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +8,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".activities.FeedbacksActivity">
+
+    <ImageView
+        android:padding="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.05"
+        android:src="@drawable/trophy"/>
 
 
     <LinearLayout

@@ -19,9 +19,33 @@
             android:fitsSystemWindows="true"
             tools:context=".activities.ServersActivity">
 
-            <include
-                android:id="@+id/included_toolbar"
-                layout="@layout/layout_toolbar" />
+            <androidx.appcompat.widget.Toolbar
+                android:paddingEnd="6dp"
+                android:fitsSystemWindows="true"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/toolbar_background"
+                android:minHeight="?attr/actionBarSize"
+                app:theme="@style/ToolBarStyle"
+                android:elevation="16dp"
+                tools:showIn="@layout/activity_main" >
+                <TextView
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textDirection="rtl"
+                    android:layout_marginEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp"
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hellllo my name is"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#2E2E2E"
+                    />
+            </androidx.appcompat.widget.Toolbar>
 
 
             <LinearLayout
@@ -396,16 +420,19 @@
                 android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:paddingBottom="4dp"
                 >
 
                 <TextView
-                    android:drawablePadding="8dp"
-                    android:drawableStart="@drawable/back"
+                    android:layout_marginBottom="2dp"
+                    android:drawablePadding="12dp"
+                    android:drawableStart="@drawable/ic_baseline_arrow_circle_right_24"
                     android:id="@+id/back"
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:gravity="center_vertical"
-                    android:background="@drawable/watch_back"
+                    android:background="@color/white"
+                    android:elevation="2dp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="الحلقه السابقة" />
@@ -413,14 +440,16 @@
 
 
                 <TextView
-                    android:drawablePadding="8dp"
-                    android:drawableEnd="@drawable/next"
-                    android:layout_marginStart="42dp"
+                    android:layout_marginBottom="2dp"
+                    android:drawablePadding="12dp"
+                    android:drawableEnd="@drawable/ic_baseline_arrow_circle_left_24"
+                    android:layout_marginStart="36dp"
                     android:id="@+id/next"
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:gravity="center_vertical"
-                    android:background="@drawable/watch_back"
+                    android:elevation="2dp"
+                    android:background="@color/white"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="الحلقة التالية" />

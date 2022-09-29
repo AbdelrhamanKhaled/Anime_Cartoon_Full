@@ -12,30 +12,36 @@
         android:orientation="horizontal"
         android:layoutDirection="rtl"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        >
 
         <TextView
             tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/medal_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="62dp"
             android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:textSize="28sp"
-            android:text="#4" />
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:text="#100" />
 
         <ImageView
             android:paddingTop="6dp"
-            tools:visibility="visible"
+            android:layout_gravity="center_vertical"
+            tools:visibility="gone"
             android:visibility="gone"
             android:id="@+id/medal_imgView"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="62dp"
+            android:layout_height="40dp"
             android:src="@drawable/gold_medal" />
 
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/user_imgView"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -45,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="24dp">
+            android:layout_marginStart="16dp">
 
             <TextView
                 android:id="@+id/usernameTxtView"

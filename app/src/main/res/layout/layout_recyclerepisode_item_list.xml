@@ -35,38 +35,41 @@
 
 
         <RelativeLayout
-            android:padding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
             android:layoutDirection="rtl"
             >
 
 
             <TextView
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/seenImg"
                 android:ellipsize="end"
-                android:maxLines="2"
                 android:text="@{title}"
                 android:textColor="@color/AnimeTextColor_1"
-                tool:text="Cartoon Name" />
+                android:textDirection="rtl"
+                tool:text="الحلقة 1 " />
 
 
             <ImageView
-                android:layout_alignParentEnd="true"
                 android:id="@+id/seenImg"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/unseen"
-                android:visibility="visible"
-                android:layout_centerVertical="true"
-                />
+                android:visibility="visible" />
 
 
         </RelativeLayout>

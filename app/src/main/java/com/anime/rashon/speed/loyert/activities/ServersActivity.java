@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -163,16 +164,16 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        setSupportActionBar(mBinding.includedToolbar.toolbar);
+        setSupportActionBar(mBinding.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().setTitle(episode.getTitle());
         updateToolbarTitle();
     }
 
     private void updateToolbarTitle() {
-        String title = "الحلقة  " + (current_pos+1) ;
         if (getSupportActionBar()!=null)
-        getSupportActionBar().setTitle(title);
+        mBinding.title.setText(episode.getTitle());
     }
 
     private void getIntentData() {
@@ -188,7 +189,7 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void checkSeversAvailability() {
-        Log.i("ab_do" , "checkSeversAvailability");
+        Log.i("ab_do" , "checkSeversAvailability " + episode.getTitle());
         mBinding.progressBarLayout.setVisibility(View.GONE);
         if (episode.getVideo() == null || episode.getVideo().isEmpty()) {
             //mBinding.llServer1.setVisibility(View.GONE);
@@ -197,10 +198,22 @@ public class ServersActivity extends AppCompatActivity {
             server1 = false;
         }
 
+        else {
+            mBinding.llServer1.setEnabled(true);
+            mBinding.active1.setImageResource(R.drawable.active);
+            server1 = true;
+        }
+
         if (episode.getVideo1() == null || episode.getVideo1().isEmpty()) {
             mBinding.llServer2.setEnabled(false);
             mBinding.active2.setImageResource(R.drawable.not_active);
             server2 = false;
+        }
+
+        else {
+            mBinding.llServer2.setEnabled(true);
+            mBinding.active2.setImageResource(R.drawable.active);
+            server2 = true;
         }
 
         if (episode.getVideo2() == null || episode.getVideo2().isEmpty()) {
@@ -209,11 +222,24 @@ public class ServersActivity extends AppCompatActivity {
             server3 = false;
         }
 
+        else {
+            mBinding.llServer3.setEnabled(true);
+            mBinding.active3.setImageResource(R.drawable.active);
+            server3 = true;
+        }
+
         if (episode.getVideo3() == null || episode.getVideo3().isEmpty()) {
             mBinding.llServer4.setEnabled(false);
             mBinding.active4.setImageResource(R.drawable.not_active);
             server4 = false;
         }
+
+        else {
+            mBinding.llServer4.setEnabled(true);
+            mBinding.active4.setImageResource(R.drawable.active);
+            server4 = true;
+        }
+
 
         if (episode.getVideo4() == null || episode.getVideo4().isEmpty()) {
             mBinding.llServer5.setEnabled(false);
@@ -221,10 +247,23 @@ public class ServersActivity extends AppCompatActivity {
             server5 = false;
         }
 
+        else {
+            mBinding.llServer5.setEnabled(true);
+            mBinding.active5.setImageResource(R.drawable.active);
+            server5 = true;
+        }
+
+
         if (episode.getVideo5() == null || episode.getVideo5().isEmpty()) {
             mBinding.llServer6.setEnabled(false);
             mBinding.active6.setImageResource(R.drawable.not_active);
             server6 = false;
+        }
+
+        else {
+            mBinding.llServer6.setEnabled(true);
+            mBinding.active6.setImageResource(R.drawable.active);
+            server6 = true;
         }
     }
 
@@ -407,12 +446,12 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void checkServers() {
-        updateToolbarTitle();
         updateBackNextBtn();
         mBinding.progressBarLayout.setVisibility(View.VISIBLE);
         episode = episodeList.get(current_pos);
+        updateToolbarTitle();
         if (episode == null) return;
-        Log.i("ab_do", "checkServers" + episode.getVideo());
+        Log.i("ab_do", "checkServers : " + current_pos);
         if (
                 episode.getVideo1() == null &&
                         episode.getVideo2()== null &&
@@ -531,5 +570,11 @@ public class ServersActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         setResult(RESULT_OK);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.server_menu , menu) ;
+        return super.onCreateOptionsMenu(menu);
     }
 }

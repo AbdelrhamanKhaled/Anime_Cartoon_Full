@@ -5,8 +5,6 @@
     android:layout_gravity="center"
     android:layoutDirection="ltr"
     android:background="@drawable/dialog_back"
-    android:layout_marginStart="32dp"
-    android:layout_marginEnd="32dp"
     android:gravity="center">
 
     <LinearLayout
@@ -20,7 +18,7 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/log" />
+            android:src="@drawable/score" />
 
 
         <TextView
@@ -29,7 +27,7 @@
             android:layout_marginTop="16dp"
             android:alpha="0.7"
             android:gravity="center"
-            android:text="أبرز المساهمين في التطبيق أستمر في مشاهدة الحلقات ونافس أصدقائك الأن"
+            android:text="قائمة أبرز المستخدمين في التطبيق أستمر في مشاهدة الحلقات ونافس أصدقائك الأن !"
             android:textColor="@color/black"
             android:textSize="18sp" />
 

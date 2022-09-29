@@ -9,6 +9,11 @@
         android:orientation="vertical">
 
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:padding="8dp"
             android:id="@+id/episodes_recyclerview"
@@ -19,6 +24,7 @@
             app:spanCount="3"
             tools:listitem="@layout/layout_latest_episode_item"
             />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <FrameLayout
             android:id="@+id/progressBarLayout"
