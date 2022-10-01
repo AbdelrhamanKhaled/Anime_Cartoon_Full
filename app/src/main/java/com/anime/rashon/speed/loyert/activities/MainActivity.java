@@ -831,6 +831,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(getBaseContext() , LeaderboardActivity.class));
         }
 
+        else if (itemId == R.id.anime_time) {
+            startActivity(new Intent(getBaseContext() , EpisodeDatesActivity.class));
+        }
+
 //        else if (itemId == R.id.downloads) {
 //            startActivity(new Intent(MainActivity.this, DownloadsActivity.class));
 //        } else if (itemId == R.id.support) {

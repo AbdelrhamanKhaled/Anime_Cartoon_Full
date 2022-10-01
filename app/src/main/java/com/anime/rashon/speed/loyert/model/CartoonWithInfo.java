@@ -22,6 +22,9 @@ public class CartoonWithInfo extends Cartoon {
     @Expose
     private Integer status;
 
+    // used for episode dates activity
+    private String episodeDateTitle ;
+
     public CartoonWithInfo() {
 
     }
@@ -33,6 +36,13 @@ public class CartoonWithInfo extends Cartoon {
         this.status = status;
     }
 
+    public String getEpisodeDateTitle() {
+        return episodeDateTitle;
+    }
+
+    public void setEpisodeDateTitle(String episodeDateTitle) {
+        this.episodeDateTitle = episodeDateTitle;
+    }
 
     public String getWorld_rate() {
         return world_rate;

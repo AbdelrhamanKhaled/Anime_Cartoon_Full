@@ -84,7 +84,7 @@ public class CartoonFragment extends Fragment{
 
     public void initRecyclerview(boolean isGrid) {
         mBinding.cartoonsRecyclerview.setHasFixedSize(true);
-        adapter = new CartoonsAdapter(getActivity(), cartoonList , isGrid);
+        adapter = new CartoonsAdapter(getActivity(), cartoonList , isGrid , false);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override

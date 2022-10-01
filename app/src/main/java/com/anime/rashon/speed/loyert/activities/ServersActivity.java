@@ -13,18 +13,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.google.android.material.snackbar.Snackbar;
 import com.inside4ndroid.jresolver.Jresolver;
 import com.inside4ndroid.jresolver.Model.Jmodel;
 
@@ -624,12 +628,30 @@ public class ServersActivity extends AppCompatActivity {
             finish();
             return true ;
         }if (item.getItemId() == R.id.add_comment) {
+            LoginUtil loginUtil = new LoginUtil(this);
+            if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
             goToEpisodeCommentsActivity();
+            else
+                showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
+
             return true ;
         }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSnackMsg (String msg) {
+        Snackbar snack = Snackbar.make(mBinding.getRoot(), msg , Snackbar.LENGTH_SHORT);
+        showSnack(snack);
+    }
+
+    private void showSnack(Snackbar snack) {
+        View view = snack.getView();
+        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+        params.gravity = Gravity.CENTER;
+        view.setLayoutParams(params);
+        snack.show();
     }
 
     private void goToEpisodeCommentsActivity() {

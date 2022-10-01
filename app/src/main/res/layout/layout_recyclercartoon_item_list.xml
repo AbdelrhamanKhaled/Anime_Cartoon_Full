@@ -50,6 +50,7 @@
 
 
             <TextView
+                android:id="@+id/cartoon_title"
                 android:background="@drawable/title_background"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -57,7 +58,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="@{cartoon.title}"
                 android:textColor="@color/AnimeTextColor_1"
                 tool:text="Cartoon Name" />
 

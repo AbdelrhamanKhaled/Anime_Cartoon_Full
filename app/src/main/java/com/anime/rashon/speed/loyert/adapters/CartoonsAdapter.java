@@ -1,12 +1,11 @@
 package com.anime.rashon.speed.loyert.adapters;
 
+import static com.anime.rashon.speed.loyert.activities.MainActivity.searchCase;
+
 import android.app.Activity;
 import android.content.Intent;
-import androidx.databinding.DataBindingUtil;
-import androidx.annotation.NonNull;
-import androidx.databinding.ViewDataBinding;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.InformationActivity;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
-import com.anime.rashon.speed.loyert.activities.PlayListsActivity;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclercartoonItemBinding;
@@ -27,8 +30,6 @@ import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.anime.rashon.speed.loyert.activities.MainActivity.searchCase;
 
 public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements Filterable {
@@ -42,13 +43,14 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final int nativeAdView = 2;
 
     private boolean isGrid ;
+    private boolean isEpisodesDates ;
 
-    public CartoonsAdapter(Activity mContext, List<CartoonWithInfo> cartoonList , boolean isGrid) {
+    public CartoonsAdapter(Activity mContext, List<CartoonWithInfo> cartoonList , boolean isGrid , boolean isEpisodesDates) {
         this.mContext = mContext;
         this.cartoonList = cartoonList;
         this.cartoonListFiltered = cartoonList;
         this.isGrid = isGrid ;
-
+        this.isEpisodesDates = isEpisodesDates ;
     }
 
     @NonNull
@@ -83,12 +85,18 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             NativeAdHolder nativeAdHolder = (NativeAdHolder) holder;
             Config.loadNativeAd(mContext, nativeAdHolder.mBinding.nativeAdTemplate);
         }
-        else{
+        else {
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(mContext , R.anim.anim_itemview));
             CartoonHolder cartoonHolder = (CartoonHolder) holder;
             final CartoonWithInfo cartoon = cartoonListFiltered.get(position);
             if (isGrid) {
                 cartoonHolder.gridBinding.setCartoon(cartoon);
+                if (isEpisodesDates) {
+                    cartoonHolder.gridBinding.cartoonTitle.setText(cartoon.getEpisodeDateTitle());
+                }
+                else {
+                    cartoonHolder.gridBinding.cartoonTitle.setText(cartoon.getTitle());
+                }
                 switch (cartoon.getStatus()) {
                     case 1:
                         cartoonHolder.gridBinding.statues.setText("مكتمل");
@@ -103,6 +111,12 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             else {
                 cartoonHolder.listBinding.setCartoon(cartoon);
+                if (isEpisodesDates) {
+                    cartoonHolder.listBinding.cartoonTitle.setText(cartoon.getEpisodeDateTitle());
+                }
+                else {
+                    cartoonHolder.listBinding.cartoonTitle.setText(cartoon.getTitle());
+                }
                 switch (cartoon.getStatus()) {
                     case 1:
                         cartoonHolder.listBinding.statues.setText("مكتمل");
@@ -126,6 +140,7 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         if(position == cartoonList.size() - 1 && !searchCase){
+            if (!isEpisodesDates)
             ((MainActivity)mContext).getNewCartoons();
         }
     }

@@ -182,6 +182,7 @@ public class LatestEpisodesFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        if (MainActivity.search_item!=null)
         MainActivity.search_item.setVisible(false);
     }
 }

@@ -38,4 +38,5 @@
     <color name="AnimeTextColor" >@color/gray</color>
     <color name="AnimeTextColor_2" >@color/gray</color>
     <color name="AnimeTextColor_1" >#6C6C6C</color>
+    <color name="episode_date_title_color">#000000</color>
 </resources>

@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_comment"
-        android:title="إضافة تعليق"
-        android:icon="@drawable/ic_baseline_comment_24"
+        android:id="@+id/grid_or_list"
+        android:title="قائمة"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24"
         app:showAsAction="always"
         />
 </menu>

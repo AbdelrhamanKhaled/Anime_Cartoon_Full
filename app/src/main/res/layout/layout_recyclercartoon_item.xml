@@ -40,6 +40,7 @@
 
 
         <TextView
+            android:id="@+id/cartoon_title"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingTop="2dp"
@@ -50,7 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:gravity="center"
-            android:text="@{cartoon.title}"
             android:textColor="@color/AnimeTextColor_1"
             tool:text="Cartoon Name" />
 

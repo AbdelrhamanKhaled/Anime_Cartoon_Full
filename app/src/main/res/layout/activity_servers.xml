@@ -424,6 +424,9 @@
                 >
 
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_marginBottom="2dp"
                     android:drawablePadding="12dp"
                     android:drawableStart="@drawable/ic_baseline_arrow_circle_right_24"
@@ -440,6 +443,9 @@
 
 
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_marginBottom="2dp"
                     android:drawablePadding="12dp"
                     android:drawableEnd="@drawable/ic_baseline_arrow_circle_left_24"
