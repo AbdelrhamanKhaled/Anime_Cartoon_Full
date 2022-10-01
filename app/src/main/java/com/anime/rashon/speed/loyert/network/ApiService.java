@@ -4,6 +4,8 @@ import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.model.EpisodeComment;
+import com.anime.rashon.speed.loyert.model.EpisodeDate;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.Information;
@@ -15,7 +17,6 @@ import com.anime.rashon.speed.loyert.model.UserResponse;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -99,33 +100,30 @@ public interface ApiService {
 
 
 
-    @GET("episode/dates.php")
-    Single<List<EpisodeDate>> episodeDates();
-
     @FormUrlEncoded
-    @POST ("Accses/LoginWithEmail.php")
-    Single<UserResponse> loginWithEmail (
-            @Field("email") String email ,
+    @POST("Accses/LoginWithEmail.php")
+    Single<UserResponse> loginWithEmail(
+            @Field("email") String email,
             @Field("password") String password
     );
 
 
     @FormUrlEncoded
-    @POST ("Accses/RegisterWithEmail.php")
-    Single<UserResponse> createNewUserWithEmail (
-            @Field("email") String email ,
-            @Field("password") String password ,
-            @Field("name") String name ,
+    @POST("Accses/RegisterWithEmail.php")
+    Single<UserResponse> createNewUserWithEmail(
+            @Field("email") String email,
+            @Field("password") String password,
+            @Field("name") String name,
             @Field("photo_Uri") String photoUrl
     );
 
 
     @FormUrlEncoded
-    @POST ("Accses/RegisterWithToken.php")
-    Single<UserResponse> createNewUserWithToken (
-            @Field("token") String token ,
-            @Field("email") String email ,
-            @Field("name") String name ,
+    @POST("Accses/RegisterWithToken.php")
+    Single<UserResponse> createNewUserWithToken(
+            @Field("token") String token,
+            @Field("email") String email,
+            @Field("name") String name,
             @Field("photo_Uri") String photo_Uri
     );
 
@@ -207,20 +205,93 @@ public interface ApiService {
             @Query("cartoon_id") int cartoonId
     );
 
+
     @GET("UserLoggedOptions/getUserLikesOnCartoonFeedback.php")
     Single<List<Integer>> getFeedbacksLikesIds(
-            @Query("user_id") int userID ,
+            @Query("user_id") int userID,
             @Query("cartoon_id") int cartoonId
     );
 
 
     @GET("UserLoggedOptions/getUserDislikesOnCartoonFeedback.php")
     Single<List<Integer>> getFeedbacksDisLikesIds(
-            @Query("user_id") int userID ,
+            @Query("user_id") int userID,
             @Query("cartoon_id") int cartoonId
     );
 
+    //#--------------------------------------------------------------#//
 
+    @GET("UserLoggedOptions/getEpisodesCommentsDesc.php")
+    Single<List<EpisodeComment>> getCommentsDesc(
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/getEpisodesCommentsAsc.php")
+    Single<List<EpisodeComment>> getCommentsAsc(
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/getUserLikesOnEpisodeComments.php")
+    Single<List<Integer>> getCommentsLikesIds(
+            @Query("user_id") int userID,
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/getUserDislikesOnEpisodeComments.php")
+    Single<List<Integer>> getCommentsDisLikesIds(
+            @Query("user_id") int userID,
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/addEpisodeComment.php")
+    Single<UserResponse> addEpisodeComment(
+            @Query("user_id") int userId,
+            @Query("episode_id") int episode_id,
+            @Query("comment") String comment,
+            @Query("name") String name,
+            @Query("photo_Uri") String photo_Uri,
+            @Query("time") String time
+    );
+
+    @GET("UserLoggedOptions/likeEpisodeComment.php")
+    Single<UserResponse> likeEpisodeComment(
+            @Query("user_id") int userId,
+            @Query("comment_id") int comment_id
+    );
+
+    @GET("UserLoggedOptions/dislikeEpisodeComment.php")
+    Single<UserResponse> dislikeEpisodeComment(
+            @Query("user_id") int userId,
+            @Query("comment_id") int comment_id
+    );
+
+    @GET("UserLoggedOptions/removeCommentLike.php")
+    Single<UserResponse> removeCommentLike(
+            @Query("user_id") int userId,
+            @Query("comment_id") int comment_id
+    );
+
+    @GET("UserLoggedOptions/removeEpisodeComment.php")
+    Single<UserResponse> removeEpisodeComment(
+            @Query("comment_id") int comment_id
+    );
+
+    @GET("UserLoggedOptions/removeCommentDislike.php")
+    Single<UserResponse> removeCommentDislike(
+            @Query("user_id") int userId,
+            @Query("comment_id") int comment_id
+    );
+
+
+    @GET("UserLoggedOptions/makeCommentReport.php")
+    Single<UserResponse> makeCommentReport(
+            @Query("user_id") int userId,
+            @Query("comment_id") int comment_id,
+            @Query("description") String description
+    );
+
+
+    //#--------------------------------------------------------------#//
 
     @GET("UserLoggedOptions/insertSeenEpisode.php")
     Single<UserResponse> insertSeenEpisode(
@@ -275,14 +346,14 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST ("Uploaded_Images/uploadImg.php")
+    @POST("Uploaded_Images/uploadImg.php")
     Single<String> saveUserImg(
             @Field("image") String base64Img,
             @Field("user_id") int id);
 
 
     @FormUrlEncoded
-    @POST ("Uploaded_Images/changeUserImg.php")
+    @POST("Uploaded_Images/changeUserImg.php")
     Single<String> changeUserImg(
             @Field("image") String base64Img,
             @Field("user_id") int id,
@@ -306,5 +377,15 @@ public interface ApiService {
 
     @GET("Leaderboard/getLeaderboard.php")
     Single<List<User>> getLeaderboard();
+
+    @GET("Accses/makeServerReport.php")
+    Single<UserResponse> sendServerReport(
+            @Query("episode_id") int episode_id,
+            @Query("episode_name") String episode_name,
+            @Query("playlist_name") String playlist_name,
+            @Query("cartoon_name") String cartoon_name);
+
+    @GET("episode_dates_with_info/read.php")
+    Single<List<EpisodeDate>> getEpisodeDates();
 
 }

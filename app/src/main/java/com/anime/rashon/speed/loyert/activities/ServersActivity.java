@@ -18,8 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -48,11 +50,13 @@ public class ServersActivity extends AppCompatActivity {
     int Action = -1;
     int current_pos = -1;
     List<Episode> episodeList;
+    ServerReportDialog reportDialog ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_servers);
+        reportDialog = new ServerReportDialog(this);
         getIntentData();
         initToolbar();
         checkSeversAvailability();
@@ -194,6 +198,8 @@ public class ServersActivity extends AppCompatActivity {
         if (episode.getVideo() == null || episode.getVideo().isEmpty()) {
             //mBinding.llServer1.setVisibility(View.GONE);
             mBinding.llServer1.setEnabled(false);
+            mBinding.play1.setEnabled(false);
+            mBinding.download1.setEnabled(false);
             mBinding.active1.setImageResource(R.drawable.not_active);
             server1 = false;
         }
@@ -201,24 +207,32 @@ public class ServersActivity extends AppCompatActivity {
         else {
             mBinding.llServer1.setEnabled(true);
             mBinding.active1.setImageResource(R.drawable.active);
+            mBinding.play1.setEnabled(true);
+            mBinding.download1.setEnabled(true);
             server1 = true;
         }
 
         if (episode.getVideo1() == null || episode.getVideo1().isEmpty()) {
             mBinding.llServer2.setEnabled(false);
             mBinding.active2.setImageResource(R.drawable.not_active);
+            mBinding.play2.setEnabled(false);
+            mBinding.download2.setEnabled(false);
             server2 = false;
         }
 
         else {
             mBinding.llServer2.setEnabled(true);
             mBinding.active2.setImageResource(R.drawable.active);
+            mBinding.play2.setEnabled(true);
+            mBinding.download2.setEnabled(true);
             server2 = true;
         }
 
         if (episode.getVideo2() == null || episode.getVideo2().isEmpty()) {
             mBinding.llServer3.setEnabled(false);
             mBinding.active3.setImageResource(R.drawable.not_active);
+            mBinding.play3.setEnabled(false);
+            mBinding.download3.setEnabled(false);
             server3 = false;
         }
 
@@ -226,11 +240,15 @@ public class ServersActivity extends AppCompatActivity {
             mBinding.llServer3.setEnabled(true);
             mBinding.active3.setImageResource(R.drawable.active);
             server3 = true;
+            mBinding.play3.setEnabled(true);
+            mBinding.download3.setEnabled(true);
         }
 
         if (episode.getVideo3() == null || episode.getVideo3().isEmpty()) {
             mBinding.llServer4.setEnabled(false);
             mBinding.active4.setImageResource(R.drawable.not_active);
+            mBinding.play4.setEnabled(false);
+            mBinding.download4.setEnabled(false);
             server4 = false;
         }
 
@@ -238,12 +256,16 @@ public class ServersActivity extends AppCompatActivity {
             mBinding.llServer4.setEnabled(true);
             mBinding.active4.setImageResource(R.drawable.active);
             server4 = true;
+            mBinding.play4.setEnabled(true);
+            mBinding.download4.setEnabled(true);
         }
 
 
         if (episode.getVideo4() == null || episode.getVideo4().isEmpty()) {
             mBinding.llServer5.setEnabled(false);
             mBinding.active5.setImageResource(R.drawable.not_active);
+            mBinding.play5.setEnabled(false);
+            mBinding.download5.setEnabled(false);
             server5 = false;
         }
 
@@ -251,19 +273,37 @@ public class ServersActivity extends AppCompatActivity {
             mBinding.llServer5.setEnabled(true);
             mBinding.active5.setImageResource(R.drawable.active);
             server5 = true;
+            mBinding.play5.setEnabled(true);
+            mBinding.download5.setEnabled(true);
         }
 
 
         if (episode.getVideo5() == null || episode.getVideo5().isEmpty()) {
             mBinding.llServer6.setEnabled(false);
             mBinding.active6.setImageResource(R.drawable.not_active);
+            mBinding.play6.setEnabled(false);
+            mBinding.download6.setEnabled(false);
             server6 = false;
         }
 
         else {
             mBinding.llServer6.setEnabled(true);
             mBinding.active6.setImageResource(R.drawable.active);
+            mBinding.play6.setEnabled(true);
+            mBinding.download6.setEnabled(true);
             server6 = true;
+        }
+        checkIfAllServerIsDisabled();
+    }
+
+    private void checkIfAllServerIsDisabled() {
+        // display dialog to report :
+        if (!server1&&!server2&&!server3&&!server4&&!server5&&!server6) {
+            reportDialog.setEpisode_id(episode.getId());
+            reportDialog.setEpisode_name(episode.getTitle());
+            reportDialog.setPlaylist_name(getIntent().getStringExtra("playlistTitle"));
+            reportDialog.setCartoon_name(getIntent().getStringExtra("cartoonTitle"));
+            reportDialog.showDialog();
         }
     }
 
@@ -324,7 +364,8 @@ public class ServersActivity extends AppCompatActivity {
         episode.setError(false);
         if (!isNetworkConnected(ServersActivity.this)) {
             Toast.makeText(ServersActivity.this, "من فضلك تأكد من اتصالك بالانترنت", Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        else {
             //Check if needs xgetter
             if (needsXGetter == 1) { //Needs extractions
                 Log.i("ab_do", "needsXGetter");
@@ -372,7 +413,7 @@ public class ServersActivity extends AppCompatActivity {
                         //Error
                         episode.setError(true);
                         Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
-                        updateServerStatues(serverNumber);
+                        turnOffServer(serverNumber);
                     }
                 });
 
@@ -385,45 +426,64 @@ public class ServersActivity extends AppCompatActivity {
         }
     }
 
-    private void updateServerStatues(int serverNumber) {
+    private void turnOffServer(int serverNumber) {
         switch (serverNumber) {
             case 1:
                 mBinding.active1.setImageResource(R.drawable.not_active);
+                server1 = false;
+                mBinding.play1.setEnabled(false);
+                mBinding.download1.setEnabled(false);
                 break;
             case 2:
                 mBinding.active2.setImageResource(R.drawable.not_active);
+                server2 = false;
+                mBinding.play2.setEnabled(false);
+                mBinding.download2.setEnabled(false);
                 break;
             case 3:
                 mBinding.active3.setImageResource(R.drawable.not_active);
+                server3 = false;
+                mBinding.play3.setEnabled(false);
+                mBinding.download3.setEnabled(false);
                 break;
             case 4:
                 mBinding.active4.setImageResource(R.drawable.not_active);
+                server4 = false;
+                mBinding.play4.setEnabled(false);
+                mBinding.download4.setEnabled(false);
                 break;
             case 5:
                 mBinding.active5.setImageResource(R.drawable.not_active);
+                server5 = false;
+                mBinding.play5.setEnabled(false);
+                mBinding.download5.setEnabled(false);
                 break;
             case 6:
                 mBinding.active6.setImageResource(R.drawable.not_active);
+                server6 = false;
+                mBinding.play6.setEnabled(false);
+                mBinding.download6.setEnabled(false);
                 break;
         }
+        checkIfAllServerIsDisabled();
     }
 
     private void handleAction(int serverNumber, String url, int Action) {
 
         if (episode.isError()) {
-            updateServerStatues(serverNumber);
+            turnOffServer(serverNumber);
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/")) {
-            updateServerStatues(serverNumber);
+            turnOffServer(serverNumber);
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/")) {
-            updateServerStatues(serverNumber);
+            turnOffServer(serverNumber);
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
@@ -560,10 +620,22 @@ public class ServersActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == android.R.id.home)
+        if (item.getItemId() == android.R.id.home) {
             finish();
+            return true ;
+        }if (item.getItemId() == R.id.add_comment) {
+            goToEpisodeCommentsActivity();
+            return true ;
+        }
+
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void goToEpisodeCommentsActivity() {
+        Intent intent = new Intent(this , EpisodeCommentsActivity.class);
+        intent.putExtra(Constants.EPISODE_ID , episode.getId());
+        startActivity(intent);
     }
 
     @Override

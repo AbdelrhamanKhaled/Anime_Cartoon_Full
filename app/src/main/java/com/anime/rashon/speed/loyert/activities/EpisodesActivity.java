@@ -334,19 +334,21 @@ public class EpisodesActivity extends AppCompatActivity {
     private void checkServers(final int position, final Episode episode, final String episodeTitle, final String thumb,
                               final String playlistTitle, final String cartoonTitle){
         //Log.i("ab_do" , "checkServers"+ episode.getVideo());
-        if(episode.getVideo1().isEmpty() &&
-                episode.getVideo2().isEmpty() &&
-                episode.getVideo3().isEmpty() &&
-                episode.getVideo4().isEmpty())
-        {
-
-//            startVideoPlayer(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
-//            Config.optionsDialog(this, episode.getVideo(), episode, playlistTitle, cartoonTitle);
-            checkjResolver(episode.getVideo(), episode, playlistTitle, cartoonTitle);
-        }
-        else  {
+//        if(episode.getVideo1().isEmpty() &&
+//                episode.getVideo2().isEmpty() &&
+//                episode.getVideo3().isEmpty() &&
+//                episode.getVideo4().isEmpty() &&
+//                episode.getVideo5().isEmpty()
+//        )
+//        {
+//
+////            startVideoPlayer(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
+////            Config.optionsDialog(this, episode.getVideo(), episode, playlistTitle, cartoonTitle);
+//            checkjResolver(episode.getVideo(), episode, playlistTitle, cartoonTitle);
+//        }
+//        else  {
             openServersActivity(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
-        }
+//        }
     }
 
     private void checkjResolver(String url, Episode episode,
