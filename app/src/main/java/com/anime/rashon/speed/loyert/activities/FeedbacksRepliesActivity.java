@@ -1,5 +1,10 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,17 +14,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
-import com.anime.rashon.speed.loyert.adapters.EpisodeCommentsAdapter;
-import com.anime.rashon.speed.loyert.databinding.ActivityEpisodeCommentsBinding;
-import com.anime.rashon.speed.loyert.model.EpisodeComment;
+import com.anime.rashon.speed.loyert.adapters.CartoonFeedbacksAdapter;
+import com.anime.rashon.speed.loyert.databinding.ActivityFeedbacksRepliesBinding;
+import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -33,26 +34,25 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class EpisodeCommentsActivity extends AppCompatActivity implements ReportDialog.onReportClickListener {
-    int user_id, episode_id;
+public class FeedbacksRepliesActivity extends AppCompatActivity implements ReportDialog.onReportClickListener , CartoonFeedbacksAdapter.OnMentionUserClicked {
+    public static int user_id, cartoon_id , feedback_id;
     CompositeDisposable disposable;
     ApiService apiService;
-    ActivityEpisodeCommentsBinding binding;
-    List<EpisodeComment> loaded_comments = new ArrayList<>();
-    List<Integer> commentsLikesIDs = new ArrayList<>();
-    List<Integer> commentsDisLikesIDs = new ArrayList<>();
+    ActivityFeedbacksRepliesBinding binding;
+    List<Feedback> loaded_feedbacks = new ArrayList<>();
+    List<Integer> feedbackLikesIDs = new ArrayList<>();
+    List<Integer> feedbackDisLikesIDs = new ArrayList<>();
     LoginUtil loginUtil ;
-    EpisodeCommentsAdapter commentsAdapter ;
+    CartoonFeedbacksAdapter feedbacksAdapter ;
     private boolean isRefresh = false;
     boolean desc = true ;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityEpisodeCommentsBinding.inflate(getLayoutInflater());
+        binding = ActivityFeedbacksRepliesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();
-        loadComments();
+        loadReplies();
     }
 
     private void init() {
@@ -61,20 +61,21 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         user_id = loginUtil.getCurrentUser().getId();
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
-        episode_id = getIntent().getIntExtra(Constants.EPISODE_ID, -1);
+        cartoon_id = getIntent().getIntExtra(Constants.CARTOON_ID, -1);
+        feedback_id = getIntent().getIntExtra(Constants.FEEDBACK_ID, -1);
         initToolbar();
-        commentsAdapter = new EpisodeCommentsAdapter(this , user_id , apiService , disposable , false);
-        binding.recycleView.setAdapter(commentsAdapter);
+        feedbacksAdapter = new CartoonFeedbacksAdapter(this , user_id , apiService , disposable , true);
+        binding.recycleView.setAdapter(feedbacksAdapter);
         binding.recycleView.setItemAnimator(null);
         binding.sendFeedbackImgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String comment = binding.commentEditText.getText().toString();
-                if (comment.trim().isEmpty()) {
+                String feedback = binding.feedbackEditText.getText().toString();
+                if (feedback.trim().isEmpty()) {
                     showSnackMsg("يرجي ملئ الحقل أولا !");
                 }
                 else {
-                    addComment(comment);
+                    addFeedbackReply(feedback);
                 }
             }
         });
@@ -87,17 +88,17 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
             public void onRefresh() {
                 binding.swipeRefreshLayout.setRefreshing(true);
                 isRefresh = true;
-                loadComments();
+                loadReplies();
             }
         });
     }
 
-    private void addComment(String comment) {
+    private void addFeedbackReply(String feedback) {
         binding.progressBarLayout.setVisibility(View.VISIBLE);
         // add api call to save the feedback :)
         disposable.add(
                 apiService
-                        .addEpisodeComment(user_id , episode_id, comment ,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , String.valueOf(System.currentTimeMillis()))
+                        .addCartoonFeedbackReply(feedback_id , user_id , cartoon_id , feedback,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , String.valueOf(System.currentTimeMillis()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
@@ -106,13 +107,13 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                                 Log.i("ab_do" , "onSuccess addedFeedback");
                                 if (!response.isError()) {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    binding.commentEditText.setText("");
-                                    binding.commentEditText.clearFocus();
-                                    addNewCommentToAdapter(response.getReturned_id() , comment);
+                                    binding.feedbackEditText.setText("");
+                                    binding.feedbackEditText.clearFocus();
+                                    addNewFeedbackToAdapter(response.getReturned_id() , feedback);
                                 }
                                 else {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    showSnackMsg("حدث خطا ما أثناء إضافة التعليق الخاص بك");
+                                    showSnackMsg("حدث خطا ما أثناء إضافة الرد الخاصة بك");
                                 }
                             }
 
@@ -120,16 +121,16 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                             public void onError(Throwable e) {
                                 Log.i("ab_do" , "onError addedFeedback " + e.getMessage());
                                 binding.progressBarLayout.setVisibility(View.GONE);
-                                showSnackMsg("حدث خطا ما أثناء إضافة التعليق الخاص بك");
+                                showSnackMsg("حدث خطا ما أثناء إضافة الرد الخاص بك");
                             }
                         })
         );
     }
 
-    private void addNewCommentToAdapter(int returned_id, String comment) {
-        EpisodeComment episodeComment = new EpisodeComment(returned_id , episode_id, user_id , comment , loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , 0 , 0 , String.valueOf(System.currentTimeMillis()));
-        int pos = desc ? 0 : loaded_comments.size() ;
-        commentsAdapter.addComment(pos , episodeComment);
+    private void addNewFeedbackToAdapter(int returned_id, String feedback) {
+        Feedback _feedback = new Feedback(returned_id , cartoon_id , user_id , feedback , loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , 0 , 0 , String.valueOf(System.currentTimeMillis()));
+        int pos = desc ? 0 : loaded_feedbacks.size() ;
+        feedbacksAdapter.addFeedback(pos , _feedback);
     }
 
     private void showSnackMsg (String s) {
@@ -147,22 +148,22 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
 
     private void initToolbar() {
         setSupportActionBar(binding.includedToolbar.toolbar);
-        getSupportActionBar().setTitle("التعليقات");
+        getSupportActionBar().setTitle("الردود");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void loadComments() {
+    private void loadReplies() {
         if (desc) {
             disposable.add(
                     apiService
-                            .getCommentsDesc(episode_id)
+                            .getFeedbacksRepliesDesc(feedback_id)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableSingleObserver<List<EpisodeComment>>() {
+                            .subscribeWith(new DisposableSingleObserver<List<Feedback>>() {
                                 @Override
-                                public void onSuccess(List<EpisodeComment> episodeComments) {
-                                    loaded_comments.clear();
-                                    loaded_comments = episodeComments;
+                                public void onSuccess(List<Feedback> feedbacks) {
+                                    loaded_feedbacks.clear();
+                                    loaded_feedbacks = feedbacks;
                                     loadFeedbackLikesIDS();
                                 }
 
@@ -170,7 +171,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                                 public void onError(Throwable e) {
                                     Log.i("ab_do" , "onError " + e.getMessage());
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(FeedbacksRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                                 }
                             })
             );
@@ -178,21 +179,21 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         else {
             disposable.add(
                     apiService
-                            .getCommentsAsc(episode_id)
+                            .getFeedbacksRepliesAsc(feedback_id)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableSingleObserver<List<EpisodeComment>>() {
+                            .subscribeWith(new DisposableSingleObserver<List<Feedback>>() {
                                 @Override
-                                public void onSuccess(List<EpisodeComment> episodeComments) {
-                                    loaded_comments.clear();
-                                    loaded_comments = episodeComments;
+                                public void onSuccess(List<Feedback> feedbacks) {
+                                    loaded_feedbacks.clear();
+                                    loaded_feedbacks = feedbacks;
                                     loadFeedbackLikesIDS();
                                 }
 
                                 @Override
                                 public void onError(Throwable e) {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(FeedbacksRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                                 }
                             })
             );
@@ -203,20 +204,20 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     private void loadFeedbackLikesIDS() {
         disposable.add(
                 apiService
-                        .getCommentsLikesIds(user_id, episode_id)
+                        .getFeedbacksLikesIds(user_id, cartoon_id)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
                             @Override
                             public void onSuccess(List<Integer> ids) {
-                                commentsLikesIDs = ids;
+                                feedbackLikesIDs = ids;
                                 loadFeedbackDisLikesIDS();
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 binding.progressBarLayout.setVisibility(View.GONE);
-                                Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(FeedbacksRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -225,13 +226,13 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     private void loadFeedbackDisLikesIDS() {
         disposable.add(
                 apiService
-                        .getCommentsDisLikesIds(user_id, episode_id)
+                        .getFeedbacksDisLikesIds(user_id, cartoon_id)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<Integer>>() {
                             @Override
                             public void onSuccess(List<Integer> ids) {
-                                commentsDisLikesIDs = ids;
+                                feedbackDisLikesIDs = ids;
                                 binding.progressBarLayout.setVisibility(View.GONE);
                                 if (isRefresh) {
                                     binding.swipeRefreshLayout.setRefreshing(false);
@@ -243,7 +244,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                             @Override
                             public void onError(Throwable e) {
                                 binding.progressBarLayout.setVisibility(View.GONE);
-                                Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(FeedbacksRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -251,21 +252,22 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
 
     private void updateAdapter() {
         Log.i("ab_do" , "updateAdapter");
-        commentsAdapter.setCommentsLikesIDs(commentsLikesIDs);
-        commentsAdapter.setCommentsDisLikesIDs(commentsDisLikesIDs);
-        commentsAdapter.submitList(loaded_comments);
+        feedbacksAdapter.setFeedbackLikesIDs(feedbackLikesIDs);
+        feedbacksAdapter.setFeedbackDisLikesIDs(feedbackDisLikesIDs);
+        feedbacksAdapter.submitList(loaded_feedbacks);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            startActivity(new Intent(getBaseContext() , FeedbacksActivity.class).putExtra(Constants.CARTOON_ID , cartoon_id));
             finish();
             return true;
         }
         else if (item.getItemId() == R.id.change_order) {
             desc = !desc ;
             binding.progressBarLayout.setVisibility(View.VISIBLE);
-            loadComments();
+            loadReplies();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -273,11 +275,11 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
 
 
 
-    private void sendReport(int user_id , int comment_id, String description) {
-        Log.i("ab_do" , "id = " + comment_id + " " + "description = " + description);
+    private void sendReport(int user_id , int feedback_id, String description) {
+        Log.i("ab_do" , "id = " + feedback_id + " " + "description = " + description);
         disposable.add(
                 apiService
-                        .makeCommentReport(user_id , comment_id , description)
+                        .makeFeedbackReport(user_id , feedback_id , description)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
@@ -302,9 +304,9 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     }
 
     @Override
-    public void onReportClicked(String description, int comment_id , int user_id) {
+    public void onReportClicked(String description, int feedback_id , int user_id) {
         binding.progressBarLayout.setVisibility(View.VISIBLE);
-        sendReport(user_id , comment_id , description);
+        sendReport(user_id , feedback_id , description);
     }
 
     @Override
@@ -313,5 +315,17 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onClick(String username) {
+        binding.feedbackEditText.requestFocus();
+        binding.feedbackEditText.getText().clear();
+        binding.feedbackEditText.setText("@" + username + " ");
+    }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getBaseContext() , FeedbacksActivity.class).putExtra(Constants.CARTOON_ID , cartoon_id));
+        finish();
+        super.onBackPressed();
+    }
 }

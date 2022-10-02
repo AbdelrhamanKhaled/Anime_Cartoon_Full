@@ -29,6 +29,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CommentsRepliesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FeedbacksRepliesActivity"
+            android:exported="false" />
+        <activity
             android:name=".EpisodeDatesActivity"
             android:exported="false" />
         <activity
@@ -123,6 +129,8 @@
         <activity android:name=".activities.LeaderboardActivity" />
         <activity android:name=".activities.EpisodeCommentsActivity" />
         <activity android:name=".activities.EpisodeDatesActivity" />
+        <activity android:name=".activities.FeedbacksRepliesActivity" />
+        <activity android:name=".activities.CommentsRepliesActivity" />
     </application>
 
 </manifest>

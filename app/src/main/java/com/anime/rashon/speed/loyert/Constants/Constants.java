@@ -8,4 +8,6 @@ public interface Constants {
     int INCORRECT_PASSWORD =  205 ;
     String CARTOON_ID = "cartoon_id";
     String EPISODE_ID ="episode_id" ;
+    String FEEDBACK_ID = "feedback_id";
+    String COMMENT_ID = "comment_id";
 }

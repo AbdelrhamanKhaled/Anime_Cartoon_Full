@@ -2,6 +2,7 @@ package com.anime.rashon.speed.loyert.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.activities.FeedbacksActivity;
+import com.anime.rashon.speed.loyert.activities.FeedbacksRepliesActivity;
 import com.anime.rashon.speed.loyert.databinding.CartoonFeedbackItemviewBinding;
 import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.UserResponse;
@@ -40,15 +43,20 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
     List<Feedback> feedbacks = new ArrayList<>();
     private List<Integer> feedbackLikesIDs = new ArrayList<>();
     private List<Integer> feedbackDisLikesIDs = new ArrayList<>();
-    Context context;
+    Activity context;
     ReportDialog reportDialog;
+    boolean isReply;
+    OnMentionUserClicked onMentionUserClicked ;
 
-    public CartoonFeedbacksAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable) {
+    public CartoonFeedbacksAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable , boolean isReply) {
         this.context = context;
         this.apiService = apiService;
         this.disposable = disposable;
         this.user_id = user_id;
         reportDialog = new ReportDialog(context);
+        this.isReply = isReply ;
+        if (isReply)
+        this.onMentionUserClicked = (CartoonFeedbacksAdapter.OnMentionUserClicked) context;
     }
 
     @NonNull
@@ -92,6 +100,15 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
             binding.usernameTxtView.setText(feedback.getUsername());
             binding.likesTxtView.setText(String.valueOf(feedback.getLikes()));
             binding.dislikesTxtView.setText(String.valueOf(feedback.getDislikes()));
+            if (!isReply) {
+                binding.replyTxtView.setText(String.valueOf(feedback.getNum_of_replies()));
+                binding.replyTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0 , 0 , R.drawable.ic_baseline_article_24 , 0);
+            }
+            else {
+                binding.replyTxtView.setText("");
+                binding.replyTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0 , 0 , R.drawable.ic_baseline_reply_24 , 0);
+
+            }
             binding.feedbackTxtView.setText(feedback.getFeedback());
             Glide.with(context)
                     .load(feedback.getPhoto_Uri())
@@ -109,12 +126,11 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
 
             if(feedback.getUserID() == user_id) {
                 // this feedback is belong to the user so hide report and show delete
-                binding.deleteImgView.setVisibility(View.VISIBLE);
-                binding.reportImgView.setVisibility(View.GONE);
+                binding.deleteORReportImgView.setImageResource(R.drawable.ic_baseline_delete_24);
             }
             else {
-                binding.deleteImgView.setVisibility(View.GONE);
-                binding.reportImgView.setVisibility(View.VISIBLE);
+                binding.deleteORReportImgView.setImageResource(R.drawable.ic_baseline_report_24);
+
             }
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
             String ago = prettyTime.format(new Date(Long.parseLong(feedback.getTime())));
@@ -126,6 +142,24 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
         }
 
         private void setListeners(Feedback feedback , int pos) {
+
+            binding.replyTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isReply) {
+                        // mention :
+                        onMentionUserClicked.onClick(feedback.getUsername());
+                    }
+                    else {
+                        // open reply activity
+                        Intent intent = new Intent(context , FeedbacksRepliesActivity.class);
+                        intent.putExtra(Constants.FEEDBACK_ID , feedback.getFeedbackId());
+                        intent.putExtra(Constants.CARTOON_ID , feedback.getCartoonId());
+                        context.startActivity(intent);
+                        context.finish();
+                    }
+                }
+            });
 
             binding.likesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -364,48 +398,78 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
                 }
             });
 
-            binding.reportImgView.setOnClickListener(new View.OnClickListener() {
+            binding.deleteORReportImgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    reportDialog.setFeedback_id(feedback.getFeedbackId());
-                    reportDialog.setUser_id(feedback.getUserID());
-                    reportDialog.showDialog();
-                }
-            });
-
-            binding.deleteImgView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // delete feedback
-                    feedbacks.remove(feedback);
-                    notifyItemChanged(pos);
-                    // add api call to remove like :
-                    disposable.add(
-                            apiService
-                                    .removeFeedback(feedback.getFeedbackId())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeWith(new DisposableSingleObserver<UserResponse>() {
-                                        @Override
-                                        public void onSuccess(UserResponse response) {
-                                            if (!response.isError()) {
-                                                Log.i("ab_do", "onSuccess remove feedback");
-                                                // now remove like from list
-                                            } else {
-                                                Log.i("ab_do", "error when remove feedback");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Log.i("ab_do", "error when remove feedback");
-                                        }
-                                    })
-                    );
+                    if(feedback.getUserID() == user_id) {
+                          deleteFeedback(feedback , pos);
+                    }
+                    else {
+                        makeReport(feedback);
+                    }
                 }
             });
         }
 
+    }
+
+    private void makeReport(Feedback feedback) {
+        reportDialog.setFeedback_id(feedback.getFeedbackId());
+        reportDialog.setUser_id(feedback.getUserID());
+        reportDialog.showDialog();
+    }
+
+    private void deleteFeedback(Feedback feedback, int pos) {
+        // delete feedback
+        feedbacks.remove(feedback);
+        notifyItemRemoved(pos);
+        // add api call to remove like :
+        disposable.add(
+                apiService
+                        .removeFeedback(feedback.getFeedbackId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    Log.i("ab_do", "onSuccess remove feedback");
+                                    if (isReply) {
+                                        // decrement number of replies of the parent feedback
+                                        disposable.add(
+                                                apiService
+                                                        .decrementFeedbackReplies(FeedbacksRepliesActivity.feedback_id)
+                                                        .subscribeOn(Schedulers.io())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                                                            @Override
+                                                            public void onSuccess(UserResponse response) {
+                                                                if (!response.isError()) {
+                                                                    Log.i("ab_do", "onSuccess decrement feedback replies");
+
+                                                                } else {
+                                                                    Log.i("ab_do", "error when decrement feedback replies");
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onError(Throwable e) {
+                                                                Log.i("ab_do", "error when remove feedback");
+                                                            }
+                                                        })
+                                        );
+                                    }
+                                } else {
+                                    Log.i("ab_do", "error when remove feedback");
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do", "error when remove feedback");
+                            }
+                        })
+        );
     }
 
     public void setFeedbackLikesIDs(List<Integer> feedbackLikesIDs) {
@@ -414,6 +478,10 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
 
     public void setFeedbackDisLikesIDs(List<Integer> feedbackDisLikesIDs) {
         this.feedbackDisLikesIDs = feedbackDisLikesIDs;
+    }
+
+   public interface OnMentionUserClicked {
+        void onClick (String username);
     }
 
 }

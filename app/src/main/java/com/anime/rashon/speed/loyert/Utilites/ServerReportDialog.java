@@ -35,6 +35,8 @@ public class ServerReportDialog {
 
     private void createDialog() {
         dialog.setContentView(R.layout.server_report_dialog);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         ImageView close = dialog.findViewById(R.id.close_Btn);
         Button ok = dialog.findViewById(R.id.ok_Btn);
         close.setOnClickListener(new View.OnClickListener() {

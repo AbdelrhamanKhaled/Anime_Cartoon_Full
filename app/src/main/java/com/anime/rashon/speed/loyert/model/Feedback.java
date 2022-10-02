@@ -31,6 +31,9 @@ public class Feedback {
     @SerializedName("time")
     @Expose
     private String time;
+    @SerializedName("num_of_replies")
+    @Expose
+    private int num_of_replies;
 
     public Feedback() {
     }
@@ -137,4 +140,11 @@ public class Feedback {
         dislikes-=1;
     }
 
+    public int getNum_of_replies() {
+        return num_of_replies;
+    }
+
+    public void setNum_of_replies(int num_of_replies) {
+        this.num_of_replies = num_of_replies;
+    }
 }

@@ -63,7 +63,7 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
         apiService = ApiClient.getClient(this).create(ApiService.class);
         cartoon_id = getIntent().getIntExtra(Constants.CARTOON_ID, -1);
         initToolbar();
-        feedbacksAdapter = new CartoonFeedbacksAdapter(this , user_id , apiService , disposable);
+        feedbacksAdapter = new CartoonFeedbacksAdapter(this , user_id , apiService , disposable , false);
         binding.recycleView.setAdapter(feedbacksAdapter);
         binding.recycleView.setItemAnimator(null);
         binding.sendFeedbackImgView.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +80,7 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
         });
         initSwipeRefresh();
     }
+
 
     private void initSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

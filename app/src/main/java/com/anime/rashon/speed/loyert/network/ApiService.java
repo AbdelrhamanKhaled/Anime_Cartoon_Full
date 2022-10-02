@@ -205,6 +205,16 @@ public interface ApiService {
             @Query("cartoon_id") int cartoonId
     );
 
+    @GET("UserLoggedOptions/getFeedbackRepliesASC.php")
+    Single<List<Feedback>> getFeedbacksRepliesAsc(
+            @Query("feedback_id") int feedback_id
+    );
+
+    @GET("UserLoggedOptions/getFeedbackRepliesDesc.php")
+    Single<List<Feedback>> getFeedbacksRepliesDesc(
+            @Query("feedback_id") int feedback_id
+    );
+
 
     @GET("UserLoggedOptions/getUserLikesOnCartoonFeedback.php")
     Single<List<Integer>> getFeedbacksLikesIds(
@@ -231,6 +241,16 @@ public interface ApiService {
             @Query("episode_id") int episodeId
     );
 
+    @GET("UserLoggedOptions/getAllCommentsRepliesDesc.php")
+    Single<List<EpisodeComment>> getCommentsRepliesDesc(
+            @Query("comment_id") int comment_id
+    );
+
+    @GET("UserLoggedOptions/getAllCommentsRepliesAsc.php")
+    Single<List<EpisodeComment>> getCommentsRepliesAsc(
+            @Query("comment_id") int comment_id
+    );
+
     @GET("UserLoggedOptions/getUserLikesOnEpisodeComments.php")
     Single<List<Integer>> getCommentsLikesIds(
             @Query("user_id") int userID,
@@ -245,6 +265,18 @@ public interface ApiService {
 
     @GET("UserLoggedOptions/addEpisodeComment.php")
     Single<UserResponse> addEpisodeComment(
+            @Query("user_id") int userId,
+            @Query("episode_id") int episode_id,
+            @Query("comment") String comment,
+            @Query("name") String name,
+            @Query("photo_Uri") String photo_Uri,
+            @Query("time") String time
+    );
+
+
+    @GET("UserLoggedOptions/addEpisodeCommentReply.php")
+    Single<UserResponse> addEpisodeCommentReply(
+            @Query("comment_id") int comment_id,
             @Query("user_id") int userId,
             @Query("episode_id") int episode_id,
             @Query("comment") String comment,
@@ -307,6 +339,17 @@ public interface ApiService {
 
     @GET("UserLoggedOptions/addCartoonFeedback.php")
     Single<UserResponse> addCartoonFeedback(
+            @Query("user_id") int userId,
+            @Query("cartoon_id") int cartoon_id,
+            @Query("feedback") String feedback,
+            @Query("name") String name,
+            @Query("photo_Uri") String photo_Uri,
+            @Query("time") String time
+    );
+
+    @GET("UserLoggedOptions/addCartoonFeedbackReply.php")
+    Single<UserResponse> addCartoonFeedbackReply(
+            @Query("feedback_id") int feedback_id,
             @Query("user_id") int userId,
             @Query("cartoon_id") int cartoon_id,
             @Query("feedback") String feedback,
@@ -387,5 +430,15 @@ public interface ApiService {
 
     @GET("episode_dates_with_info/read.php")
     Single<List<EpisodeDate>> getEpisodeDates();
+
+
+    @GET("UserLoggedOptions/decrementNumOfCommentReplies.php")
+    Single<UserResponse> decrementCommentReplies(
+            @Query("comment_id") int comment_id);
+
+    @GET("UserLoggedOptions/decrementNumOfFeedbackReplies.php")
+    Single<UserResponse> decrementFeedbackReplies(
+            @Query("feedback_id") int feedback_id);
+
 
 }

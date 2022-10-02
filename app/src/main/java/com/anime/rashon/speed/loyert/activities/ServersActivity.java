@@ -343,16 +343,6 @@ public class ServersActivity extends AppCompatActivity {
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
             serverClicked(5, episode.getVideo4(), episode.getjResolver4());
-
-        /*if(!server1 && !server2 && !server3 &&
-                !server4){
-            if(episode.getVideo4().isEmpty())
-                Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
-            else
-                openVideoPlayer(5, episode.getVideo4(), episode.getxGetter4());
-        }else{
-            Toast.makeText(ServersActivity.this, "سيتم تفعيل السيرفر في حال فشلت باقي السيرفرات", Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     public void openServer6() {
@@ -416,8 +406,9 @@ public class ServersActivity extends AppCompatActivity {
                     public void onError() {
                         //Error
                         episode.setError(true);
-                        Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
                         turnOffServer(serverNumber);
+                        if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
+                        Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -476,18 +467,21 @@ public class ServersActivity extends AppCompatActivity {
 
         if (episode.isError()) {
             turnOffServer(serverNumber);
+            if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/")) {
             turnOffServer(serverNumber);
+            if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/")) {
             turnOffServer(serverNumber);
+            if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
             Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
             return;
         }
@@ -589,6 +583,7 @@ public class ServersActivity extends AppCompatActivity {
                     //Error
                     episode.setError(true);
                     mBinding.progressBarLayout.setVisibility(View.GONE);
+                    if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
                     Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
                 }
             });

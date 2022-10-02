@@ -230,11 +230,8 @@ public class PlayListsActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.favorite_menu, menu);
         this.menu = menu;
         menu.findItem(R.id.menusearch).setVisible(false);
-        if(sqliteManager.isCartoonFavorite(cartoon.getId())){
-            menu.findItem(R.id.menu_empty_star).setVisible(false);
-            menu.findItem(R.id.menu_filled_star).setVisible(true);
-        }
-
+        menu.findItem(R.id.menu_empty_star).setVisible(false);
+        menu.findItem(R.id.menu_filled_star).setVisible(false);
         //Search Function
         MenuItem search_item = menu.findItem(R.id.menusearch);
         searchView = (android.widget.SearchView) search_item.getActionView();

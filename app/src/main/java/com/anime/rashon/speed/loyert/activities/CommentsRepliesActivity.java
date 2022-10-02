@@ -1,5 +1,10 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,16 +14,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.adapters.EpisodeCommentsAdapter;
-import com.anime.rashon.speed.loyert.databinding.ActivityEpisodeCommentsBinding;
+import com.anime.rashon.speed.loyert.databinding.ActivityCommentsRepliesBinding;
 import com.anime.rashon.speed.loyert.model.EpisodeComment;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
@@ -33,11 +34,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class EpisodeCommentsActivity extends AppCompatActivity implements ReportDialog.onReportClickListener {
-    int user_id, episode_id;
+public class CommentsRepliesActivity extends AppCompatActivity implements EpisodeCommentsAdapter.OnMentionUserClicked  , ReportDialog.onReportClickListener{
+    public static int user_id, episode_id , comment_id;
     CompositeDisposable disposable;
     ApiService apiService;
-    ActivityEpisodeCommentsBinding binding;
+    ActivityCommentsRepliesBinding binding;
     List<EpisodeComment> loaded_comments = new ArrayList<>();
     List<Integer> commentsLikesIDs = new ArrayList<>();
     List<Integer> commentsDisLikesIDs = new ArrayList<>();
@@ -49,10 +50,10 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityEpisodeCommentsBinding.inflate(getLayoutInflater());
+        binding = ActivityCommentsRepliesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();
-        loadComments();
+        loadReplies();
     }
 
     private void init() {
@@ -62,8 +63,9 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         episode_id = getIntent().getIntExtra(Constants.EPISODE_ID, -1);
+        comment_id = getIntent().getIntExtra(Constants.COMMENT_ID, -1);
         initToolbar();
-        commentsAdapter = new EpisodeCommentsAdapter(this , user_id , apiService , disposable , false);
+        commentsAdapter = new EpisodeCommentsAdapter(this , user_id , apiService , disposable , true);
         binding.recycleView.setAdapter(commentsAdapter);
         binding.recycleView.setItemAnimator(null);
         binding.sendFeedbackImgView.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +76,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                     showSnackMsg("يرجي ملئ الحقل أولا !");
                 }
                 else {
-                    addComment(comment);
+                    addCommentReply(comment);
                 }
             }
         });
@@ -87,17 +89,17 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
             public void onRefresh() {
                 binding.swipeRefreshLayout.setRefreshing(true);
                 isRefresh = true;
-                loadComments();
+                loadReplies();
             }
         });
     }
 
-    private void addComment(String comment) {
+    private void addCommentReply(String comment) {
         binding.progressBarLayout.setVisibility(View.VISIBLE);
         // add api call to save the feedback :)
         disposable.add(
                 apiService
-                        .addEpisodeComment(user_id , episode_id, comment ,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , String.valueOf(System.currentTimeMillis()))
+                        .addEpisodeCommentReply(comment_id , user_id , episode_id, comment ,loginUtil.getCurrentUser().getName() , loginUtil.getCurrentUser().getPhoto_url() , String.valueOf(System.currentTimeMillis()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
@@ -147,15 +149,15 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
 
     private void initToolbar() {
         setSupportActionBar(binding.includedToolbar.toolbar);
-        getSupportActionBar().setTitle("التعليقات");
+        getSupportActionBar().setTitle("الردود");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void loadComments() {
+    private void loadReplies() {
         if (desc) {
             disposable.add(
                     apiService
-                            .getCommentsDesc(episode_id)
+                            .getCommentsRepliesDesc(comment_id)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeWith(new DisposableSingleObserver<List<EpisodeComment>>() {
@@ -170,7 +172,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                                 public void onError(Throwable e) {
                                     Log.i("ab_do" , "onError " + e.getMessage());
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(CommentsRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                                 }
                             })
             );
@@ -178,7 +180,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         else {
             disposable.add(
                     apiService
-                            .getCommentsAsc(episode_id)
+                            .getCommentsRepliesAsc(comment_id)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeWith(new DisposableSingleObserver<List<EpisodeComment>>() {
@@ -192,7 +194,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                                 @Override
                                 public void onError(Throwable e) {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(CommentsRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                                 }
                             })
             );
@@ -216,7 +218,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                             @Override
                             public void onError(Throwable e) {
                                 binding.progressBarLayout.setVisibility(View.GONE);
-                                Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CommentsRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -243,7 +245,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                             @Override
                             public void onError(Throwable e) {
                                 binding.progressBarLayout.setVisibility(View.GONE);
-                                Toast.makeText(EpisodeCommentsActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CommentsRepliesActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -259,13 +261,14 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            startActivity(new Intent(getBaseContext() , EpisodeCommentsActivity.class).putExtra(Constants.EPISODE_ID , episode_id));
             finish();
             return true;
         }
         else if (item.getItemId() == R.id.change_order) {
             desc = !desc ;
             binding.progressBarLayout.setVisibility(View.VISIBLE);
-            loadComments();
+            loadReplies();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -313,5 +316,17 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onClick(String username) {
+        binding.commentEditText.requestFocus();
+        binding.commentEditText.getText().clear();
+        binding.commentEditText.setText("@" + username + " ");
+    }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getBaseContext() , EpisodeCommentsActivity.class).putExtra(Constants.EPISODE_ID , episode_id));
+        finish();
+        super.onBackPressed();
+    }
 }

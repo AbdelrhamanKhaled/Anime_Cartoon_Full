@@ -75,28 +75,21 @@
                 android:textAlignment="textStart"
                 android:textDirection="rtl"
                 android:textSize="15sp"
+                android:alpha="0.75"
+                android:textColor="@color/black"
                 tools:text="Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" />
 
+
             <ImageView
-                android:id="@+id/reportImgView"
+                android:id="@+id/deleteORReportImgView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/actions_container"
                 android:layout_alignParentStart="true"
-                android:alpha="0.8"
-                android:src="@drawable/ic_baseline_report_24"
-                android:visibility="gone" />
-
-
-            <ImageView
-                android:id="@+id/deleteImgView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/actions_container"
-                android:layout_alignParentStart="true"
+                android:layout_marginTop="2dp"
                 android:alpha="0.8"
                 android:src="@drawable/ic_baseline_delete_24"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
 
             <LinearLayout
@@ -106,32 +99,46 @@
                 android:layout_below="@id/feedbackTxtView"
                 android:layout_alignEnd="@id/usernameTxtView"
                 android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/reportImgView"
+                android:layout_toEndOf="@+id/deleteORReportImgView"
                 android:gravity="end"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="1dp"
+                    android:layout_weight="1"
+                    android:id="@+id/replyTxtView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_baseline_article_24"
+                    android:drawablePadding="8dp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical|end"
+                    android:textSize="12sp"
+                    tools:text="0" />
 
 
                 <TextView
                     android:id="@+id/dislikesTxtView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="48dp"
+                    android:layout_weight="1"
                     android:drawableEnd="@drawable/ic_baseline_thumb_down_24"
                     android:drawablePadding="8dp"
                     android:ellipsize="end"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|end"
                     android:textSize="12sp"
                     tools:text="12" />
 
 
                 <TextView
                     android:id="@+id/likesTxtView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:drawableEnd="@drawable/ic_baseline_thumb_up_24"
                     android:drawablePadding="8dp"
                     android:ellipsize="end"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|end"
                     android:textSize="12sp"
                     tools:text="30" />
 

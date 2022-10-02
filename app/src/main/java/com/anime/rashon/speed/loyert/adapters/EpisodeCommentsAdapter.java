@@ -2,6 +2,7 @@ package com.anime.rashon.speed.loyert.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
+import com.anime.rashon.speed.loyert.activities.CommentsRepliesActivity;
+import com.anime.rashon.speed.loyert.activities.FeedbacksRepliesActivity;
 import com.anime.rashon.speed.loyert.databinding.CartoonFeedbackItemviewBinding;
 import com.anime.rashon.speed.loyert.databinding.CommentItemViewBinding;
 import com.anime.rashon.speed.loyert.model.EpisodeComment;
@@ -41,15 +45,20 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
     List<EpisodeComment> comments = new ArrayList<>();
     private List<Integer> commentsLikesIDs = new ArrayList<>();
     private List<Integer> commentsDisLikesIDs = new ArrayList<>();
-    Context context;
+    Activity context;
     ReportDialog reportDialog;
+    boolean isReply;
+    OnMentionUserClicked onMentionUserClicked ;
 
-    public EpisodeCommentsAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable) {
+    public EpisodeCommentsAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable , boolean isReply) {
         this.context = context;
         this.apiService = apiService;
         this.disposable = disposable;
         this.user_id = user_id;
         reportDialog = new ReportDialog(context);
+        this.isReply = isReply ;
+        if (isReply)
+        this.onMentionUserClicked = (OnMentionUserClicked) context;
     }
 
     @NonNull
@@ -108,6 +117,15 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
                     .error(R.drawable.user_profile)
                     .placeholder(R.drawable.user_profile)
                     .into(binding.userImgImageView);
+            if (!isReply) {
+                binding.replyTxtView.setText(String.valueOf(comment.getNum_of_replies()));
+                binding.replyTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0 , 0 , R.drawable.ic_baseline_article_24 , 0);
+            }
+            else {
+                binding.replyTxtView.setText("");
+                binding.replyTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0 , 0 , R.drawable.ic_baseline_reply_24 , 0);
+
+            }
             if (commentsLikesIDs.contains(comment.getCommentId()))
                 binding.likesTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.like_pressed, 0);
             else
@@ -118,13 +136,12 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
                 binding.dislikesTxtView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_thumb_down_24, 0);
 
             if(comment.getUserID() == user_id) {
-                // this comment is belong to the user so hide report and show delete
-                binding.deleteImgView.setVisibility(View.VISIBLE);
-                binding.reportImgView.setVisibility(View.GONE);
+                // this feedback is belong to the user so hide report and show delete
+                binding.deleteORReportImgView.setImageResource(R.drawable.ic_baseline_delete_24);
             }
             else {
-                binding.deleteImgView.setVisibility(View.GONE);
-                binding.reportImgView.setVisibility(View.VISIBLE);
+                binding.deleteORReportImgView.setImageResource(R.drawable.ic_baseline_report_24);
+
             }
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
             String ago = prettyTime.format(new Date(Long.parseLong(comment.getTime())));
@@ -136,6 +153,37 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
         }
 
         private void setListeners(EpisodeComment comment , int pos) {
+
+            binding.replyTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isReply) {
+                        // mention :
+                        onMentionUserClicked.onClick(comment.getUsername());
+                    }
+                    else {
+                        // open reply activity
+                        Intent intent = new Intent(context , CommentsRepliesActivity.class);
+                        intent.putExtra(Constants.COMMENT_ID , comment.getCommentId());
+                        intent.putExtra(Constants.EPISODE_ID , comment.getEpisodeId());
+                        context.startActivity(intent);
+                        context.finish();
+                    }
+                }
+            });
+
+            binding.deleteORReportImgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(comment.getUserID() == user_id) {
+                        deleteComment(comment , pos);
+                    }
+                    else {
+                        makeReport(comment);
+                    }
+                }
+            });
+
 
             binding.likesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -374,47 +422,71 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
                 }
             });
 
-            binding.reportImgView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    reportDialog.setFeedback_id(comment.getCommentId());
-                    reportDialog.setUser_id(comment.getUserID());
-                    reportDialog.showDialog();
-                }
-            });
 
-            binding.deleteImgView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // delete comment
-                    comments.remove(comment);
-                    notifyItemChanged(pos);
-                    // add api call to remove like :
-                    disposable.add(
-                            apiService
-                                    .removeEpisodeComment(comment.getCommentId())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeWith(new DisposableSingleObserver<UserResponse>() {
-                                        @Override
-                                        public void onSuccess(UserResponse response) {
-                                            if (!response.isError()) {
-                                                Log.i("ab_do", "onSuccess remove comment");
-                                                // now remove like from list
-                                            } else {
-                                                Log.i("ab_do", "error when remove comment");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Log.i("ab_do", "error when remove comment");
-                                        }
-                                    })
-                    );
-                }
-            });
         }
 
+    }
+
+    private void deleteComment(EpisodeComment comment, int pos) {
+        comments.remove(comment);
+        notifyItemRemoved(pos);
+        // add api call to remove like :
+        disposable.add(
+                apiService
+                        .removeEpisodeComment(comment.getCommentId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    Log.i("ab_do", "onSuccess remove comment");
+                                    if (isReply) {
+                                        // decrement number of replies of the parent comment
+                                        disposable.add(
+                                                apiService
+                                                        .decrementCommentReplies(CommentsRepliesActivity.comment_id)
+                                                        .subscribeOn(Schedulers.io())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                                                            @Override
+                                                            public void onSuccess(UserResponse response) {
+                                                                if (!response.isError()) {
+                                                                    Log.i("ab_do", "onSuccess decrement comment replies");
+
+                                                                } else {
+                                                                    Log.i("ab_do", "error when decrement comment replies");
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onError(Throwable e) {
+                                                                Log.i("ab_do", "error when remove feedback");
+                                                            }
+                                                        })
+                                        );
+                                    }
+                                    // now remove like from list
+                                } else {
+                                    Log.i("ab_do", "error when remove comment");
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do", "error when remove comment");
+                            }
+                        })
+        );
+    }
+
+    private void makeReport(EpisodeComment comment) {
+        reportDialog.setFeedback_id(comment.getCommentId());
+        reportDialog.setUser_id(comment.getUserID());
+        reportDialog.showDialog();
+    }
+
+    public interface OnMentionUserClicked {
+        void onClick (String username);
     }
 }
