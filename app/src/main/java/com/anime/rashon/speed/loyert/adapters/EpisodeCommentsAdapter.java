@@ -429,7 +429,7 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
 
     private void deleteComment(EpisodeComment comment, int pos) {
         comments.remove(comment);
-        notifyItemRemoved(pos);
+        notifyDataSetChanged();
         // add api call to remove like :
         disposable.add(
                 apiService

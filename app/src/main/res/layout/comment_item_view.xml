@@ -75,7 +75,7 @@
                 android:textAlignment="textStart"
                 android:textDirection="rtl"
                 android:textSize="15sp"
-                android:alpha="0.75"
+                android:alpha="0.8"
                 android:textColor="@color/black"
                 tools:text="Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" />
 

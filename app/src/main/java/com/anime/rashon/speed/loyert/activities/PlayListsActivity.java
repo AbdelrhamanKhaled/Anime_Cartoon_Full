@@ -93,7 +93,8 @@ public class PlayListsActivity extends AppCompatActivity {
     private void initToolbar(){
         setSupportActionBar(mBinding.includedToolbar.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("الأجزاء");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setTitle("الأجزاء");
 //        Glide.with(this)
 //                .load(cartoon.getThumb())
 //                .into(mBinding.toolbarImage);

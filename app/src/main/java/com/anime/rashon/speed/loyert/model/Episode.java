@@ -49,7 +49,7 @@ public class Episode implements Serializable {
 
     @SerializedName("cartoon")
     @Expose
-    private Cartoon cartoon;
+    private CartoonWithInfo cartoon;
 
     @SerializedName("jResolver")
     @Expose
@@ -173,11 +173,11 @@ public class Episode implements Serializable {
         this.playlistId = playlistId;
     }
 
-    public Cartoon getCartoon() {
+    public CartoonWithInfo getCartoon() {
         return cartoon;
     }
 
-    public void setCartoon(Cartoon cartoon) {
+    public void setCartoon(CartoonWithInfo cartoon) {
         this.cartoon = cartoon;
     }
 

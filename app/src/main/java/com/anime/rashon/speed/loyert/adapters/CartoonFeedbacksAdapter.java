@@ -422,7 +422,7 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
     private void deleteFeedback(Feedback feedback, int pos) {
         // delete feedback
         feedbacks.remove(feedback);
-        notifyItemRemoved(pos);
+        notifyDataSetChanged();
         // add api call to remove like :
         disposable.add(
                 apiService

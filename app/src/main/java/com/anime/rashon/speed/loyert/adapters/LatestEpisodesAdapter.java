@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.EpisodesActivity;
+import com.anime.rashon.speed.loyert.activities.InformationActivity;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutLatestEpisodeItemListBinding;
@@ -158,9 +159,9 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             }
             episodeHolder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(mContext, EpisodesActivity.class);
+                Intent intent = new Intent(mContext, InformationActivity.class);
                 intent.putExtra("cartoon", episode.getCartoon());
-                intent.putExtra("playlist", episode.getPlaylist());
+//                intent.putExtra("playlist", episode.getPlaylist());
                 mContext.startActivity(intent);
             });
         }

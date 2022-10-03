@@ -137,8 +137,11 @@ public class EpisodesActivity extends AppCompatActivity {
         if (getIntent().getStringExtra("title")!=null) {
             getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
         }
-        else
-        getSupportActionBar().setTitle("الحلقات");
+        else {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+//        else
+//        getSupportActionBar().setTitle("الحلقات");
 //        Glide.with(this)
 //                .load(playlist.getThumb())
 //                .into(mBinding.toolbarImage);
