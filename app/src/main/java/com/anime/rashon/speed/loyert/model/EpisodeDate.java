@@ -28,6 +28,9 @@ public class EpisodeDate implements Serializable {
     @SerializedName("type")
     @Expose
     private int type;
+    @SerializedName("classification")
+    @Expose
+    private int classification;
     @SerializedName("world_rate")
     @Expose
     private String world_rate;
@@ -132,5 +135,13 @@ public class EpisodeDate implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public int getClassification() {
+        return classification;
+    }
+
+    public void setClassification(int classification) {
+        this.classification = classification;
     }
 }

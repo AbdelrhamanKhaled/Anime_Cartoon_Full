@@ -515,22 +515,6 @@ public class Config {
     }
 
     public static final int Nav_LatestEpisode = 0;
-
-
-    public static final int ALL = 0;
-    public static final int ACTION = 1;
-    public static final int GIRLSANIME = 2;
-    public static final int ADVENTURE = 3;
-    public static final int OTHER = 4;
-    public static final int TRANSLATED_ANIME = 5;
-    public static final int CHILD_ANIME = 6;
-    public static final int SPORT_ANIME = 7;
-    public static final int NEW_ANIME = 8;
-    public static final int FILMS = 9;
-    public static final int FAVOURITE = 10;
-    public static final int WATCHED = 11;
-    public static final int WATCH_LATER = 12;
-    public static final int MOST_VIEWED = 13;
     public static final String CHANNEL_ID = "animeCartoonNotification";
 
     public static Admob admob;

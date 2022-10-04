@@ -153,6 +153,12 @@ public class ServersActivity extends AppCompatActivity {
                 openServer6();
             }
         });
+
+        if (getIntent().getAction()!=null && getIntent().getAction().equals("Film")) return;
+
+        if (episodeList.size()<=1) {
+            return;
+        }
         mBinding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,8 +192,18 @@ public class ServersActivity extends AppCompatActivity {
 
     private void getIntentData() {
         episode = (Episode) getIntent().getSerializableExtra("episode");
+        if (getIntent().getAction()!=null && getIntent().getAction().equals("Film")) {
+               mBinding.back.setVisibility(View.GONE);
+               mBinding.next.setVisibility(View.GONE);
+               return;
+        }
         current_pos = getIntent().getIntExtra("current_pos", -1);
         episodeList = (List<Episode>) getIntent().getSerializableExtra("episodeList");
+        if (episodeList.size()<=1) {
+            mBinding.back.setVisibility(View.GONE);
+            mBinding.next.setVisibility(View.GONE);
+            return;
+        }
         updateBackNextBtn();
     }
 

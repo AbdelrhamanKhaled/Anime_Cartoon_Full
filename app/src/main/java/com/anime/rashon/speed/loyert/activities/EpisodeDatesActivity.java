@@ -123,6 +123,7 @@ public class EpisodeDatesActivity extends AppCompatActivity {
         cartoon.setWorld_rate(episodeDate.getWorld_rate());
         cartoon.setTitle(episodeDate.getTitle());
         cartoon.setThumb(episodeDate.getThumb());
+        cartoon.setClassification(episodeDate.getClassification());
         return cartoon ;
     }
 

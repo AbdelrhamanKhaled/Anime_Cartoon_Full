@@ -10,4 +10,18 @@ public interface Constants {
     String EPISODE_ID ="episode_id" ;
     String FEEDBACK_ID = "feedback_id";
     String COMMENT_ID = "comment_id";
+    int IS_SERIES = 1 ;
+    int IS_FILM = 2 ;
+    int IS_DUBBED = 1 ;  // مدبلج
+    int IS_TRANSLATED = 2 ;
+    int DUBBED_ANIME = 100;
+    int TRANSLATED_ANIME = 101;
+    int TRANSLATED_FILMS = 102;
+    int DUBBED_FILMS = 103;
+    int NEW_ANIME = 104;
+    int LATEST_EPISODES = 0;
+    int FAVOURITE = 10;
+    int WATCHED = 11;
+    int WATCH_LATER = 12;
+    int MOST_VIEWED = 13;
 }

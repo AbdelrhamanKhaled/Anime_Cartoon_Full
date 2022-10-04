@@ -24,6 +24,9 @@ public class Cartoon implements Serializable {
     @SerializedName("type")
     @Expose
     private int type;
+    @SerializedName("classification")
+    @Expose
+    private int classification;
     @SerializedName("visibility")
     @Expose
     private Boolean visibility;
@@ -55,6 +58,16 @@ public class Cartoon implements Serializable {
         this.thumb = thumb;
         this.type = type;
         this.visibility = visibility;
+    }
+
+    public Cartoon(Integer id, String title, String thumb, int type, int classification, Boolean visibility, int rate) {
+        this.id = id;
+        this.title = title;
+        this.thumb = thumb;
+        this.type = type;
+        this.classification = classification;
+        this.visibility = visibility;
+        this.rate = rate;
     }
 
     public Integer getId() {
@@ -103,5 +116,13 @@ public class Cartoon implements Serializable {
 
     public void setRate(int rate) {
         this.rate = rate;
+    }
+
+    public int getClassification() {
+        return classification;
+    }
+
+    public void setClassification(int classification) {
+        this.classification = classification;
     }
 }

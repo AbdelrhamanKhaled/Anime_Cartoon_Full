@@ -1,22 +1,17 @@
 package com.anime.rashon.speed.loyert.fragments;
 
-import static com.anime.rashon.speed.loyert.app.Config.ACTION;
-import static com.anime.rashon.speed.loyert.app.Config.ADVENTURE;
-import static com.anime.rashon.speed.loyert.app.Config.ALL;
-import static com.anime.rashon.speed.loyert.app.Config.CHILD_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.FAVOURITE;
-import static com.anime.rashon.speed.loyert.app.Config.FILMS;
-import static com.anime.rashon.speed.loyert.app.Config.GIRLSANIME;
-import static com.anime.rashon.speed.loyert.app.Config.MOST_VIEWED;
-import static com.anime.rashon.speed.loyert.app.Config.NEW_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.SPORT_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.TRANSLATED_ANIME;
-import static com.anime.rashon.speed.loyert.app.Config.WATCHED;
-import static com.anime.rashon.speed.loyert.app.Config.WATCH_LATER;
+import static com.anime.rashon.speed.loyert.Constants.Constants.DUBBED_ANIME;
+import static com.anime.rashon.speed.loyert.Constants.Constants.DUBBED_FILMS;
+import static com.anime.rashon.speed.loyert.Constants.Constants.FAVOURITE;
+import static com.anime.rashon.speed.loyert.Constants.Constants.MOST_VIEWED;
+import static com.anime.rashon.speed.loyert.Constants.Constants.NEW_ANIME;
+import static com.anime.rashon.speed.loyert.Constants.Constants.TRANSLATED_ANIME;
+import static com.anime.rashon.speed.loyert.Constants.Constants.TRANSLATED_FILMS;
+import static com.anime.rashon.speed.loyert.Constants.Constants.WATCHED;
+import static com.anime.rashon.speed.loyert.Constants.Constants.WATCH_LATER;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +27,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
-import com.anime.rashon.speed.loyert.activities.PlayListsActivity;
 import com.anime.rashon.speed.loyert.adapters.CartoonsAdapter;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.FragmentCartoonBinding;
-import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
-import com.github.ybq.android.spinkit.style.Circle;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -74,6 +66,7 @@ public class CartoonFragment extends Fragment{
 
     @Nullable
     @Override
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCartoonBinding.inflate(inflater);
         initRecyclerview(true);
@@ -114,10 +107,6 @@ public class CartoonFragment extends Fragment{
         checkCartoonType(MainActivity.selectedType);
     }
 
-    private void initProgressBar(){
-        Circle circle = new Circle();
-        mBinding.progress.setIndeterminateDrawable(circle);
-    }
 
     private void initRetrofit(){
         apiService = ApiClient.getClient(getActivity()).create(ApiService.class);
@@ -128,15 +117,13 @@ public class CartoonFragment extends Fragment{
         mBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mBinding.swipeRefreshLayout.setRefreshing(true);
                 if(cartoonList != null){
                     cartoonList.clear();
                     isOnRefresh = true;
                     pageNumber = 1;
                     checkCartoonType(MainActivity.selectedType);
-                    //getAllCartoons();
-                   // ((MainActivity)getActivity()).getAdmobData();
                 }
-//                ((MainActivity)getActivity()).resetTitleAndSelection();
             }
         });
     }
@@ -202,6 +189,7 @@ public class CartoonFragment extends Fragment{
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
                                 //Check if on refresh case
@@ -225,65 +213,12 @@ public class CartoonFragment extends Fragment{
                             }
                             @Override
                             public void onError(Throwable e) {
-                                mBinding.progressBarLayout.setVisibility(View.GONE);
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-                                Toast.makeText(getActivity(), "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                onGetCartoonError();
                             }
                         })
         );
     }
 
-    private void goToPlaylist(Cartoon cartoon) {
-        Intent intent = new Intent(requireContext(), PlayListsActivity.class)
-                .setAction("Films");
-        intent.putExtra("cartoon", cartoon);
-        requireActivity().startActivity(intent);
-        requireActivity().finish();
-    }
-
-    public void getCartoonsByType(int type){
-//        Log.i("Ab_do" , "getCartoonsByType "+type);
-//        mBinding.swipeRefreshLayout.setRefreshing(true);
-//        disposable.add(
-//                apiService
-//                        .getCartoonsByType(pageNumber, type)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
-//                            @Override
-//                            public void onSuccess(List<Cartoon> retrievedCartoonList) {
-//                                    Log.i("Ab_do" , "No Film");
-//                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-//                                        if ((i + 1) % 10 == 0) {
-//                                            retrievedCartoonList.add(i, new Cartoon());
-//                                        }
-//                                    }
-//
-//                                    cartoonList.addAll(retrievedCartoonList);
-//
-//
-//                                //--------------------//
-//
-//                                if(cartoonList.isEmpty()){
-//                                    mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-//                                }
-//                                else{
-//
-//                                    mBinding.cartoonsRecyclerview.getAdapter().notifyItemInserted(cartoonList.size());
-//                                }
-//                                pageNumber++;
-//                                mBinding.swipeRefreshLayout.setRefreshing(false);
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                mBinding.progressBarLayout.setVisibility(View.GONE);
-//                                mBinding.swipeRefreshLayout.setRefreshing(false);
-////                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//        );
-    }
 
     public void filterAdapter(String searchQuery){
 //        mBinding.swipeRefreshLayout.setRefreshing(true);
@@ -315,18 +250,27 @@ public class CartoonFragment extends Fragment{
     }
 
     public void checkCartoonType(int categoryId){
-
         cartoonList.clear();
-//        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
         pageNumber = 1;
-
         switch (categoryId){
-            case ALL: //All Cartoons
-                getAllCartoons();
+            case DUBBED_ANIME: //All Cartoons
+                getCartoonsByType(DUBBED_ANIME);
                 break;
 
-            case ACTION: //Action Cartoons
-                getCartoonsByType(ACTION);
+            case DUBBED_FILMS: //Action Cartoons
+                getCartoonsByType(DUBBED_FILMS);
+                break;
+
+            case TRANSLATED_ANIME:
+                getCartoonsByType(TRANSLATED_ANIME);
+                break;
+
+            case TRANSLATED_FILMS:
+                getCartoonsByType(TRANSLATED_FILMS);
+                break;
+
+            case NEW_ANIME:
+                getCartoonsByType(NEW_ANIME);
                 break;
 
             case FAVOURITE:
@@ -345,92 +289,29 @@ public class CartoonFragment extends Fragment{
                 getMostViewedCartoons();
                 break;
 
-            case GIRLSANIME: //Girls Cartoons
-                getCartoonsByType(GIRLSANIME);
-                break;
-
-            case ADVENTURE: //Adventure Cartoons
-                getCartoonsByType(ADVENTURE);
-                break;
-
-            case TRANSLATED_ANIME:
-                getCartoonsByType(TRANSLATED_ANIME);
-                break;
-
-            case CHILD_ANIME:
-                getCartoonsByType(CHILD_ANIME);
-                break;
-
-            case SPORT_ANIME:
-                getCartoonsByType(SPORT_ANIME);
-                break;
-
-            case NEW_ANIME:
-                getCartoonsByType(NEW_ANIME);
-                break;
-
-            case FILMS:
-                getAllCartoons();
-                break;
             default: //No Action
         }
     }
 
 
-    public void getAllCartoons() {
-        mBinding.swipeRefreshLayout.setRefreshing(true);
-        disposable.add(
-                apiService
-                        .getCartoonsWithInfo(pageNumber)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
-                            @Override
-                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
-                                Log.i("ab_do" , "new Response");
-                                //Check if on refresh case
-                                if (isOnRefresh) {
-                                    cartoonList.clear();
-                                    isOnRefresh = false;
-                                }
+    private void onGetCartoonError() {
+        mBinding.swipeRefreshLayout.setRefreshing(false);
+    }
 
-                                if (MainActivity.selectedType == FILMS) {
-                                    Log.i("Ab_do", "Yes Film");
-                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-//
-                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
-                                            Log.i("Ab_do", "catch Film");
-                                            Cartoon cartoon = retrievedCartoonList.get(i);
-                                            goToPlaylist(cartoon);
-                                            break;
-                                        }
-                                    }
-                                }
-                                else {
-                                    for (int i = 0; i < retrievedCartoonList.size(); i++) {
-                                        if ((i + 1) % 10 == 0) {
-                                            retrievedCartoonList.add(i, new CartoonWithInfo());
-                                        }
-                                        if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
-                                            retrievedCartoonList.remove(i);
-                                        }
-                                    }
-
-                                    cartoonList.addAll(retrievedCartoonList);
-                                    mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-                                    pageNumber++;
-                                    mBinding.swipeRefreshLayout.setRefreshing(false);
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                mBinding.progressBarLayout.setVisibility(View.GONE);
-                                mBinding.swipeRefreshLayout.setRefreshing(false);
-//                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
-                            }
-                        })
-        );
+    private void updateUI(List<CartoonWithInfo> retrievedCartoonList) {
+        mBinding.swipeRefreshLayout.setRefreshing(false);
+        if (isOnRefresh) {
+            cartoonList.clear();
+            isOnRefresh = false;
+        }
+            for (int i = 0; i < retrievedCartoonList.size(); i++) {
+            if ((i + 1) % 10 == 0) {
+                retrievedCartoonList.add(i, new CartoonWithInfo());
+               }
+            }
+        cartoonList.addAll(retrievedCartoonList);
+        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        pageNumber++;
     }
 
     //--------Override Methods------//
@@ -450,4 +331,107 @@ public class CartoonFragment extends Fragment{
         return mBinding.cartoonsRecyclerview ;
     }
 
+    public void getCartoonsByType(int selectedType) {
+        if (selectedType == DUBBED_ANIME) {
+            disposable.add(
+                    apiService
+                            .readPagingDUBBEDSeriesAnime(pageNumber)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                                @Override
+                                public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                    //Check if on refresh case
+                                    updateUI(retrievedCartoonList);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    onGetCartoonError();
+                                }
+                            })
+            );
+        }
+        else if (selectedType == DUBBED_FILMS) {
+            disposable.add(
+                    apiService
+                            .readPagingDUBBEDFilms(pageNumber)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                                @Override
+                                public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                    //Check if on refresh case
+                                    updateUI(retrievedCartoonList);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    onGetCartoonError();
+                                }
+                            })
+            );
+        }
+        else if (selectedType == TRANSLATED_ANIME) {
+            disposable.add(
+                    apiService
+                            .readPagingTranslatedSeriesAnime(pageNumber)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                                @Override
+                                public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                    //Check if on refresh case
+                                    updateUI(retrievedCartoonList);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    onGetCartoonError();
+                                }
+                            })
+            );
+        }
+        else if (selectedType == TRANSLATED_FILMS) {
+            disposable.add(
+                    apiService
+                            .readPagingTranslatedFilms(pageNumber)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                                @Override
+                                public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                    //Check if on refresh case
+                                    updateUI(retrievedCartoonList);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    onGetCartoonError();
+                                }
+                            })
+            );
+        }
+        else if (selectedType == NEW_ANIME) {
+            disposable.add(
+                    apiService
+                            .readPagingContinueAnime(pageNumber)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                                @Override
+                                public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                    //Check if on refresh case
+                                    updateUI(retrievedCartoonList);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    onGetCartoonError();
+                                }
+                            })
+            );
+        }
+
+    }
 }

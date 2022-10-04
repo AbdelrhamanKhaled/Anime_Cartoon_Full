@@ -32,8 +32,24 @@ public interface ApiService {
             @Query("page") int pageNumber
     );
 
-    @GET("cartoon_with_info/readPaging.php")
-    Single<List<CartoonWithInfo>> getCartoonsWithInfo(
+    @GET("cartoon_with_info/readPagingContinueAnime.php")
+    Single<List<CartoonWithInfo>> readPagingContinueAnime(
+            @Query("page") int pageNumber
+    );
+    @GET("cartoon_with_info/readPagingDUBBEDFilms.php")
+    Single<List<CartoonWithInfo>> readPagingDUBBEDFilms(
+            @Query("page") int pageNumber
+    );
+    @GET("cartoon_with_info/readPagingDUBBEDSeriesAnime.php")
+    Single<List<CartoonWithInfo>> readPagingDUBBEDSeriesAnime(
+            @Query("page") int pageNumber
+    );
+    @GET("cartoon_with_info/readPagingTranslatedFilms.php")
+    Single<List<CartoonWithInfo>> readPagingTranslatedFilms(
+            @Query("page") int pageNumber
+    );
+    @GET("cartoon_with_info/readPagingTranslatedSeriesAnime.php")
+    Single<List<CartoonWithInfo>> readPagingTranslatedSeriesAnime(
             @Query("page") int pageNumber
     );
 

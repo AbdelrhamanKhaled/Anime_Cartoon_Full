@@ -45,15 +45,5 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/close_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_baseline_close_24" />
-
 
 </RelativeLayout>

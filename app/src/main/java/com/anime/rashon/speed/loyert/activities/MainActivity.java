@@ -1,6 +1,6 @@
 package com.anime.rashon.speed.loyert.activities;
 
-import static com.anime.rashon.speed.loyert.app.Config.ALL;
+import static com.anime.rashon.speed.loyert.Constants.Constants.LATEST_EPISODES;
 import static com.anime.rashon.speed.loyert.app.Config.admob;
 
 import android.content.Context;
@@ -34,6 +34,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
@@ -61,13 +63,10 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import org.ocpsoft.prettytime.PrettyTime;
-
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static boolean searchCase = false;
 
-    public static int selectedType = 0;
+    public static int selectedType = LATEST_EPISODES;
 
     public static MenuItem search_item ;
     DatabaseReference FavouriteRef;
@@ -491,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void replaceLatestEpisodesFragment(){
+        selectedType = LATEST_EPISODES;
         Objects.requireNonNull(getSupportActionBar()).setTitle("أحدث الحلقات");
         LatestEpisodesFragmentFragment = new LatestEpisodesFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -517,21 +517,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "جاري التحميل من فضلك انتظر...", Toast.LENGTH_SHORT).show();
     }
 
-    public void resetTitleAndSelection(){
-        getSupportActionBar().setTitle(getString(R.string.app_name));
-        selectedType = ALL ;
-        mBinding.navView.getMenu().getItem(0).setChecked(true);
-    }
 
     public void getNewCartoons(){
          cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
-
-        if(selectedType == 0){
-            cartoonFragment.getAllCartoons();
-        }
-        else{
-            cartoonFragment.getCartoonsByType(selectedType);
-        }
+         if (cartoonFragment!=null)
+         cartoonFragment.getCartoonsByType(selectedType);
     }
 
 
@@ -551,6 +541,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+
 
 
     public void getMessage(){
@@ -691,13 +682,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             searchView.setIconified(true);
             hideSoftKeyboard();
         }
-        else if(selectedType != ALL){
-            selectedType = ALL;
+        else if(selectedType != LATEST_EPISODES){
+            selectedType = LATEST_EPISODES;
             mBinding.navView.getMenu().getItem(0).setChecked(true);
-            CartoonFragment cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
-            assert cartoonFragment != null;
-            cartoonFragment.checkCartoonType(ALL);
-            Objects.requireNonNull(getSupportActionBar()).setTitle(getString(R.string.app_name));
+            cartoonFragment = null ;
+            grid = true ;
+            updateGridIcon(menu.findItem(R.id.grid_or_list));
+            replaceLatestEpisodesFragment();
         }
         else{
             /*Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -754,43 +745,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             replaceLatestEpisodesFragment();
         }
         else if (itemId == R.id.anime) {
-            mBinding.navView.setCheckedItem(itemId);
-            LatestEpisodesFragmentFragment = null ;
-            grid = true ;
-            updateGridIcon(menu.findItem(R.id.grid_or_list));
-            selectedType = ALL;
-            if (getSupportActionBar()!=null)
-            getSupportActionBar().setTitle("المدبلج");
-            replaceCartoonsFragment();
+            openCartoonFragment(Constants.DUBBED_ANIME, "المدبلج" , itemId);
         }
         else if (itemId == R.id.films_t) {
-            mBinding.navView.setCheckedItem(itemId);
-            grid = true ;
-            updateGridIcon(menu.findItem(R.id.grid_or_list));
-            //dialogUtilities.ShowDialog(this);
-            if(mBinding.progressBarLayout!=null)
-            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
-            getFilms("الافلام المترجمه");
+            openCartoonFragment(Constants.TRANSLATED_FILMS, "الافلام المترجمه" , itemId);
         }
 
         else if (itemId == R.id.films_d) {
-            mBinding.navView.setCheckedItem(itemId);
-            grid = true ;
-            updateGridIcon(menu.findItem(R.id.grid_or_list));
-            if(mBinding.progressBarLayout!=null)
-            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
-            //dialogUtilities.ShowDialog(this);
-            getFilms("الافلام المدبلجة");
+            openCartoonFragment(Constants.DUBBED_FILMS, "الافلام المدبلجة" , itemId);
         }
 
         else if (itemId == R.id.most_viewed) {
             mBinding.navView.setCheckedItem(itemId);
-            openCartoonFragment(Config.MOST_VIEWED, "الأكثر المشاهدة" , itemId);
+            openCartoonFragment(Constants.MOST_VIEWED, "الأكثر المشاهدة" , itemId);
         }
 
         else if (itemId == R.id.see_later) {
             if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Config.WATCH_LATER, "قائمتي" , itemId);
+            openCartoonFragment(Constants.WATCH_LATER, "قائمتي" , itemId);
             else {
                 loginDialog.showDialog();
                 hideDrawer();
@@ -800,7 +772,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else if (itemId == R.id.animeSeen) {
             if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Config.WATCHED,  "تمت مشاهدته" , itemId);
+            openCartoonFragment(Constants.WATCHED,  "تمت مشاهدته" , itemId);
              else {
                  loginDialog.showDialog();
                 hideDrawer();
@@ -811,7 +783,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else if (itemId == R.id.favourite) {
             if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Config.FAVOURITE, "المفضلة" ,  itemId);
+            openCartoonFragment(Constants.FAVOURITE, "المفضلة" ,  itemId);
             else {
                 loginDialog.showDialog();
                 hideDrawer();
@@ -820,11 +792,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         else if (itemId == R.id.translation_anime) {
-            openCartoonFragment( Config.TRANSLATED_ANIME , "المترجم" , itemId);
+            openCartoonFragment(Constants.TRANSLATED_ANIME, "المترجم" , itemId);
         }
 
         else if (itemId == R.id.new_cartoon) {
-            openCartoonFragment( Config.NEW_ANIME , "المستمر" ,  itemId);
+            openCartoonFragment(Constants.NEW_ANIME , "المستمر" ,  itemId);
         }
 
         else if (itemId == R.id.leaderboard) {
@@ -872,7 +844,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         selectedType = type;
         grid = true;
         updateGridIcon(menu.findItem(R.id.grid_or_list));
-        //dialogUtilities.ShowDialog(this);
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(s);
         replaceCartoonsFragment();

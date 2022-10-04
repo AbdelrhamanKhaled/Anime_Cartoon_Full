@@ -24,13 +24,16 @@ import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityInformationBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
+import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.Information;
+import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.Serializable;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -65,6 +68,10 @@ public class InformationActivity extends AppCompatActivity {
         binding.progressBarLayout.setVisibility(View.VISIBLE);
         activity = this ;
         cartoon = (CartoonWithInfo) getIntent().getSerializableExtra("cartoon");
+        if (cartoon.getType() == Constants.IS_FILM) {
+            binding.watch.setText("مشاهدة الفيلم");
+        }
+        else binding.watch.setText("مشاهدة المسلسل");
         favourite = UserOptions.getUserOptions().getFavouriteCartoonsIds().contains(cartoon.getId());
         addedToWatched = UserOptions.getUserOptions().getWatchedCartoonsIds().contains(cartoon.getId());
         addedToWatchedLater = UserOptions.getUserOptions().getWatchLaterCartoonsIds().contains(cartoon.getId());
@@ -82,7 +89,7 @@ public class InformationActivity extends AppCompatActivity {
         binding.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToPlaylistActivity();
+                goToWatch();
             }
         });
         loginUtil = new LoginUtil(this);
@@ -310,7 +317,7 @@ public class InformationActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Information information) {
                                 if (information == null) {
-                                    goToPlaylistActivity();
+                                    goToWatch();
                                     finish();
                                     return;
                                 }
@@ -351,21 +358,28 @@ public class InformationActivity extends AppCompatActivity {
         }
 
         if (information.getAge_rate()!=null) {
+            String age ;
             switch (information.getAge_rate()) {
                 case 1:
-                    binding.age.setText("لكل الاعمار");
+                    age = "لكل الاعمار" ;
                     break;
 
                 case 2:
-                    binding.age.setText("+ 13");
+                    age = "+13" ;
                     break;
 
                 case 3:
-                    binding.age.setText("+ 17");
+                    age = "+17" ;
                     break;
                 default:
-                    binding.age.setText("غير محدد");
+                    age = "غير محدد" ;
             }
+            String classification ;
+            if (cartoon.getType() == Constants.IS_SERIES) {
+                classification = "مسلسل" ;
+            }
+            else classification = "فيلم" ;
+            binding.age.setText(classification + "  " + age);
         }
         else {
             binding.age.setText("غير محدد");
@@ -432,9 +446,76 @@ public class InformationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void goToPlaylistActivity() {
-        Intent intent = new Intent(getBaseContext(), PlayListsActivity.class);
-        intent.putExtra("cartoon", cartoon);
+    private void goToWatch() {
+        if (cartoon.getType() == Constants.IS_SERIES) {
+            Intent intent = new Intent(getBaseContext(), PlayListsActivity.class);
+            intent.putExtra("cartoon", cartoon);
+            startActivity(intent);
+        }
+        else {
+            // is film
+            binding.progressBarLayout.setVisibility(View.VISIBLE);
+            getPlaylists();
+        }
+    }
+
+    private void getPlaylists(){
+        disposable.add(
+                apiService
+                        .getPlaylists(cartoon.getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Playlist>>() {
+                            @Override
+                            public void onSuccess(List<Playlist> playlistList) {
+                                     // contain only one playlist :)
+                                     Playlist playlist = playlistList.get(0);
+                                     getEpisodes(playlist);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                showSnackMsg("حدث خطأ ما يرجي إعادة المحاولة");
+                            }
+                        })
+        );
+
+    }
+
+    public void getEpisodes(Playlist playlist){
+        disposable.add(
+                apiService
+                        .getEpisodes(playlist.getId(), 1)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Episode>>() {
+                            @Override
+                            public void onSuccess(List<Episode> retrievedEpisodeList) {
+                                // only one episode
+                                Episode episode = retrievedEpisodeList.get(0);
+                                openServersActivity(playlist , episode);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                binding.progressBarLayout.setVisibility(View.GONE);
+                                showSnackMsg("حدث خطأ ما يرجي إعادة المحاولة");
+                            }
+                        })
+        );
+    }
+
+    private void openServersActivity(Playlist playlist , Episode episode) {
+        Intent intent = new Intent(InformationActivity.this, ServersActivity.class);
+        intent.putExtra("episode", episode);
+        intent.putExtra("title", episode.getTitle());
+        intent.putExtra("thumb", episode.getThumb());
+        intent.putExtra("playlistTitle", playlist.getTitle());
+        intent.putExtra("cartoonTitle", cartoon.getTitle());
+        intent.putExtra("current_pos" , 0);
+        intent.setAction("Film");
+        binding.progressBarLayout.setVisibility(View.GONE);
         startActivity(intent);
     }
 

@@ -29,8 +29,8 @@ public class CartoonWithInfo extends Cartoon {
 
     }
 
-    public CartoonWithInfo(Integer id, String title, String thumb, int type, Boolean visibility, int rate, String world_rate, String view_date, Integer status) {
-        super(id, title, thumb, type, visibility, rate);
+    public CartoonWithInfo(Integer id, String title, String thumb, int type, int classification, Boolean visibility, int rate, String world_rate, String view_date, Integer status) {
+        super(id, title, thumb, type, classification , visibility, rate);
         this.world_rate = world_rate;
         this.view_date = view_date;
         this.status = status;
