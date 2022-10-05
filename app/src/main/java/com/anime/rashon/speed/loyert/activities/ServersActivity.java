@@ -1,12 +1,6 @@
 package com.anime.rashon.speed.loyert.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
+import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,6 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
@@ -35,8 +37,6 @@ import com.inside4ndroid.jresolver.Model.Jmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
 public class ServersActivity extends AppCompatActivity {
 
@@ -155,7 +155,7 @@ public class ServersActivity extends AppCompatActivity {
         });
 
         if (getIntent().getAction()!=null && getIntent().getAction().equals("Film")) return;
-
+        if (getIntent().getAction()!=null && getIntent().getAction().equals("downloads")) return;
         if (episodeList.size()<=1) {
             return;
         }
@@ -192,7 +192,7 @@ public class ServersActivity extends AppCompatActivity {
 
     private void getIntentData() {
         episode = (Episode) getIntent().getSerializableExtra("episode");
-        if (getIntent().getAction()!=null && getIntent().getAction().equals("Film")) {
+        if (getIntent().getAction()!=null && (getIntent().getAction().equals("Film") || getIntent().getAction().equals("downloads"))) {
                mBinding.back.setVisibility(View.GONE);
                mBinding.next.setVisibility(View.GONE);
                return;

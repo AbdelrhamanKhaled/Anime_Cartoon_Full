@@ -41,6 +41,7 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginDialog;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.Utilites.MessageDialog;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityMainBinding;
@@ -72,12 +73,13 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  , MessageDialog.onMsgBtnClickListener{
 
     private final String TAG = MainActivity.class.getSimpleName();
 
     ActivityMainBinding mBinding;
 
+    MainActivity activity ;
     LatestEpisodesFragment LatestEpisodesFragmentFragment ;
 
     private android.widget.SearchView searchView;
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        activity = this ;
         initRetrofit();
         //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
@@ -418,7 +421,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     intent.putExtra("redirect", redirect);
                                     startActivity(intent);
                                     finish();
-                                }else{
+                                }
+                                else
+                                {
                                     getMessage();
                                     initNavDrawer();
 
@@ -554,38 +559,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             @Override
                             public void onSuccess(Redirect redirect) {
                                 if(redirect.getIs_active().equals("yes")){
-
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                                    builder.setMessage(redirect.getMessage());
-                                    builder.setCancelable(true);
-                                    builder.setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            if(redirect.getRedirect_type().equals("package_name")){
-
-                                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + redirect.getPackage_name())));
-
-                                            }else if(redirect.getRedirect_type().equals("url")){
-
-                                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect.getUrl()));
-                                                startActivity(browserIntent);
-
-                                            }
-                                        }
-                                    });
-
-                                    builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.dismiss();
-                                        }
-                                    });
-
-                                    builder.show();
-
-                                }else{
-
+                                    MessageDialog messageDialog = new MessageDialog(activity , redirect);
+                                    messageDialog.showDialog();
                                 }
                             }
 
@@ -803,13 +778,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(getBaseContext() , LeaderboardActivity.class));
         }
 
-        else if (itemId == R.id.anime_time) {
-            startActivity(new Intent(getBaseContext() , EpisodeDatesActivity.class));
-        }
-
+//        else if (itemId == R.id.anime_downloads) {
+//            startActivity(new Intent(getBaseContext() , EpisodeDownloadsActivity.class));
+//        }
 //        else if (itemId == R.id.downloads) {
 //            startActivity(new Intent(MainActivity.this, DownloadsActivity.class));
-//        } else if (itemId == R.id.support) {
+//        }
+//        else if (itemId == R.id.support) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/m_c_w_a")));
 //        } else if (itemId == R.id.rate) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apps-anime.com")));
@@ -921,5 +896,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (SeenEpisodesRef!=null)
         SeenEpisodesRef.removeEventListener(SeenEpisodeslistener);
         super.onDestroy();
+    }
+
+    @Override
+    public void onReportClicked(Redirect redirect) {
+        if(redirect.getRedirect_type().equals("package_name")){
+
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + redirect.getPackage_name())));
+
+        }
+        else if(redirect.getRedirect_type().equals("url")){
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect.getUrl()));
+            startActivity(browserIntent);
+        }
     }
 }

@@ -72,9 +72,8 @@
                         android:id="@+id/rate_container"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/img_container"
+                        android:layout_alignTop="@id/action_container"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp">
 
                         <TextView
@@ -109,11 +108,11 @@
                             android:ellipsize="end"
                             android:gravity="start"
                             android:layoutDirection="ltr"
-                            android:maxLines="2"
                             android:textColor="@color/black"
                             android:textDirection="ltr"
                             android:textSize="17sp"
-                            tools:text="مسلسل توم وجيري" />
+                            android:maxLines="2"
+                            tools:text="مسلسل توم وجيريdddddddddddddddddddddddddddddddddddddddddddddddddddddddd" />
 
 
                         <TextView
@@ -167,9 +166,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/watch"
-                        android:layout_alignTop="@id/rate_container"
+                        android:layout_alignTop="@id/action_container"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="16dp"
+                        android:layout_marginTop="6dp"
                         android:layout_marginBottom="12dp"
                         android:layout_toStartOf="@id/rate_container"
                         android:orientation="horizontal">

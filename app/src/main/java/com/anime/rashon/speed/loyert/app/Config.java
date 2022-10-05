@@ -419,7 +419,7 @@ public class Config {
                                 }
                                 else {
                                     dismissDialog(activity);
-                                    Toast.makeText(activity, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                    startExoPlayer(activity, intent);
                                 }
 
                             }
@@ -427,7 +427,7 @@ public class Config {
                             @Override
                             public void onError(Throwable e) {
                                 dismissDialog(activity);
-                                Toast.makeText(activity, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                startExoPlayer(activity, intent);
                             }
                         })
         );
@@ -444,21 +444,14 @@ public class Config {
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
                             @Override
                             public void onSuccess(UserResponse response) {
-                                if (!response.isError()) {
                                     dismissDialog(activity);
                                     startExoPlayer(activity , intent);
-                                }
-                                else {
-                                    dismissDialog(activity);
-                                    Toast.makeText(activity, "حدث خطأ ما يرجي إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
-                                }
-
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 dismissDialog(activity);
-                                Toast.makeText(activity, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                startExoPlayer(activity , intent);
                             }
                         })
         );
@@ -468,7 +461,7 @@ public class Config {
         try {
             progressDialog.dismiss();
         }catch (Exception exception) {
-
+          Log.i("ab_do" , "dismiss dialog error " + exception.getMessage());
         }
     }
 

@@ -15,6 +15,7 @@ import com.anime.rashon.speed.loyert.model.Report;
 import com.anime.rashon.speed.loyert.model.User;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 
+import java.security.spec.ECPoint;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -94,11 +95,11 @@ public interface ApiService {
     );
 
 
-    @GET("redirect/animelive.php")
+    @GET("redirect/readOne.php")
     Single<Redirect> getRedirect(
     );
 
-    @GET("message/animelive.php")
+    @GET("message/readOne.php")
     Single<Redirect> getMessage(
     );
 
@@ -352,6 +353,17 @@ public interface ApiService {
             @Query("user_id") int userId
     );
 
+    @GET("UserLoggedOptions/insertDownloadEpisode.php")
+    Single<UserResponse> insertDownloadEpisode(
+            @Query("user_id") int userId,
+            @Query("episode_id") int episodeId
+    );
+
+    @GET("UserLoggedOptions/getEpisodeDownloads.php")
+    Single<List<Episode>> getEpisodeDownloads(
+            @Query("user_id") int userId
+    );
+
 
     @GET("UserLoggedOptions/addCartoonFeedback.php")
     Single<UserResponse> addCartoonFeedback(
@@ -455,6 +467,10 @@ public interface ApiService {
     @GET("UserLoggedOptions/decrementNumOfFeedbackReplies.php")
     Single<UserResponse> decrementFeedbackReplies(
             @Query("feedback_id") int feedback_id);
+
+    @GET("Accses/serverMaintance.php")
+    Single<Integer> checkIfServerIsUnderMaintains();
+
 
 
 }

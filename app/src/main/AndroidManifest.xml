@@ -29,6 +29,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".EpisodeDownloadsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ServerIsUnderMaintanceActivity"
+            android:exported="false" />
+        <activity
             android:name=".CommentsRepliesActivity"
             android:exported="false" />
         <activity
@@ -101,10 +107,10 @@
             android:configChanges="orientation|screenSize|layoutDirection"
             android:noHistory="true" />
         <activity
-            android:launchMode="singleTask"
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:exported="true"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -132,6 +138,8 @@
         <activity android:name=".activities.EpisodeDatesActivity" />
         <activity android:name=".activities.FeedbacksRepliesActivity" />
         <activity android:name=".activities.CommentsRepliesActivity" />
+        <activity android:name=".activities.ServerIsUnderMaintenanceActivity" />
+        <activity android:name=".activities.EpisodeDownloadsActivity" />
     </application>
 
 </manifest>
