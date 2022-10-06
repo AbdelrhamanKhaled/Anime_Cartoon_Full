@@ -49,6 +49,7 @@
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout-land/activity_main.xml" value="0.1" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_comment.xml" value="0.25" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_comments_replies.xml" value="0.19010416666666666" />
+        <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_downloads.xml" value="0.20416666666666666" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_episode_comments.xml" value="0.20416666666666666" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_episode_dates.xml" value="0.22" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_episode_downloads.xml" value="0.20416666666666666" />
@@ -68,6 +69,7 @@
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/activity_splash.xml" value="0.2" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/cartoon_feedback_itemview.xml" value="0.22" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/comment_item_view.xml" value="0.22" />
+        <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/downloaded_episode_itemview.xml" value="0.25" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/fragment_cartoon.xml" value="0.17685185185185184" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/fragment_latest_episodes.xml" value="0.14" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/layout_header.xml" value="0.22" />
@@ -86,7 +88,7 @@
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/leadrboard_dialog.xml" value="0.25" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/leadrboard_itemview.xml" value="0.25" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/login_dialog.xml" value="0.25" />
-        <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/message_dialog.xml" value="0.25" />
+        <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/message_dialog.xml" value="0.22" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/progress_dialog.xml" value="0.25" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/report_dialog.xml" value="0.22" />
         <entry key="..\:/FreeLancerQias/Anime_Cartoon_Full/app/src/main/res/layout/server_report_dialog.xml" value="0.25" />

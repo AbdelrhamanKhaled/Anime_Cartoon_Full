@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.activities.InformationActivity;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -88,7 +89,7 @@ public class Config {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private static void ShowDialog(Context context) {
+    public static void ShowDialog(Context context) {
         //setting up progress dialog
         progressDialog = new ProgressDialog(context);
         try {
@@ -315,6 +316,9 @@ public class Config {
         sqliteManager.insertDownload(cartoonTitle + " - " + playlistTitle + " - " + episode.getTitle()
                 , full_path);
         Toast.makeText(activity, "يتم تحميل الحلقة الان...", Toast.LENGTH_SHORT).show();
+        LoginUtil loginUtil = new LoginUtil(activity);
+        if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+        Utilities.insertEpisodeDownload(activity , loginUtil.getCurrentUser().getId() , episode.getId() , full_path );
     }
 
     private static void openDownloaderApp(Activity activity, String playlistTitle , String url, String cartoonTitle, Episode episode) {
@@ -336,8 +340,13 @@ public class Config {
                 Log.i("ab_do" ,"FromDownloader ");
                 String path = intent.getStringExtra("animePath");
                 String name = intent.getStringExtra("animeName");
-                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(context);
-                sqliteManager.insertDownload(name, path);
+                Log.i("ab_do" , "path " + path);
+                 LoginUtil loginUtil = new LoginUtil(activity);
+                if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+                Utilities.insertEpisodeDownload(activity , loginUtil.getCurrentUser().getId() , episode.getId() , path);
+//                sqliteManager.insertDownload(name, path);
+//                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(context);
+//                sqliteManager.insertDownload(name, path);
                 activity.unregisterReceiver(receiver);
             }
             // register the receiver
@@ -457,7 +466,7 @@ public class Config {
         );
     }
 
-    private static void dismissDialog(Activity activity) {
+    public static void dismissDialog(Activity activity) {
         try {
             progressDialog.dismiss();
         }catch (Exception exception) {
@@ -511,5 +520,6 @@ public class Config {
     public static final String CHANNEL_ID = "animeCartoonNotification";
 
     public static Admob admob;
+
 
 }

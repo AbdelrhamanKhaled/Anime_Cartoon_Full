@@ -10,7 +10,6 @@
 
 
         <LinearLayout
-            android:layoutDirection="rtl"
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -25,12 +24,12 @@
                 android:layoutAnimation="@anim/recycle_anim"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="3"
-                android:id="@+id/episodess_recyclerview"
+                android:id="@+id/downloaded_episodes_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:padding= "8dp"
-                tools:listitem="@layout/layout_recyclerepisode_item"
+                tools:listitem="@layout/downloaded_episode_itemview"
                 />
 
             <LinearLayout

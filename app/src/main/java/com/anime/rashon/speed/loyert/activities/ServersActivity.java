@@ -27,6 +27,7 @@ import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
+import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -620,16 +621,23 @@ public class ServersActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 101) {
-            if (resultCode == RESULT_OK) {
-                Log.i("ab_do", "FromDownloader ");
-                if (data == null) return;
-                String path = data.getStringExtra("animePath");
-                String name = data.getStringExtra("animeName");
-                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(this);
-                sqliteManager.insertDownload(name, path);
-            }
-        }
+//        if (requestCode == 101) {
+//            if (resultCode == RESULT_OK) {
+//                Log.i("ab_do", "Hello FromDownloader ");
+//                if (data == null)  {
+//                    Log.i("ab_do" , "data is null");
+//                    return;
+//                }
+//                String path = data.getStringExtra("animePath");
+//                String name = data.getStringExtra("animeName");
+////                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(this);
+////                sqliteManager.insertDownload(name, path);
+//                Log.i("ab_do" , "path " + path);
+//                LoginUtil loginUtil = new LoginUtil(getBaseContext());
+//                if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+//                Utilities.insertEpisodeDownload(getBaseContext() , loginUtil.getCurrentUser().getId() , episode.getId() , path);
+//            }
+//        }
     }
 
     @Override

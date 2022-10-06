@@ -78,7 +78,10 @@ public class Episode implements Serializable {
     @SerializedName("playlist")
     @Expose
     private Playlist playlist;
-
+    // used for downloaded episode :)
+    @SerializedName("video_url")
+    @Expose
+    private String video_url;
 
     private boolean Error = false;
 
@@ -243,5 +246,13 @@ public class Episode implements Serializable {
 
     public void setError(boolean error) {
         Error = error;
+    }
+
+    public String getVideo_url() {
+        return video_url;
+    }
+
+    public void setVideo_url(String video_url) {
+        this.video_url = video_url;
     }
 }

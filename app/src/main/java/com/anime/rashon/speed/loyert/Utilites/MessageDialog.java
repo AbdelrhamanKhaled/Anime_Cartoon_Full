@@ -30,8 +30,11 @@ public class MessageDialog {
 
     private void createDialog() {
         dialog.setContentView(R.layout.message_dialog);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_back);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         Button go = dialog.findViewById(R.id.go);
-        ImageView close = dialog.findViewById(R.id.close);
+        Button close = dialog.findViewById(R.id.close);
         TextView msgTxtView = dialog.findViewById(R.id.msgTxt);
         msgTxtView.setText(msg);
         close.setOnClickListener(new View.OnClickListener() {

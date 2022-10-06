@@ -765,6 +765,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false ;
             }
         }
+        else
+            if (itemId == R.id.anime_time) {
+            startActivity(new Intent(getBaseContext() , EpisodeDatesActivity.class));
+            return false ;
+        }
 
         else if (itemId == R.id.translation_anime) {
             openCartoonFragment(Constants.TRANSLATED_ANIME, "المترجم" , itemId);
@@ -776,11 +781,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else if (itemId == R.id.leaderboard) {
             startActivity(new Intent(getBaseContext() , LeaderboardActivity.class));
+            return false ;
         }
 
-//        else if (itemId == R.id.anime_downloads) {
-//            startActivity(new Intent(getBaseContext() , EpisodeDownloadsActivity.class));
-//        }
+        else if (itemId == R.id.anime_downloads) {
+            if(loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null) {
+                startActivity(new Intent(getBaseContext() , EpisodeDownloadsActivity.class));
+            }
+            else {
+                loginDialog.showDialog();
+                hideDrawer();
+            }
+            return false ;
+        }
 //        else if (itemId == R.id.downloads) {
 //            startActivity(new Intent(MainActivity.this, DownloadsActivity.class));
 //        }

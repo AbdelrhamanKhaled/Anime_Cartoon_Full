@@ -176,7 +176,17 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
                 @Override
                 public void onClick(View v) {
                     if(comment.getUserID() == user_id) {
-                        deleteComment(comment , pos);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+
+                        builder.setMessage("هل تريد حذف التعليق الخاص بك ؟");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("نعم", (dialog, which) -> {
+                            deleteComment(comment , pos);
+                        });
+                        builder.setNegativeButton("لا", (dialog, which) -> dialog.cancel());
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+
                     }
                     else {
                         makeReport(comment);

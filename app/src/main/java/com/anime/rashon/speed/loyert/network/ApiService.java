@@ -356,8 +356,15 @@ public interface ApiService {
     @GET("UserLoggedOptions/insertDownloadEpisode.php")
     Single<UserResponse> insertDownloadEpisode(
             @Query("user_id") int userId,
-            @Query("episode_id") int episodeId
+            @Query("episode_id") int episodeId ,
+            @Query("video_url") String video_url
     );
+
+    @GET("UserLoggedOptions/deleteDownloadEpisode.php")
+    Single<UserResponse> deleteDownloadEpisode(
+            @Query("user_id") int userId,
+            @Query("episode_id") int episodeId,
+            @Query("video_url") String video_url);
 
     @GET("UserLoggedOptions/getEpisodeDownloads.php")
     Single<List<Episode>> getEpisodeDownloads(

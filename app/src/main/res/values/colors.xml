@@ -2,11 +2,11 @@
 <resources>
     <color name="colorPrimary">#1a05b5</color>
     <color name="colorPrimaryDark">#1a05b5</color>
-    <color name="colorAccent">#CDDC39</color>
+    <color name="colorAccent">#3B97C7</color>
 
     <color name="toolbarColorPrimary">#22292e</color>
     <color name="toolbarColorPrimaryDark">#000000</color>
-    <color name="toolbarColorAccent">#CDDC39</color>
+    <color name="toolbarColorAccent">#3B97C7</color>
     <color name="purple_500">@color/gmts_blue</color>
     <color name="transparentBackgroundColor">#b0000000</color>
     <color name="transparentBackgroundColorVideo">#29000000</color>

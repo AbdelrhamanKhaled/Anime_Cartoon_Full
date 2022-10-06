@@ -52,7 +52,7 @@ public class DownloadsActivity extends AppCompatActivity {
     }
 
     private void initRecyclerview(){
-        adapter = new DownloadsAdapter(DownloadsActivity.this, downloadList);
+        //adapter = new DownloadsAdapter(DownloadsActivity.this, downloadList);
 
         mBinding.downloadsRecyclerview.setLayoutManager(new LinearLayoutManager(DownloadsActivity.this));
         mBinding.downloadsRecyclerview.setAdapter(adapter);

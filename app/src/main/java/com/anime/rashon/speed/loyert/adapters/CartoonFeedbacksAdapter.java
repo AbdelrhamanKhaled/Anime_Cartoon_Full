@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -402,7 +403,17 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
                 @Override
                 public void onClick(View v) {
                     if(feedback.getUserID() == user_id) {
-                          deleteFeedback(feedback , pos);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+
+                        builder.setMessage("هل تريد حذف التعليق الخاص بك ؟");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("نعم", (dialog, which) -> {
+                            deleteFeedback(feedback , pos);
+                        });
+                        builder.setNegativeButton("لا", (dialog, which) -> dialog.cancel());
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+
                     }
                     else {
                         makeReport(feedback);

@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
+import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.adapters.EpisodesAdapter;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityEpisodesBinding;
@@ -101,6 +103,7 @@ public class EpisodesActivity extends AppCompatActivity {
     static int ASC = 1 ;
     static int DESC = 2 ;
     static int order ;
+    Episode episode ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,6 +271,7 @@ public class EpisodesActivity extends AppCompatActivity {
     public void startVideoActivity(int position, Episode episode, String episodeTitle, String thumb,
                                    String playlistTitle, String cartoonTitle){
 
+        this.episode = episode ;
         mBinding.progressBarLayout.setVisibility(View.GONE);
 //        checkServers(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
 //        Config.showFacebookInterstitialAd(this, admob.getInterstitial());
@@ -665,8 +669,12 @@ public class EpisodesActivity extends AppCompatActivity {
                 String path = data.getStringExtra("animePath");
                 String name = data.getStringExtra("animeName");
                 Log.i("ab_do" ,"FromDownloader " + path);
-                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(this);
-                sqliteManager.insertDownload(name, path);
+                Log.i("ab_do" , "path " + path);
+//                SQLiteDatabaseManager sqliteManager = new SQLiteDatabaseManager(this);
+//                sqliteManager.insertDownload(name, path);
+                LoginUtil loginUtil = new LoginUtil(getBaseContext());
+                if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+                Utilities.insertEpisodeDownload(getBaseContext() , loginUtil.getCurrentUser().getId() , episode.getId() , path);
             }
         }
 
