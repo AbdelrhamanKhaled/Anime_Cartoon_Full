@@ -614,8 +614,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if(!TextUtils.isEmpty(s)){
-                    CartoonFragment cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
-                    cartoonFragment.filterAdapter(s);
+                    if (cartoonFragment!=null)
+                    cartoonFragment.filterData(s);
                 }
                 hideSoftKeyboard();
                 return true;

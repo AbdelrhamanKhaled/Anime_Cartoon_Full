@@ -238,13 +238,6 @@ public class splashActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(List<EpisodeWithInfo> retrivedEpisodeList) {
                                 Log.i("splash_abdo" , "onSuccess ");
-                                for (int i=0; i < retrivedEpisodeList.size(); i++) {
-                                    if ((i+1) % 10 == 0){
-                                        Log.i("ab_doa" , "Ad"  + i);
-                                        // add Ad :)
-                                        retrivedEpisodeList.add(i, new EpisodeWithInfo());
-                                    }
-                                }
                                 List<EpisodeWithInfo> episodeList = new ArrayList<>(retrivedEpisodeList);
                                 Intent intent = new Intent(getBaseContext() , MainActivity.class);
                                 intent.putExtra("list" , (Serializable) episodeList);

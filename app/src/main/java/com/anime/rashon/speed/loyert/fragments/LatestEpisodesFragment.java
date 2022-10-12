@@ -100,24 +100,13 @@ public class LatestEpisodesFragment extends Fragment {
         if (isGrid) {
             //anim = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.recycle_anim);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    Log.i("ab_oo" , "getSpanSize " + position);
-                    if ((position+1)%10==0) {
-                        // ad
-                        return 3;
-                    }
-                    else
-                    return 1;
-                }
-            });
             mBinding.episodesRecyclerview.setLayoutManager(gridLayoutManager);
         }
         else {
             mBinding.episodesRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
             //anim = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.recycle_anim);
         }
+        mBinding.episodesRecyclerview.setHasFixedSize(true);
         mBinding.episodesRecyclerview.setAdapter(adapter);
         //mBinding.episodesRecyclerview.setLayoutAnimation(anim);
     }
@@ -140,15 +129,6 @@ public class LatestEpisodesFragment extends Fragment {
                         .subscribeWith(new DisposableSingleObserver<List<EpisodeWithInfo>>() {
                             @Override
                             public void onSuccess(List<EpisodeWithInfo> retrivedEpisodeList) {
-
-                                for (int i=0; i < retrivedEpisodeList.size(); i++) {
-                                    Log.i("ab_do" , "onSuccess refresh " + retrivedEpisodeList.size());
-                                    if ((i+1) % 10 == 0){
-                                        Log.i("ab_doa" , "Ad"  + i);
-                                        // add Ad :)
-                                        retrivedEpisodeList.add(i, new EpisodeWithInfo());
-                                    }
-                                }
                                 episodeList.addAll(retrivedEpisodeList);
                                 adapter.notifyDataSetChanged();
                                 mBinding.progressBarLayout.setVisibility(View.GONE);

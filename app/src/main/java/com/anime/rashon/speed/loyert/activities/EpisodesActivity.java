@@ -168,15 +168,6 @@ public class EpisodesActivity extends AppCompatActivity {
     private void initRecyclerview(boolean grid){
         adapter = new EpisodesAdapter(this, episodeList , grid);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if(episodeList.get(position).getId() == 0){
-                    return 3;
-                }
-                return 1;
-            }
-        });
         if (grid)
         mBinding.episodessRecyclerview.setLayoutManager(gridLayoutManager);
         else mBinding.episodessRecyclerview.setLayoutManager(new LinearLayoutManager(this ));
@@ -197,20 +188,6 @@ public class EpisodesActivity extends AppCompatActivity {
 
                                 Log.d("ab_do" , "To waatch size " + retrievedEpisodeList.size());
                                 Log.d("ab_do" , "wwto " + playlist.getId());
-                                int counter = 0;
-                                if(!episodeList.isEmpty()){
-                                    counter = (episodeList.size() - 1) - lastAdPosition ;
-                                }
-
-                                for (int i=0; i<retrievedEpisodeList.size(); i++){
-                                    if(counter == Config.numOfItemsBetweenAds){
-                                        retrievedEpisodeList.add(i, new Episode());
-                                        counter = 0;
-                                        lastAdPosition = episodeList.size() + i;
-                                    }else{
-                                        counter++;
-                                    }
-                                }
                                 if (pageNumber == 1)
                                 episodeList.addAll(retrievedEpisodeList);
                                 else {

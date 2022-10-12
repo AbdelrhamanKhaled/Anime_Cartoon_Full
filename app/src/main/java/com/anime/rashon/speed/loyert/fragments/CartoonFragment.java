@@ -80,15 +80,6 @@ public class CartoonFragment extends Fragment{
         mBinding.cartoonsRecyclerview.setHasFixedSize(true);
         adapter = new CartoonsAdapter(getActivity() , isGrid , false);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if((position+1)%10 == 0){
-                    return 3;
-                }
-                return 1;
-            }
-        });
         if (isGrid) {
             mBinding.cartoonsRecyclerview.setLayoutManager(gridLayoutManager);
         }
@@ -152,11 +143,6 @@ public class CartoonFragment extends Fragment{
 
     public void getFavouriteCartoons() {
         List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getFavouriteCartoons());
-        for (int i = 0; i < retrievedCartoonList.size(); i++) {
-            if ((i + 1) % 10 == 0) {
-                retrievedCartoonList.add(i, new CartoonWithInfo());
-            }
-        }
         cartoonList.addAll(retrievedCartoonList);
         adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
@@ -164,11 +150,6 @@ public class CartoonFragment extends Fragment{
 
     public void getWatchedCartoons(){
         List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getWatchedCartoons());
-        for (int i = 0; i < retrievedCartoonList.size(); i++) {
-            if ((i + 1) % 10 == 0) {
-                retrievedCartoonList.add(i, new CartoonWithInfo());
-            }
-        }
         cartoonList.addAll(retrievedCartoonList);
         adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
@@ -176,11 +157,6 @@ public class CartoonFragment extends Fragment{
 
     public void getWatchLaterCartoons(){
         List<CartoonWithInfo> retrievedCartoonList = new ArrayList<>(UserOptions.getUserOptions().getWatchLaterCartoons());
-        for (int i = 0; i < retrievedCartoonList.size(); i++) {
-            if ((i + 1) % 10 == 0) {
-                retrievedCartoonList.add(i, new CartoonWithInfo());
-            }
-        }
         cartoonList.addAll(retrievedCartoonList);
         adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
@@ -202,16 +178,6 @@ public class CartoonFragment extends Fragment{
                                     cartoonList.clear();
                                     isOnRefresh = false;
                                 }
-                                for (int i = 0; i < retrievedCartoonList.size(); i++) {
-                                    if ((i + 1) % 10 == 0) {
-                                        retrievedCartoonList.add(i, new CartoonWithInfo());
-                                    }
-                                    if (retrievedCartoonList.get(i).getTitle() != null && retrievedCartoonList.get(i).getTitle().equals("الافلام")) {
-                                        retrievedCartoonList.remove(i);
-                                        break;
-                                    }
-                                }
-
                                 cartoonList.addAll(retrievedCartoonList);
                                 adapter.updateList(cartoonList);
                                 mBinding.swipeRefreshLayout.setRefreshing(false);
@@ -247,34 +213,6 @@ public class CartoonFragment extends Fragment{
         );
     }
 
-    public void filterAdapter(String searchQuery){
-//        mBinding.swipeRefreshLayout.setRefreshing(true);
-//        disposable.add(
-//                apiService
-//                        .searchCartoons(searchQuery)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribeWith(new DisposableSingleObserver<List<Cartoon>>() {
-//                            @Override
-//                            public void onSuccess(List<Cartoon> cartoonList) {
-//                                CartoonFragment.this.cartoonList.clear();
-//                                CartoonFragment.this.cartoonList.addAll(cartoonList);
-//
-//                                mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
-//                                mBinding.swipeRefreshLayout.setRefreshing(false);
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                mBinding.progressBarLayout.setVisibility(View.GONE);
-//                                mBinding.swipeRefreshLayout.setRefreshing(false);
-////                                Toast.makeText(getActivity(), getString(R.string.err_general), Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//        );
-
-//        ((CartoonsAdapter)mBinding.cartoonsRecyclerview.getAdapter()).getFilter().filter(searchQuery);
-    }
 
     public void checkCartoonType(int categoryId){
         cartoonList.clear();
@@ -339,11 +277,6 @@ public class CartoonFragment extends Fragment{
             cartoonList.clear();
             isOnRefresh = false;
         }
-            for (int i = 0; i < retrievedCartoonList.size(); i++) {
-            if ((i + 1) % 10 == 0) {
-                retrievedCartoonList.add(i, new CartoonWithInfo());
-               }
-            }
         cartoonList.addAll(retrievedCartoonList);
         adapter.updateList(cartoonList);
         pageNumber++;

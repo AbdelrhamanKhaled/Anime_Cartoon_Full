@@ -1,23 +1,20 @@
 package com.anime.rashon.speed.loyert.adapters;
 
 import android.app.Activity;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.annotation.NonNull;
-import androidx.databinding.ViewDataBinding;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.EpisodesActivity;
-import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
-import com.anime.rashon.speed.loyert.databinding.LayoutNativeAdBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclerepisodeItemBinding;
 import com.anime.rashon.speed.loyert.databinding.LayoutRecyclerepisodeItemListBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -35,7 +32,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private SQLiteDatabaseManager sqLiteDatabaseManager;
 
     private final int episodeView = 1;
-    private final int nativeAdView = 2;
     private boolean grid ;
 
     public EpisodesAdapter(Activity mContext, List<Episode> episodeList, boolean grid) {
@@ -52,13 +48,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        if(viewType == nativeAdView){
-            LayoutNativeAdBinding binding = DataBindingUtil.inflate(
-                    LayoutInflater.from(mContext), R.layout.layout_native_ad, parent, false);
-
-            return new NativeAdHolder(binding.getRoot());
-        }
-
         ViewDataBinding binding ;
         if (grid) {
             binding = DataBindingUtil.inflate(
@@ -74,12 +63,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-
-        if(holder.getItemViewType() == nativeAdView){
-            NativeAdHolder nativeAdHolder = (NativeAdHolder) holder;
-            Config.loadNativeAd(mContext, nativeAdHolder.mBinding.nativeAdTemplate);
-        }
-        else{
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(mContext , R.anim.anim_itemview));
             final EpisodeHolder episodeHolder = (EpisodeHolder) holder;
             final Episode episode = episodeList.get(position);
@@ -129,19 +112,10 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //        if(position == episodeList.size()-1){
 //            ((EpisodesActivity)mContext).getEpisodes();
 //        }
-    }
 
     @Override
     public int getItemCount() {
         return episodeList.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if(episodeList.get(position).getId() == 0){
-            return nativeAdView;
-        }
-        return episodeView;
     }
 
     public class EpisodeHolder extends RecyclerView.ViewHolder{
@@ -159,15 +133,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private static class NativeAdHolder extends RecyclerView.ViewHolder{
-
-        LayoutNativeAdBinding mBinding;
-
-        NativeAdHolder(View itemView) {
-            super(itemView);
-            mBinding = DataBindingUtil.bind(itemView);
-        }
-    }
 
     public void updateList (List<Episode> episodeList) {
         this.episodeList = episodeList ;
