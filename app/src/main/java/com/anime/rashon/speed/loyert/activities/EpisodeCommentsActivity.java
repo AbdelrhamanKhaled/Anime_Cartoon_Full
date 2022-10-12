@@ -33,7 +33,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class EpisodeCommentsActivity extends AppCompatActivity implements ReportDialog.onReportClickListener {
+public class EpisodeCommentsActivity extends AppCompatActivity implements  EpisodeCommentsAdapter.ShouldLoginMsg , ReportDialog.onReportClickListener {
     int user_id, episode_id;
     CompositeDisposable disposable;
     ApiService apiService;
@@ -58,7 +58,10 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
     private void init() {
         loginUtil = new LoginUtil(this) ;
         binding.progressBarLayout.setVisibility(View.VISIBLE);
-        user_id = loginUtil.getCurrentUser().getId();
+        if (loginUtil.getCurrentUser()!=null)
+            user_id = loginUtil.getCurrentUser().getId();
+        else
+            user_id = -1 ;
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         episode_id = getIntent().getIntExtra(Constants.EPISODE_ID, -1);
@@ -74,7 +77,12 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
                     showSnackMsg("يرجي ملئ الحقل أولا !");
                 }
                 else {
-                    addComment(comment);
+                    if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+                        addComment(comment);
+                    else {
+                        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
+                    }
+
                 }
             }
         });
@@ -313,5 +321,9 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements Report
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void show() {
+        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
+    }
 
 }

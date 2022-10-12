@@ -144,6 +144,14 @@ public interface ApiService {
             @Field("photo_Uri") String photo_Uri
     );
 
+
+    @GET("cartoon_with_info/searchCartoon.php")
+    Single<List<CartoonWithInfo>> searchCartoon(
+            @Query("search") String Search,
+            @Query("type") int type ,
+            @Query("classification") int classification
+    );
+
     @GET("UserLoggedOptions/getAllFavouriteCartoons.php")
     Single<List<CartoonWithInfo>> getAllFavouriteCartoons(
             @Query("user_id") int userId
@@ -273,6 +281,11 @@ public interface ApiService {
             @Query("user_id") int userID,
             @Query("episode_id") int episodeId
     );
+
+
+
+
+
 
     @GET("UserLoggedOptions/getUserDislikesOnEpisodeComments.php")
     Single<List<Integer>> getCommentsDisLikesIds(

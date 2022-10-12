@@ -34,7 +34,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class CommentsRepliesActivity extends AppCompatActivity implements EpisodeCommentsAdapter.OnMentionUserClicked  , ReportDialog.onReportClickListener{
+public class CommentsRepliesActivity extends AppCompatActivity implements EpisodeCommentsAdapter.ShouldLoginMsg , EpisodeCommentsAdapter.OnMentionUserClicked  , ReportDialog.onReportClickListener{
     public static int user_id, episode_id , comment_id;
     CompositeDisposable disposable;
     ApiService apiService;
@@ -59,7 +59,10 @@ public class CommentsRepliesActivity extends AppCompatActivity implements Episod
     private void init() {
         loginUtil = new LoginUtil(this) ;
         binding.progressBarLayout.setVisibility(View.VISIBLE);
-        user_id = loginUtil.getCurrentUser().getId();
+        if (loginUtil.getCurrentUser()!=null)
+            user_id = loginUtil.getCurrentUser().getId();
+        else
+            user_id = -1 ;
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         episode_id = getIntent().getIntExtra(Constants.EPISODE_ID, -1);
@@ -76,7 +79,12 @@ public class CommentsRepliesActivity extends AppCompatActivity implements Episod
                     showSnackMsg("يرجي ملئ الحقل أولا !");
                 }
                 else {
-                    addCommentReply(comment);
+                    if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+                        addCommentReply(comment);
+                    else {
+                        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
+                    }
+
                 }
             }
         });
@@ -328,5 +336,10 @@ public class CommentsRepliesActivity extends AppCompatActivity implements Episod
         startActivity(new Intent(getBaseContext() , EpisodeCommentsActivity.class).putExtra(Constants.EPISODE_ID , episode_id));
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void show() {
+        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
     }
 }

@@ -151,6 +151,10 @@ public class Config {
 
     public static void startDownloadingEpisode(Activity activity, String url, Episode episode,
                                                String playlistTitle, String cartoonTitle) {
+        if (url.endsWith(".m3u8")) {
+            Toast.makeText(activity, "الرابط غير صالح للتحميل", Toast.LENGTH_SHORT).show();
+            return;
+        }
         ShowDialog(activity);
           if (!isPackageInstalled ( "com.mojfhr.plasjre" , activity.getPackageManager())) {
               showDownloadDownloaderAppDialog(activity);
@@ -187,7 +191,8 @@ public class Config {
                            if (error.getValue() == Error.REQUEST_NOT_SUCCESSFUL.getValue()) {
                                Log.i("ab_do" , "anime REQUEST_NOT_SUCCESSFUL");
                                endFetch(download, fetch);
-                               startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
+                               //startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
+                               Toast.makeText(activity, "حدث خطأ .. يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
                            }
                }
 

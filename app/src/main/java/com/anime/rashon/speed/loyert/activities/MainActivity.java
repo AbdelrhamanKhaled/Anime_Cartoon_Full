@@ -3,13 +3,17 @@ package com.anime.rashon.speed.loyert.activities;
 import static com.anime.rashon.speed.loyert.Constants.Constants.LATEST_EPISODES;
 import static com.anime.rashon.speed.loyert.app.Config.admob;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -28,11 +32,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
@@ -63,6 +69,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 import java.util.List;
@@ -109,6 +116,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activity = this ;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // create channel notification if the device is greater the or equal 26 (oreo) as it`s required
+            // and make it priority high so the notification is popping up to the user
+            createChannel();
+        }
+        FirebaseMessaging.getInstance().subscribeToTopic("AppUpdatesNotifications");
         initRetrofit();
         //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
@@ -128,6 +141,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });*/
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationChannel notificationChannel = new NotificationChannel(getString(R.string.notification_channel_id), "Anime updates", NotificationManager.IMPORTANCE_HIGH);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.createNotificationChannel(notificationChannel);
+    }
 
     private void init() {
         Log.i("ab_do" , sharedPreferencesUtil.getSharedPreferences(this).getString(sharedPreferencesUtil.CURRENT_PHOTO , "no photo"));
@@ -480,6 +500,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void inflateLatestEpisodesFragment(){
+        showSearchMenu(false);
         Objects.requireNonNull(getSupportActionBar()).setTitle("اخر الحلقات المضافة");
         if (getIntent().getSerializableExtra("list") !=null) {
             Log.i("ab_do2" , "list is ready");
@@ -495,6 +516,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void replaceLatestEpisodesFragment(){
+        showSearchMenu(false);
         selectedType = LATEST_EPISODES;
         Objects.requireNonNull(getSupportActionBar()).setTitle("أحدث الحلقات");
         LatestEpisodesFragmentFragment = new LatestEpisodesFragment();
@@ -585,10 +607,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.menu = menu ;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         search_item = menu.findItem(R.id.menusearch);
-
         searchView = (android.widget.SearchView) search_item.getActionView();
-
+        searchView.setQueryHint("   أبحث هنا ");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if(!TextUtils.isEmpty(s)){
@@ -601,15 +623,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public boolean onQueryTextChange(String s) {
-                CartoonFragment cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(CartoonFragment.class.getSimpleName());
-                if(!TextUtils.isEmpty(s)){
-                    searchCase = true;
-                    if (cartoonFragment!=null)
-                    cartoonFragment.filterAdapter(s);
-                }else{
-                    searchCase = false;
-                    if (cartoonFragment!=null)
-                    cartoonFragment.checkCartoonType(selectedType);
+                Log.i("ab_do"  , "onQueryTextChange " + s);
+                if (cartoonFragment!=null) {
+                    if (!TextUtils.isEmpty(s)) {
+                        searchCase = true;
+                        mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                        if (cartoonFragment != null)
+                            cartoonFragment.filterData(s);
+                    }
+                    else {
+                        mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                        searchCase = false;
+                        if (cartoonFragment != null)
+                            cartoonFragment.resetDataAfterSearch();
+                     }
                 }
                 return true;
             }
@@ -721,23 +748,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if (itemId == R.id.anime) {
             openCartoonFragment(Constants.DUBBED_ANIME, "المدبلج" , itemId);
+            showSearchMenu(true);
         }
         else if (itemId == R.id.films_t) {
             openCartoonFragment(Constants.TRANSLATED_FILMS, "الافلام المترجمه" , itemId);
+            showSearchMenu(true);
         }
 
         else if (itemId == R.id.films_d) {
             openCartoonFragment(Constants.DUBBED_FILMS, "الافلام المدبلجة" , itemId);
+            showSearchMenu(true);
         }
 
         else if (itemId == R.id.most_viewed) {
             mBinding.navView.setCheckedItem(itemId);
             openCartoonFragment(Constants.MOST_VIEWED, "الأكثر المشاهدة" , itemId);
+            showSearchMenu(false);
         }
 
         else if (itemId == R.id.see_later) {
-            if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Constants.WATCH_LATER, "قائمتي" , itemId);
+            if(loginUtil.userIsLoggedIN()) {
+                openCartoonFragment(Constants.WATCH_LATER, "قائمتي", itemId);
+                showSearchMenu(false);
+            }
             else {
                 loginDialog.showDialog();
                 hideDrawer();
@@ -746,8 +779,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         else if (itemId == R.id.animeSeen) {
-            if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Constants.WATCHED,  "تمت مشاهدته" , itemId);
+            if(loginUtil.userIsLoggedIN()) {
+                openCartoonFragment(Constants.WATCHED, "تمت مشاهدته", itemId);
+                showSearchMenu(false);
+            }
              else {
                  loginDialog.showDialog();
                 hideDrawer();
@@ -757,8 +792,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         else if (itemId == R.id.favourite) {
-            if(loginUtil.userIsLoggedIN())
-            openCartoonFragment(Constants.FAVOURITE, "المفضلة" ,  itemId);
+            if(loginUtil.userIsLoggedIN()) {
+                openCartoonFragment(Constants.FAVOURITE, "المفضلة", itemId);
+                showSearchMenu(false);
+            }
             else {
                 loginDialog.showDialog();
                 hideDrawer();
@@ -773,10 +810,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else if (itemId == R.id.translation_anime) {
             openCartoonFragment(Constants.TRANSLATED_ANIME, "المترجم" , itemId);
+                showSearchMenu(true);
         }
 
         else if (itemId == R.id.new_cartoon) {
             openCartoonFragment(Constants.NEW_ANIME , "المستمر" ,  itemId);
+             showSearchMenu(false);
         }
 
         else if (itemId == R.id.leaderboard) {
@@ -825,6 +864,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getAdmobData();
         hideDrawer();
         return true;
+    }
+
+    private void showSearchMenu(boolean b) {
+        if (search_item != null)
+            search_item.setVisible(b);
     }
 
     private void openCartoonFragment(int type, String s , int item_id) {

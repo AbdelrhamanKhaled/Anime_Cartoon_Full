@@ -31,13 +31,14 @@ import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements Filterable {
+public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final String TAG = CartoonsAdapter.class.getSimpleName();
     private Activity mContext;
+
+
+
     private List<CartoonWithInfo> cartoonList;
-    private List<CartoonWithInfo> cartoonListFiltered;
 
     private final int albumView = 1;
     private final int nativeAdView = 2;
@@ -45,12 +46,11 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private boolean isGrid ;
     private boolean isEpisodesDates ;
 
-    public CartoonsAdapter(Activity mContext, List<CartoonWithInfo> cartoonList , boolean isGrid , boolean isEpisodesDates) {
+    public CartoonsAdapter(Activity mContext, boolean isGrid , boolean isEpisodesDates) {
         this.mContext = mContext;
-        this.cartoonList = cartoonList;
-        this.cartoonListFiltered = cartoonList;
         this.isGrid = isGrid ;
         this.isEpisodesDates = isEpisodesDates ;
+        cartoonList = new ArrayList<>();
     }
 
     @NonNull
@@ -78,6 +78,12 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
+    public void updateList(List<CartoonWithInfo> cartoonList) {
+        this.cartoonList.clear();
+        this.cartoonList.addAll(cartoonList);
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
@@ -86,9 +92,10 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Config.loadNativeAd(mContext, nativeAdHolder.mBinding.nativeAdTemplate);
         }
         else {
+            if (!searchCase)
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(mContext , R.anim.anim_itemview));
             CartoonHolder cartoonHolder = (CartoonHolder) holder;
-            final CartoonWithInfo cartoon = cartoonListFiltered.get(position);
+            final CartoonWithInfo cartoon = cartoonList.get(position);
             if (isGrid) {
                 cartoonHolder.gridBinding.setCartoon(cartoon);
                 if (isEpisodesDates) {
@@ -145,48 +152,16 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void clearData() {
+        cartoonList.clear();
+    }
+
 
     @Override
     public int getItemCount() {
         return cartoonList.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-
-                if(TextUtils.isEmpty(charSequence)){
-                    //cartoonListFiltered = cartoonList;
-                }else{
-
-                    List<Cartoon> filteredList = new ArrayList<>();
-                    for(Cartoon cartoon : cartoonList){
-
-                        if(cartoon.getTitle().toLowerCase().contains(charSequence.toString().toLowerCase()))
-                            filteredList.add(cartoon);
-
-                    }
-
-                   // cartoonListFiltered = filteredList;
-
-                }
-
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = cartoonListFiltered;
-
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                //cartoonListFiltered = (ArrayList<Cartoon>) filterResults.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
 
     @Override
     public int getItemViewType(int position) {

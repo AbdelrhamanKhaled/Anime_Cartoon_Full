@@ -40,7 +40,7 @@ import io.reactivex.schedulers.Schedulers;
 public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbacksAdapter.feedbackHolder> {
     private final CompositeDisposable disposable;
     private final ApiService apiService;
-    private final int user_id;
+    public final int user_id;
     List<Feedback> feedbacks = new ArrayList<>();
     private List<Integer> feedbackLikesIDs = new ArrayList<>();
     private List<Integer> feedbackDisLikesIDs = new ArrayList<>();
@@ -48,6 +48,7 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
     ReportDialog reportDialog;
     boolean isReply;
     OnMentionUserClicked onMentionUserClicked ;
+    ShouldLoginMsg shouldLoginMsg ;
 
     public CartoonFeedbacksAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable , boolean isReply) {
         this.context = context;
@@ -58,6 +59,7 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
         this.isReply = isReply ;
         if (isReply)
         this.onMentionUserClicked = (CartoonFeedbacksAdapter.OnMentionUserClicked) context;
+        shouldLoginMsg = (ShouldLoginMsg) context;
     }
 
     @NonNull
@@ -162,9 +164,14 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
                 }
             });
 
+
             binding.likesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     // case --1-- user is already liked this feedback :
                     // remove like from db and from list
                     if (feedbackLikesIDs.contains(feedback.getFeedbackId())) {
@@ -283,6 +290,10 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
             binding.dislikesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     // case --1-- user is already disliked this feedback :
                     // remove dislike from db and from list
                     if (feedbackDisLikesIDs.contains(feedback.getFeedbackId())) {
@@ -402,6 +413,10 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
             binding.deleteORReportImgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     if(feedback.getUserID() == user_id) {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
 
@@ -494,5 +509,10 @@ public class CartoonFeedbacksAdapter extends RecyclerView.Adapter<CartoonFeedbac
    public interface OnMentionUserClicked {
         void onClick (String username);
     }
+
+    public interface ShouldLoginMsg {
+        void show ();
+    }
+
 
 }

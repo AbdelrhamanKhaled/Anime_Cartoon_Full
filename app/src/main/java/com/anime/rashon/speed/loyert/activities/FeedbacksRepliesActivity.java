@@ -34,7 +34,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class FeedbacksRepliesActivity extends AppCompatActivity implements ReportDialog.onReportClickListener , CartoonFeedbacksAdapter.OnMentionUserClicked {
+public class FeedbacksRepliesActivity extends AppCompatActivity implements CartoonFeedbacksAdapter.ShouldLoginMsg , ReportDialog.onReportClickListener , CartoonFeedbacksAdapter.OnMentionUserClicked {
     public static int user_id, cartoon_id , feedback_id;
     CompositeDisposable disposable;
     ApiService apiService;
@@ -58,7 +58,10 @@ public class FeedbacksRepliesActivity extends AppCompatActivity implements Repor
     private void init() {
         loginUtil = new LoginUtil(this) ;
         binding.progressBarLayout.setVisibility(View.VISIBLE);
-        user_id = loginUtil.getCurrentUser().getId();
+        if (loginUtil.getCurrentUser()!=null)
+            user_id = loginUtil.getCurrentUser().getId();
+        else
+            user_id = -1 ;
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         cartoon_id = getIntent().getIntExtra(Constants.CARTOON_ID, -1);
@@ -75,7 +78,11 @@ public class FeedbacksRepliesActivity extends AppCompatActivity implements Repor
                     showSnackMsg("يرجي ملئ الحقل أولا !");
                 }
                 else {
-                    addFeedbackReply(feedback);
+                    if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
+                        addFeedbackReply(feedback);
+                    else {
+                        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
+                    }
                 }
             }
         });
@@ -327,5 +334,10 @@ public class FeedbacksRepliesActivity extends AppCompatActivity implements Repor
         startActivity(new Intent(getBaseContext() , FeedbacksActivity.class).putExtra(Constants.CARTOON_ID , cartoon_id));
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void show() {
+        showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
     }
 }

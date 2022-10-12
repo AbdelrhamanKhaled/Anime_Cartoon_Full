@@ -104,13 +104,13 @@ public class EpisodeDatesActivity extends AppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void notifyAllAdapters() {
-        adapter1.notifyDataSetChanged();
-        adapter2.notifyDataSetChanged();
-        adapter3.notifyDataSetChanged();
-        adapter4.notifyDataSetChanged();
-        adapter5.notifyDataSetChanged();
-        adapter6.notifyDataSetChanged();
-        adapter7.notifyDataSetChanged();
+        adapter1.updateList(list1);
+        adapter2.updateList(list2);
+        adapter3.updateList(list3);
+        adapter4.updateList(list4);
+        adapter5.updateList(list5);
+        adapter6.updateList(list6);
+        adapter7.updateList(list7);
     }
 
     private CartoonWithInfo getCartoonObjectFromEpisodeDate(EpisodeDate episodeDate) {
@@ -210,13 +210,13 @@ public class EpisodeDatesActivity extends AppCompatActivity {
     }
 
     private void initAdapters() {
-        adapter1 = new CartoonsAdapter(this, list1 , isGrid , true);
-        adapter2 = new CartoonsAdapter(this, list2 , isGrid , true);
-        adapter3 = new CartoonsAdapter(this, list3 , isGrid , true);
-        adapter4 = new CartoonsAdapter(this, list4 , isGrid , true);
-        adapter5 = new CartoonsAdapter(this, list5 , isGrid , true);
-        adapter6 = new CartoonsAdapter(this, list6 , isGrid , true);
-        adapter7 = new CartoonsAdapter(this, list7 , isGrid , true);
+        adapter1 = new CartoonsAdapter(this , isGrid , true);
+        adapter2 = new CartoonsAdapter(this , isGrid , true);
+        adapter3 = new CartoonsAdapter(this  , isGrid , true);
+        adapter4 = new CartoonsAdapter(this , isGrid , true);
+        adapter5 = new CartoonsAdapter(this,  isGrid , true);
+        adapter6 = new CartoonsAdapter(this,  isGrid , true);
+        adapter7 = new CartoonsAdapter(this,  isGrid , true);
     }
 
     @Override

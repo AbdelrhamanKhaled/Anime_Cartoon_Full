@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
 import com.anime.rashon.speed.loyert.adapters.CartoonsAdapter;
@@ -62,7 +63,7 @@ public class CartoonFragment extends Fragment{
     Fragment current ;
 
     int user_id ;
-
+    int cartoon_type , classification ;
 
     @Nullable
     @Override
@@ -77,7 +78,7 @@ public class CartoonFragment extends Fragment{
 
     public void initRecyclerview(boolean isGrid) {
         mBinding.cartoonsRecyclerview.setHasFixedSize(true);
-        adapter = new CartoonsAdapter(getActivity(), cartoonList , isGrid , false);
+        adapter = new CartoonsAdapter(getActivity() , isGrid , false);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -117,6 +118,10 @@ public class CartoonFragment extends Fragment{
         mBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (MainActivity.searchCase) {
+                    mBinding.swipeRefreshLayout.setRefreshing(false);
+                    return;
+                }
                 mBinding.swipeRefreshLayout.setRefreshing(true);
                 if(cartoonList != null){
                     cartoonList.clear();
@@ -153,7 +158,7 @@ public class CartoonFragment extends Fragment{
             }
         }
         cartoonList.addAll(retrievedCartoonList);
-        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -165,7 +170,7 @@ public class CartoonFragment extends Fragment{
             }
         }
         cartoonList.addAll(retrievedCartoonList);
-        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -177,7 +182,7 @@ public class CartoonFragment extends Fragment{
             }
         }
         cartoonList.addAll(retrievedCartoonList);
-        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        adapter.updateList(cartoonList);
         mBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -208,7 +213,7 @@ public class CartoonFragment extends Fragment{
                                 }
 
                                 cartoonList.addAll(retrievedCartoonList);
-                                mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+                                adapter.updateList(cartoonList);
                                 mBinding.swipeRefreshLayout.setRefreshing(false);
                             }
                             @Override
@@ -219,6 +224,28 @@ public class CartoonFragment extends Fragment{
         );
     }
 
+    public void filterData(String search) {
+        mBinding.progressBarLayout.setVisibility(View.VISIBLE);
+        // add api call to search with the given text
+        disposable.add(
+                apiService
+                        .searchCartoon(search , cartoon_type , classification)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<CartoonWithInfo>>() {
+                            @Override
+                            public void onSuccess(List<CartoonWithInfo> retrievedCartoonList) {
+                                adapter.updateList(retrievedCartoonList);
+                                mBinding.progressBarLayout.setVisibility(View.GONE);
+                            }
+                            @Override
+                            public void onError(Throwable e) {
+                                resetDataAfterSearch();
+                                Toast.makeText(getActivity(), "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
 
     public void filterAdapter(String searchQuery){
 //        mBinding.swipeRefreshLayout.setRefreshing(true);
@@ -254,18 +281,26 @@ public class CartoonFragment extends Fragment{
         pageNumber = 1;
         switch (categoryId){
             case DUBBED_ANIME: //All Cartoons
+                cartoon_type = Constants.IS_SERIES ;
+                classification = Constants.IS_DUBBED ;
                 getCartoonsByType(DUBBED_ANIME);
                 break;
 
             case DUBBED_FILMS: //Action Cartoons
+                cartoon_type = Constants.IS_FILM ;
+                classification = Constants.IS_DUBBED ;
                 getCartoonsByType(DUBBED_FILMS);
                 break;
 
             case TRANSLATED_ANIME:
+                cartoon_type = Constants.IS_SERIES ;
+                classification = Constants.IS_TRANSLATED ;
                 getCartoonsByType(TRANSLATED_ANIME);
                 break;
 
             case TRANSLATED_FILMS:
+                cartoon_type = Constants.IS_FILM ;
+                classification = Constants.IS_TRANSLATED ;
                 getCartoonsByType(TRANSLATED_FILMS);
                 break;
 
@@ -310,7 +345,7 @@ public class CartoonFragment extends Fragment{
                }
             }
         cartoonList.addAll(retrievedCartoonList);
-        mBinding.cartoonsRecyclerview.getAdapter().notifyDataSetChanged();
+        adapter.updateList(cartoonList);
         pageNumber++;
     }
 
@@ -433,5 +468,9 @@ public class CartoonFragment extends Fragment{
             );
         }
 
+    }
+
+    public void resetDataAfterSearch() {
+        adapter.updateList(cartoonList);
     }
 }

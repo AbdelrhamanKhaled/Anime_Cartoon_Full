@@ -49,7 +49,7 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
     ReportDialog reportDialog;
     boolean isReply;
     OnMentionUserClicked onMentionUserClicked ;
-
+    EpisodeCommentsAdapter.ShouldLoginMsg shouldLoginMsg ;
     public EpisodeCommentsAdapter(Activity context, int user_id, ApiService apiService, CompositeDisposable disposable , boolean isReply) {
         this.context = context;
         this.apiService = apiService;
@@ -59,6 +59,7 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
         this.isReply = isReply ;
         if (isReply)
         this.onMentionUserClicked = (OnMentionUserClicked) context;
+        shouldLoginMsg = (ShouldLoginMsg) context;
     }
 
     @NonNull
@@ -175,6 +176,10 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
             binding.deleteORReportImgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     if(comment.getUserID() == user_id) {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
 
@@ -198,6 +203,10 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
             binding.likesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     // case --1-- user is already liked this comment :
                     // remove like from db and from list
                     if (commentsLikesIDs.contains(comment.getCommentId())) {
@@ -316,6 +325,10 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
             binding.dislikesTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user_id == -1)  {
+                        shouldLoginMsg.show();
+                        return;
+                    }
                     // case --1-- user is already disliked this comment :
                     // remove dislike from db and from list
                     if (commentsDisLikesIDs.contains(comment.getCommentId())) {
@@ -498,5 +511,9 @@ public class EpisodeCommentsAdapter extends RecyclerView.Adapter<EpisodeComments
 
     public interface OnMentionUserClicked {
         void onClick (String username);
+    }
+
+    public interface ShouldLoginMsg {
+        void show ();
     }
 }

@@ -527,24 +527,23 @@ public class ServersActivity extends AppCompatActivity {
         updateToolbarTitle();
         if (episode == null) return;
         Log.i("ab_do", "checkServers : " + current_pos);
-        if (
-                episode.getVideo1() == null &&
-                        episode.getVideo2()== null &&
-                        episode.getVideo3()== null &&
-                        episode.getVideo4()== null ||
-                        episode.getVideo1().isEmpty() && (
-                                episode.getVideo2().isEmpty() &&
-                                episode.getVideo3().isEmpty() &&
-                                episode.getVideo4().isEmpty() )
-        ) {
+//        if (
+//                episode.getVideo1() == null &&
+//                        episode.getVideo2()== null &&
+//                        episode.getVideo3()== null &&
+//                        episode.getVideo4()== null ||
+//                        episode.getVideo1().isEmpty() && (
+//                                episode.getVideo2().isEmpty() &&
+//                                episode.getVideo3().isEmpty() &&
+//                                episode.getVideo4().isEmpty() )
+//        ) {
 
 //            startVideoPlayer(position, episode, episodeTitle, thumb, playlistTitle, cartoonTitle);
 //            Config.optionsDialog(this, episode.getVideo(), episode, playlistTitle, cartoonTitle);
-            checkjResolver(episode.getVideo(), episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
-        }
-        else {
-            checkSeversAvailability();
-        }
+            //checkjResolver(episode.getVideo(), episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
+
+        checkSeversAvailability();
+
     }
 
     private void checkjResolver(String url, Episode episode,
@@ -647,12 +646,7 @@ public class ServersActivity extends AppCompatActivity {
             finish();
             return true ;
         }if (item.getItemId() == R.id.add_comment) {
-            LoginUtil loginUtil = new LoginUtil(this);
-            if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
             goToEpisodeCommentsActivity();
-            else
-                showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
-
             return true ;
         }
 

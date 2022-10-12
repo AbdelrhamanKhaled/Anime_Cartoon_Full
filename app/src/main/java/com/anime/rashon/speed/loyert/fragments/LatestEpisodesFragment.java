@@ -179,10 +179,10 @@ public class LatestEpisodesFragment extends Fragment {
         super.onDestroy();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (MainActivity.search_item!=null)
-        MainActivity.search_item.setVisible(false);
-    }
+//    @Override
+//    public void onAttach(@NonNull Context context) {
+//        super.onAttach(context);
+//        if (MainActivity.search_item!=null)
+//        MainActivity.search_item.setVisible(false);
+//    }
 }

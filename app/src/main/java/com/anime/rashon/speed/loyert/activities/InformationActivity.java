@@ -78,12 +78,7 @@ public class InformationActivity extends AppCompatActivity {
         binding.addFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!=null)
                 startActivity(new Intent(getBaseContext() , FeedbacksActivity.class).putExtra(Constants.CARTOON_ID , cartoon.getId()));
-                else {
-                    showSnackMsg("عفوا يرجي تسجيل الدخول أولا ");
-                }
-
             }
         });
         binding.watch.setOnClickListener(new View.OnClickListener() {
@@ -297,6 +292,8 @@ public class InformationActivity extends AppCompatActivity {
                         })
         );
     }
+
+
 
     private void showSnack(Snackbar snack) {
         View view = snack.getView();
