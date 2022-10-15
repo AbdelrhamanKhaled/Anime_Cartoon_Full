@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- theme ids -->
+    <integer name="default_theme" >0</integer>
+    <integer name="black_theme" >1</integer>
+    <integer name="theme_Purple" >2</integer>
+    <integer name="theme_Deep_Purple" >3</integer>
+</resources>

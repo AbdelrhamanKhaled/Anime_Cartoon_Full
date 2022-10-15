@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
@@ -70,6 +73,42 @@ public class Config {
     public static final String BASE_URL = "https://dxd-downloader.com/Abdulrahman/API/";
 
     public static int numOfItemsBetweenAds = 30;
+
+    public static Intent newFacebookIntent(PackageManager pm, String url) {
+        Uri uri = Uri.parse(url);
+        try {
+            ApplicationInfo applicationInfo = pm.getApplicationInfo("com.facebook.katana", 0);
+            if (applicationInfo.enabled) {
+                // http://stackoverflow.com/a/24547437/1048340
+                uri = Uri.parse("fb://facewebmodal/f?href=" + url);
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        return new Intent(Intent.ACTION_VIEW, uri);
+    }
+
+    public static void updateTheme(Activity activity) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        int theme_id = sharedPreferences.getInt(activity.getString(R.string.THEME_KEY) , activity.getResources().getInteger(R.integer.default_theme));
+        Log.i("ab_do" , "Theme Id " + theme_id);
+
+        if (theme_id == activity.getResources().getInteger(R.integer.default_theme)) {
+            Toast.makeText(activity, "default theme", Toast.LENGTH_SHORT).show();
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.black_theme)) {
+            Toast.makeText(activity, "black_theme", Toast.LENGTH_SHORT).show();
+
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
+            Toast.makeText(activity, "theme_Purple", Toast.LENGTH_SHORT).show();
+
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
+            Toast.makeText(activity, "theme_Deep_Purple", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
     public static void shareApp(Context context){
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -151,10 +190,7 @@ public class Config {
 
     public static void startDownloadingEpisode(Activity activity, String url, Episode episode,
                                                String playlistTitle, String cartoonTitle) {
-        if (url.endsWith(".m3u8")) {
-            Toast.makeText(activity, "الرابط غير صالح للتحميل", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         ShowDialog(activity);
           if (!isPackageInstalled ( "com.mojfhr.plasjre" , activity.getPackageManager())) {
               showDownloadDownloaderAppDialog(activity);

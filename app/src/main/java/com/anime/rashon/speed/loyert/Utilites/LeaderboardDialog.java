@@ -24,6 +24,7 @@ public class LeaderboardDialog {
 
     private void createDialog() {
         dialog.setContentView(R.layout.leadrboard_dialog);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_back);
         ImageView close = dialog.findViewById(R.id.close_Btn);
         Button ok = dialog.findViewById(R.id.ok_Btn);
         close.setOnClickListener(new View.OnClickListener() {

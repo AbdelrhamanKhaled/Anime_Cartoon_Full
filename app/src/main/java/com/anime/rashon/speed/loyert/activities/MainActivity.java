@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,10 +19,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -40,6 +43,7 @@ import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
@@ -67,6 +71,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Config.updateTheme(this);
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activity = this ;
@@ -121,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // and make it priority high so the notification is popping up to the user
             createChannel();
         }
-        FirebaseMessaging.getInstance().subscribeToTopic("AppUpdatesNotifications");
         initRetrofit();
         //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
@@ -510,9 +515,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else
         LatestEpisodesFragmentFragment = new LatestEpisodesFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.content_fragment, LatestEpisodesFragmentFragment, getString(R.string.latest_episodes_fragment));
-        transaction.commit();
+        try {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.content_fragment, LatestEpisodesFragmentFragment, getString(R.string.latest_episodes_fragment));
+            transaction.commit();
+        }catch (Exception exception) {
+            Log.i("ab_do" , "exp " + exception.getMessage());
+        }
+
     }
 
     private void replaceLatestEpisodesFragment(){
@@ -606,6 +616,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu ;
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        updateNotificationIcon(menu.findItem(R.id.notification));
         search_item = menu.findItem(R.id.menusearch);
         searchView = (android.widget.SearchView) search_item.getActionView();
         searchView.setQueryHint("   أبحث هنا ");
@@ -646,6 +657,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void updateNotificationIcon(MenuItem notification_item) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean active_notification = sharedPreferences.getBoolean("notify" , true);
+        if (active_notification) {
+            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.notification_topic));
+            notification_item.setIcon(R.drawable.ic_baseline_notifications_active_24);
+        }
+        else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.notification_topic));
+            notification_item.setIcon(R.drawable.ic_baseline_notifications_none_24);
+
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
@@ -661,7 +686,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 LatestEpisodesFragmentFragment.initRecyclerview(grid);
             }
         }
+        else if (item.getItemId() == R.id.notification) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean active_notification = sharedPreferences.getBoolean("notify" , true);
+            active_notification = !active_notification ;
+            sharedPreferences.edit().putBoolean("notify" , active_notification).commit();
+            updateNotificationIcon(item);
+            if (active_notification) {
+                showSnackMsg("تم تفعيل الإشعارات بنجاح");
+            }
+            else {
+                showSnackMsg("تم إلغاء تفعيل الإشعارات بنجاح");
+            }
+
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSnackMsg (String s) {
+        Snackbar snack = Snackbar.make(mBinding.getRoot(), s, Snackbar.LENGTH_SHORT);
+        showSnack(snack);
+    }
+
+    private void showSnack(Snackbar snack) {
+        View view = snack.getView();
+        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+        params.gravity = Gravity.CENTER;
+        view.setLayoutParams(params);
+        snack.show();
     }
 
     private void updateGridIcon(MenuItem item) {
@@ -833,14 +885,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             return false ;
         }
-//        else if (itemId == R.id.downloads) {
-//            startActivity(new Intent(MainActivity.this, DownloadsActivity.class));
-//        }
+        else if (itemId == R.id.settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return false ;
+        }
 //        else if (itemId == R.id.support) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/m_c_w_a")));
-//        } else if (itemId == R.id.rate) {
+//        }
+//        else if (itemId == R.id.rate) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apps-anime.com")));
-//        } else if (itemId == R.id.contact_us) {
+//        }
+//        else if (itemId == R.id.contact_us) {
 //            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
 //                    "mailto", "contactus.developerapps@gmail.com", null));
 //            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "");

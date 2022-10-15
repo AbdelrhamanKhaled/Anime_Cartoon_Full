@@ -34,6 +34,7 @@ public class ServerReportDialog {
     }
 
     private void createDialog() {
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_back);
         dialog.setContentView(R.layout.server_report_dialog);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);

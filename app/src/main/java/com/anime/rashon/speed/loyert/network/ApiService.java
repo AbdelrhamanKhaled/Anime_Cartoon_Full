@@ -74,10 +74,12 @@ public interface ApiService {
             @Query("page") int pageNumber
     );
 
-    @POST("report/create.php")
-    Single<String> createReport(
-            @Body Report report
+    @GET("Accses/addMalfunctions.php")
+    Single<UserResponse> makeMalfunctionsReport(
+            @Query("description") String description
     );
+
+
 
     @GET("admob/animecartoonafterdelete.php")
     Single<Admob> getAdmob(

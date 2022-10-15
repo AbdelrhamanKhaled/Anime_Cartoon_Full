@@ -29,30 +29,38 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".EpisodeDownloadsActivity"
+            android:screenOrientation="portrait"
+            android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ServerIsUnderMaintanceActivity"
+            android:name=".activities.EpisodeDownloadsActivity"
             android:exported="false" />
         <activity
-            android:name=".CommentsRepliesActivity"
+            android:screenOrientation="portrait"
+
+            android:name=".activities.ServerIsUnderMaintenanceActivity"
             android:exported="false" />
         <activity
-            android:name=".FeedbacksRepliesActivity"
+            android:name=".activities.CommentsRepliesActivity"
             android:exported="false" />
         <activity
-            android:name=".EpisodeDatesActivity"
+            android:name=".activities.FeedbacksRepliesActivity"
             android:exported="false" />
         <activity
-            android:name=".EpisodeCommentsActivity"
+            android:name=".activities.EpisodeDatesActivity"
             android:exported="false" />
         <activity
-            android:name=".LeaderboardActivity"
+            android:name=".activities.EpisodeCommentsActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.LeaderboardActivity"
+            android:exported="false" />
+        <activity
+
             android:name=".activities.InformationActivity"
             android:exported="false" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".activities.splashActivity"
             android:exported="true"
             android:noHistory="true">
@@ -137,13 +145,6 @@
             android:name=".activities.FavoriteEpisodeActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity android:name=".activities.FeedbacksActivity" />
-        <activity android:name=".activities.LeaderboardActivity" />
-        <activity android:name=".activities.EpisodeCommentsActivity" />
-        <activity android:name=".activities.EpisodeDatesActivity" />
-        <activity android:name=".activities.FeedbacksRepliesActivity" />
-        <activity android:name=".activities.CommentsRepliesActivity" />
-        <activity android:name=".activities.ServerIsUnderMaintenanceActivity" />
-        <activity android:name=".activities.EpisodeDownloadsActivity" />
     </application>
 
 </manifest>

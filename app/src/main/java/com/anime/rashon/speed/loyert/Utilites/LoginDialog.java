@@ -24,6 +24,7 @@ public class LoginDialog {
 
     private void createDialog() {
         dialog.setContentView(R.layout.login_dialog);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_back);
         ImageView close = dialog.findViewById(R.id.close);
         Button login = dialog.findViewById(R.id.login);
         close.setOnClickListener(new View.OnClickListener() {

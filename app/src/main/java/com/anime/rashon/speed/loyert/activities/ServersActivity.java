@@ -366,7 +366,7 @@ public class ServersActivity extends AppCompatActivity {
         if (episode.getVideo4().isEmpty())
             Toast.makeText(ServersActivity.this, "غير متاح حاليا", Toast.LENGTH_SHORT).show();
         else
-            serverClicked(5, episode.getVideo4(), episode.getjResolver3());
+            serverClicked(6, episode.getVideo5(), episode.getjResolver5());
 
     }
 
@@ -379,6 +379,8 @@ public class ServersActivity extends AppCompatActivity {
         else {
             //Check if needs xgetter
             if (needsXGetter == 1) { //Needs extractions
+                if (Action == DOWNLOAD_ACTION)
+                if (IsBlockedUrl(videoUrl)) return;
                 Log.i("ab_do", "needsXGetter");
                 Jresolver jresolver = new Jresolver(this);
                 jresolver.onFinish(new Jresolver.OnTaskCompleted() {
@@ -412,7 +414,8 @@ public class ServersActivity extends AppCompatActivity {
 
                             dialog.show();
 
-                        } else {
+                        }
+                        else {
                             //If single
                             String url = vidURL.get(0).getUrl();
                             handleAction(serverNumber, url, Action);
@@ -431,7 +434,8 @@ public class ServersActivity extends AppCompatActivity {
 
                 jresolver.find(videoUrl);
 
-            } else {
+            }
+            else {
                 handleAction(serverNumber, videoUrl, Action);
             }
 //        mBinding.progressBarLayout.setVisibility(View.GONE);
@@ -514,10 +518,20 @@ public class ServersActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}
                         , 1);
-            } else {
+            }
+            else {
+                if (IsBlockedUrl(url)) return;
                 Config.startDownloadingEpisode(this, url, episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
             }
         }
+    }
+
+    private boolean IsBlockedUrl(String url) {
+        if (url.endsWith(".m3u8") || url.startsWith("https://ok.ru/") || url.startsWith("https://mixdrop.co/") || url.startsWith("https://www.ok.ru/") || url.startsWith("https://www.mixdrop.co/") ) {
+            Toast.makeText(this, "هذا السيرفر غير متاح للتحميل", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
     private void checkServers() {

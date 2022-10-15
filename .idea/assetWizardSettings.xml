@@ -3,6 +3,11 @@
   <component name="WizardSettings">
     <option name="children">
       <map>
+        <entry key="imageWizard">
+          <value>
+            <PersistentState />
+          </value>
+        </entry>
         <entry key="vectorWizard">
           <value>
             <PersistentState>
@@ -18,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/article/baseline_article_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/notifications_active/baseline_notifications_active_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,9 +33,10 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="636363" />
-                            <entry key="outputName" value="ic_baseline_article_24" />
-                            <entry key="sourceFile" value="C:\Users\Abdelrahman" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="color" value="0095ff" />
+                            <entry key="outputName" value="ic_youtube_icon" />
+                            <entry key="sourceFile" value="E:\downloads_Google\youtube_icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -137,7 +137,7 @@ dependencies {
 //    implementation 'com.onesignal:OneSignal:3.13.2'
 
     //XGetter
-   // implementation 'com.github.KhunHtetzNaing:xGetter:3.0'
+    // implementation 'com.github.KhunHtetzNaing:xGetter:3.0'
 
 //    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
 //    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
@@ -168,4 +168,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'org.ocpsoft.prettytime:prettytime:5.0.4.Final'
+    def preference_version = "1.1.0"
+    // Java language implementation
+    implementation "androidx.preference:preference:$preference_version"
+    // picker color dialog
+    implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
 }

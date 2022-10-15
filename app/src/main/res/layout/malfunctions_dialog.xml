@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -12,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:padding="24dp">
 
 
         <ImageView
@@ -22,34 +24,37 @@
 
 
         <TextView
-            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="هل تريد الإبلاغ عن تعليق سئ ؟"
-            android:textColor="@color/black"
             android:alpha="0.8"
+            android:gravity="center"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="يرجي توضيح العطل الذي تواجهه بالتطبيق "
+            android:textColor="@color/black"
             android:textSize="18sp" />
 
 
         <EditText
-            android:gravity="center"
-            android:background="@drawable/add_feedback_back"
             android:id="@+id/description"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
             android:layout_marginTop="16dp"
-            android:hint="إضافة وصف"
-            android:textColor="@color/black"
             android:alpha="0.7"
+            android:background="@drawable/add_feedback_back"
+            android:gravity="start"
+            android:hint="أكتب هنا"
+            android:padding="24dp"
+            android:textColor="@color/black"
             android:textSize="15sp" />
 
         <Button
-            android:layout_marginBottom="4dp"
             android:id="@+id/report"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/watch_back"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"

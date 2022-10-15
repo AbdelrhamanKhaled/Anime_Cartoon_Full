@@ -45,4 +45,33 @@
     <string name="notification_channel_id">animeUpdates</string>
 
 
+    <string name="apperance_settings">مظهر التطبيق</string>
+    <string name="apperance_summary">تعديل مظهر التطبيق اختر المظهر المفضل لك</string>
+    <string name="rate_settings">تقييم التطبيق</string>
+    <string name="share_settings">مشاركة التطبيق</string>
+    <string name="mail_settings">تواصل معنا</string>
+    <string name="mail_summary">إرسال أرائك حول التطبيق</string>
+    <string name="website_settings">الذهاب إلي موقعنا</string>
+    <string name="ApperanceKey" translatable="false">Apperance_Key</string>
+    <string name="feedback" translatable="false">feedback_key</string>
+    <string name="MoreApps" translatable="false">more_apps_key</string>
+    <string name="rate_key" translatable="false">rateKey</string>
+    <string name="damage">أبلغ عن عطل</string>
+    <string name="damage_summary">هل تواجه عطل بالتطبيق ؟ قم بالإبلاغ الان</string>
+    <string name="share_key">share_key</string>
+    <string name="social_media_key">social_media</string>
+    <string name="social_media_title">تابعنا على مواقع التواصل</string>
+    <string name="malfunctions_key">malfunctions</string>
+    <string name="THEME_KEY" translatable="false">myTheme</string>
+    <string name="CURRENT_COLOR_KEY" translatable="false">currentColor</string>
+    <string name="telegram_url">https://t.me/m_c_w_a</string>
+    <string name="facebook_url">https://www.facebook.com/bedo.kmohamed.7</string>
+    <string name="youtube_url">https://www.youtube.com/channel/UCfj_84-0XJwcSCB9ejFSBCA</string>
+    <string name="twitter_url">https://twitter.com/ABDELRA40111236</string>
+    <string name="instagram_url">https://www.instagram.com/alahlyegypt/</string>
+    <string name="tiktok_url">https://www.tiktok.com/@alahly?lang=en</string>
+    <string name="website_url">https://apps-anime.com</string>
+    <string name="contact_email">contactus.developerapps@gmail.com</string>
+    <string name="notification_topic">AppUpdatesNotifications</string>
+
 </resources>
