@@ -464,6 +464,11 @@ public class ServersActivity extends AppCompatActivity {
 
             }
             else {
+                if (Action == DOWNLOAD_ACTION) {
+                    // block any download to the url that don`t need to extraction
+                    Toast.makeText(this, "هذا السيرفر غير متاح للتحميل", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 handleAction(serverNumber, videoUrl, Action);
             }
 //        mBinding.progressBarLayout.setVisibility(View.GONE);

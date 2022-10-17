@@ -68,6 +68,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Config {
 
+    public static String video_player_package_name ;
     private static FetchListener fetchListener;
     private static ProgressDialog progressDialog ;
 //    public static final String BASE_URL = "http://dxd-player.com/animelivev/API/";
@@ -320,14 +321,6 @@ public class Config {
         progressDialog.dismiss();
     }
 
-    private static boolean isPackageInstalled(String packageName, PackageManager packageManager) {
-        try {
-            packageManager.getPackageInfo(packageName, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
 
     private static void startDownloadViaDownloadManager(Activity activity, String url, Episode episode, String playlistTitle, String cartoonTitle) {
 //        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -433,14 +426,14 @@ public class Config {
                 insertSeenEpisode(intent , activity, episode, loginUtil , progressBarLayout);
             }
             else {
-                if (progressBarLayout==null)
-                dismissDialog(activity);
-                else
-                progressBarLayout.setVisibility(View.GONE);
-                startExoPlayer(activity, intent);
+                startExoPlayer(activity, intent , progressBarLayout);
             }
         }
         else {
+            if (progressBarLayout==null)
+                dismissDialog(activity);
+            else
+                progressBarLayout.setVisibility(View.GONE);
             installExoPlayerDialog(activity);
         }
 
@@ -480,7 +473,7 @@ public class Config {
                                         dismissDialog(activity);
                                     else
                                         progressBarLayout.setVisibility(View.GONE);
-                                    startExoPlayer(activity, intent);
+                                    startExoPlayer(activity, intent, progressBarLayout);
                                 }
 
                             }
@@ -491,7 +484,7 @@ public class Config {
                                     dismissDialog(activity);
                                 else
                                     progressBarLayout.setVisibility(View.GONE);
-                                startExoPlayer(activity, intent);
+                                startExoPlayer(activity, intent, progressBarLayout);
                             }
                         })
         );
@@ -512,7 +505,7 @@ public class Config {
                                     dismissDialog(activity);
                                 else
                                     progressBarLayout.setVisibility(View.GONE);
-                                    startExoPlayer(activity , intent);
+                                    startExoPlayer(activity , intent, progressBarLayout);
                             }
 
                             @Override
@@ -521,7 +514,7 @@ public class Config {
                                     dismissDialog(activity);
                                 else
                                     progressBarLayout.setVisibility(View.GONE);
-                                startExoPlayer(activity , intent);
+                                startExoPlayer(activity , intent, progressBarLayout);
                             }
                         })
         );
@@ -535,7 +528,11 @@ public class Config {
         }
     }
 
-    private static void startExoPlayer(Activity activity, Intent intent) {
+    private static void startExoPlayer(Activity activity, Intent intent, FrameLayout progressBarLayout) {
+        if (progressBarLayout==null)
+            dismissDialog(activity);
+        else
+            progressBarLayout.setVisibility(View.GONE);
         try {
             activity.startActivity(intent);
         }
@@ -606,4 +603,14 @@ public class Config {
             activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(value.data));
         }
     }
+    public static boolean isPackageInstalled(String packageName, PackageManager packageManager) {
+        try {
+            packageManager.getApplicationInfo(packageName, 0);
+            return true ;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
 }

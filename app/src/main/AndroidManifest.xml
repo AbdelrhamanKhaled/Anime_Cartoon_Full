@@ -7,11 +7,12 @@
          location permissions for the "MyLocation" functionality.
     -->
     <queries>
-
         <!-- Explicit apps you know in advance about: -->
         <package android:name="com.mojfhr.plasjre" />
+
     </queries>
 
+<!--    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,17 +30,19 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:screenOrientation="portrait"
-            android:name=".activities.SettingsActivity"
+            android:name=".NoNetworkActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.EpisodeDownloadsActivity"
             android:exported="false" />
         <activity
-            android:screenOrientation="portrait"
-
             android:name=".activities.ServerIsUnderMaintenanceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.CommentsRepliesActivity"
             android:exported="false" />
@@ -56,14 +59,13 @@
             android:name=".activities.LeaderboardActivity"
             android:exported="false" />
         <activity
-
             android:name=".activities.InformationActivity"
             android:exported="false" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".activities.splashActivity"
             android:exported="true"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -135,6 +137,8 @@
             android:name=".activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity android:name=".activities.FeedbacksActivity" />
+        <activity android:name=".activities.NoNetworkActivity"  android:noHistory="true" android:launchMode="singleTask"
+            />
     </application>
 
 </manifest>

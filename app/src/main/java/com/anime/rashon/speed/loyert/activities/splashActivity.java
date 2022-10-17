@@ -1,5 +1,7 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -66,36 +68,23 @@ public class splashActivity extends AppCompatActivity {
         apiService = ApiClient.getClient(this).create(ApiService.class);
         loginUtil = new LoginUtil(this);
         // check first if server is underMaintenance or not
-        checkIfServerIsUnderMaintenance();
+        checkNetwork();
     }
 
-    private void checkIfServerIsUnderMaintenance() {
-        disposable.add(
-                apiService
-                        .checkIfServerIsUnderMaintains()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<Integer>() {
-                            @Override
-                            public void onSuccess(Integer statue) {
-                                if (statue == 1) {
-                                    // server is under maintenance
-                                    startActivity(new Intent(getBaseContext() , ServerIsUnderMaintenanceActivity.class));
-                                    finish();
-                                }
-                                else {
-                                    load();
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
-                                Log.i("ab_do" , "error " + e.getMessage());
-                            }
-                        })
-        );
+    private void checkNetwork() {
+        if (isNetworkConnected(this)) {
+            load();
+        }
+        else {
+            openNoNetworkActivity();
+        }
     }
+
+    private void openNoNetworkActivity() {
+        startActivity(new Intent(getBaseContext() , NoNetworkActivity.class));
+        finish();
+    }
+
 
     private void load() {
         if (loginUtil.userIsLoggedIN() && loginUtil.getCurrentUser()!= null) {
@@ -141,7 +130,11 @@ public class splashActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                 Log.i("ab_do" , "error get block statue " + e.getMessage());
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+
                             }
                         })
         );
@@ -162,7 +155,10 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
@@ -183,7 +179,11 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+
                             }
                         })
         );
@@ -204,7 +204,11 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+
                             }
                         })
         );
@@ -225,7 +229,11 @@ public class splashActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+
                             }
                         })
         );
@@ -251,7 +259,10 @@ public class splashActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                Log.i("splash_abdo" , "error " + e.getMessage());
-                               Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(splashActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+
                             }
                         })
         );

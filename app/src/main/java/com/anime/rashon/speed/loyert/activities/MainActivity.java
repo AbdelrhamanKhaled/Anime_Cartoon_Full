@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("ab_do" , " time = " + System.currentTimeMillis());
         initToolbar();
         initNavDrawer();
+        checkIfServerIsUnderMaintenance();
         getRedirect(savedInstanceState);
         updateSeenEpisodes();
         updateFavouriteCartoon();
@@ -139,6 +140,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });*/
     }
 
+    private void checkIfServerIsUnderMaintenance() {
+        disposable.add(
+                apiService
+                        .checkIfServerIsUnderMaintains()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Integer>() {
+                            @Override
+                            public void onSuccess(Integer statue) {
+                                if (statue == 1) {
+                                    // server is under maintenance
+                                    startActivity(new Intent(getBaseContext() , ServerIsUnderMaintenanceActivity.class));
+                                    finish();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do" , "error " + e.getMessage());
+                            }
+                        })
+        );
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createChannel() {
