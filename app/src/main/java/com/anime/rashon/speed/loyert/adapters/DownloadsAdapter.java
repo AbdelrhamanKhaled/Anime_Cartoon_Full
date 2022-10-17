@@ -1,36 +1,25 @@
 package com.anime.rashon.speed.loyert.adapters;
 
 import android.app.Activity;
-import android.os.Environment;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.DownloadedEpisodeItemviewBinding;
-import com.anime.rashon.speed.loyert.databinding.LayoutRecyclerdownloadItemBinding;
-import com.anime.rashon.speed.loyert.model.Download;
 import com.anime.rashon.speed.loyert.model.Episode;
-import com.anime.rashon.speed.loyert.model.UserResponse;
-import com.anime.rashon.speed.loyert.network.ApiClient;
-import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.List;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.DownloadHolder> {
 
@@ -57,6 +46,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.Down
     @Override
     public void onBindViewHolder(@NonNull DownloadHolder holder, final int position) {
         Episode episode = downloadList.get(position);
+
         holder.mBinding.cartoonTitle.setText(episode.getCartoon().getTitle());
         String episode_title = episode.getTitle() + "   " + episode.getPlaylist().getTitle();
         holder.mBinding.episodeName.setText(episode_title);
@@ -68,7 +58,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.Down
         holder.mBinding.play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Config.openExoPlayerApp(mContext, episode.getVideo_url(), episode);
+                Config.openExoPlayerApp(mContext, episode.getVideo_url(), episode, null);
             }
         });
 //
@@ -101,13 +91,18 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.Down
         return downloadList.size();
     }
 
-    public static class DownloadHolder extends RecyclerView.ViewHolder {
+    public  class DownloadHolder extends RecyclerView.ViewHolder {
 
         DownloadedEpisodeItemviewBinding mBinding;
 
         public DownloadHolder(View itemView) {
             super(itemView);
             mBinding = DataBindingUtil.bind(itemView);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            int theme_id = sharedPreferences.getInt(mContext.getString(R.string.THEME_KEY) , mContext.getResources().getInteger(R.integer.default_theme));
+            if (theme_id == mContext.getResources().getInteger(R.integer.black_theme)) {
+                mBinding.play.setImageResource(R.drawable.play_white);
+            }
         }
     }
 

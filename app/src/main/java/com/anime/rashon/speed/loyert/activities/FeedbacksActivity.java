@@ -18,6 +18,7 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.adapters.CartoonFeedbacksAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityCommentBinding;
 import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.UserResponse;
@@ -49,6 +50,7 @@ public class FeedbacksActivity extends AppCompatActivity implements ReportDialog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityCommentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();

@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:textColor="@color/AnimeTextColor_1"
+                android:textColor="?attr/AnimeTextColor_1"
                 tool:text="Cartoon Name" />
 
             <LinearLayout
@@ -81,7 +81,7 @@
                     android:gravity="left"
                     android:maxLength="25"
                     android:textSize="13sp"
-                    android:textColor="@color/AnimeTextColor_2"
+                    android:textColor="?attr/AnimeTextColor_2"
                     />
 
 
@@ -94,7 +94,7 @@
                     android:maxLength="25"
                     android:text="@{String.valueOf(cartoon.world_rate)}"
                     android:textSize="13sp"
-                    android:textColor="@color/AnimeTextColor_2"
+                    android:textColor="?attr/AnimeTextColor_2"
                     android:drawablePadding="8dp"
                     android:drawableLeft="@drawable/ic_star"
                     />

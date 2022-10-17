@@ -18,6 +18,7 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.adapters.EpisodeCommentsAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityEpisodeCommentsBinding;
 import com.anime.rashon.speed.loyert.model.EpisodeComment;
 import com.anime.rashon.speed.loyert.model.UserResponse;
@@ -49,6 +50,7 @@ public class EpisodeCommentsActivity extends AppCompatActivity implements  Episo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityEpisodeCommentsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();

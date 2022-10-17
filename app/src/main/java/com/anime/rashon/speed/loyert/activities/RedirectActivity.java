@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityRedirectBinding;
 import com.anime.rashon.speed.loyert.model.Redirect;
 
@@ -21,6 +22,7 @@ public class RedirectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_redirect);
 
         getIntentData();

@@ -4,7 +4,9 @@ import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,16 +23,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.preference.PreferenceManager;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
-import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
-import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
-import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
 import com.google.android.material.snackbar.Snackbar;
 import com.inside4ndroid.jresolver.Jresolver;
 import com.inside4ndroid.jresolver.Model.Jmodel;
@@ -60,12 +64,33 @@ public class ServersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_servers);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int theme_id = sharedPreferences.getInt(getString(R.string.THEME_KEY) , getResources().getInteger(R.integer.default_theme));
+        if (theme_id == getResources().getInteger(R.integer.black_theme)) {
+            changeIconsToWhite();
+        }
         reportDialog = new ServerReportDialog(this);
         getIntentData();
         initToolbar();
         checkSeversAvailability();
         setListeners();
+    }
+
+    private void changeIconsToWhite() {
+        mBinding.play1.setImageResource(R.drawable.play_white);
+        mBinding.play2.setImageResource(R.drawable.play_white);
+        mBinding.play3.setImageResource(R.drawable.play_white);
+        mBinding.play4.setImageResource(R.drawable.play_white);
+        mBinding.play5.setImageResource(R.drawable.play_white);
+        mBinding.play6.setImageResource(R.drawable.play_white);
+        mBinding.download1.setImageResource(R.drawable.download_white);
+        mBinding.download2.setImageResource(R.drawable.download_white);
+        mBinding.download3.setImageResource(R.drawable.download_white);
+        mBinding.download4.setImageResource(R.drawable.download_white);
+        mBinding.download5.setImageResource(R.drawable.download_white);
+        mBinding.download6.setImageResource(R.drawable.download_white);
     }
 
     private void setListeners() {
@@ -380,7 +405,9 @@ public class ServersActivity extends AppCompatActivity {
             //Check if needs xgetter
             if (needsXGetter == 1) { //Needs extractions
                 if (Action == DOWNLOAD_ACTION)
-                if (IsBlockedUrl(videoUrl)) return;
+                if (IsBlockedUrl(videoUrl)) {
+                    return;
+                }
                 Log.i("ab_do", "needsXGetter");
                 Jresolver jresolver = new Jresolver(this);
                 jresolver.onFinish(new Jresolver.OnTaskCompleted() {
@@ -397,7 +424,7 @@ public class ServersActivity extends AppCompatActivity {
                                 qualities[i] = vidURL.get(i).getQuality();
                                 urls[i] = vidURL.get(i).getUrl();
                             }
-
+                            mBinding.progressBarLayout.setVisibility(View.GONE);
                             AlertDialog.Builder builder = new AlertDialog.Builder(ServersActivity.this);
                             builder.setCancelable(true);
                             builder.setTitle("اختار جودة الحلقة");
@@ -425,6 +452,7 @@ public class ServersActivity extends AppCompatActivity {
                     @Override
                     public void onError() {
                         //Error
+                        mBinding.progressBarLayout.setVisibility(View.GONE);
                         episode.setError(true);
                         turnOffServer(serverNumber);
                         if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
@@ -485,7 +513,6 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void handleAction(int serverNumber, String url, int Action) {
-
         if (episode.isError()) {
             turnOffServer(serverNumber);
             if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
@@ -508,8 +535,10 @@ public class ServersActivity extends AppCompatActivity {
         }
 
 
-        if (Action == WATCH_ACTION)
-            Config.openExoPlayerApp(this, url, episode);
+        if (Action == WATCH_ACTION) {
+            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
+            checkIfCanPlayVideo(url , serverNumber);
+        }
 
         else {
 
@@ -524,6 +553,34 @@ public class ServersActivity extends AppCompatActivity {
                 Config.startDownloadingEpisode(this, url, episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
             }
         }
+    }
+
+    private void checkIfCanPlayVideo(String url , int server_number) {
+        ExoPlayer simpleExoPlayer = new ExoPlayer.Builder(this)
+                .setUseLazyPreparation(false) // this is new code
+                .build();
+        simpleExoPlayer.addMediaItem(new MediaItem.Builder()
+                .setUri(Uri.parse(url))
+                .build());
+        simpleExoPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                mBinding.progressBarLayout.setVisibility(View.GONE);
+                //simpleExoPlayer.release();
+                turnOffServer(server_number);
+                if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
+                Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_READY) {
+                    Config.openExoPlayerApp(ServersActivity.this, url, episode , mBinding.progressBarLayout);
+                    //simpleExoPlayer.release();
+                }
+            }
+        });
+        simpleExoPlayer.prepare();
     }
 
     private boolean IsBlockedUrl(String url) {
@@ -698,4 +755,6 @@ public class ServersActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.server_menu , menu) ;
         return super.onCreateOptionsMenu(menu);
     }
+
+
 }

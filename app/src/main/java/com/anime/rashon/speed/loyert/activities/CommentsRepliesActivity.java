@@ -19,6 +19,7 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.ReportDialog;
 import com.anime.rashon.speed.loyert.adapters.EpisodeCommentsAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityCommentsRepliesBinding;
 import com.anime.rashon.speed.loyert.model.EpisodeComment;
 import com.anime.rashon.speed.loyert.model.UserResponse;
@@ -50,6 +51,7 @@ public class CommentsRepliesActivity extends AppCompatActivity implements Episod
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityCommentsRepliesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();

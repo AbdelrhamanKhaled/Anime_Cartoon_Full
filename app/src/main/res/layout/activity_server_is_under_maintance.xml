@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:background="?attr/AppBackgroundColor"
     android:gravity="center"
     android:padding="32dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -18,30 +19,31 @@
 
     <TextView
         android:id="@+id/textMantaince"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/imgMantaince"
-        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imgMantaince"
+        android:layout_centerInParent="true"
         android:layout_marginTop="16dp"
-        android:text="نعتذر التطبيق تحت الصيانه الأن يرجي الإنتظار سنعود قريبا ! "
-        android:textColor="@color/black"
         android:alpha="0.8"
+        android:gravity="center"
+        android:text="نعتذر التطبيق تحت الصيانه الأن يرجي الإنتظار سنعود قريبا ! "
+        android:textColor="?attr/infoTextColor_1"
         android:textSize="20sp" />
 
 
     <Button
-        android:layout_centerInParent="true"
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textMantaince"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
         android:background="@drawable/watch_back"
         android:gravity="center"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:layout_marginTop="16dp"
-        android:text="حسنا سأعود قريبا" />
+        android:text="حسنا سأعود قريبا"
+        android:textColor="?attr/defaultBtnTxtColor" />
 
 
 </RelativeLayout>

@@ -8,6 +8,7 @@
     </data>
 
     <FrameLayout
+        android:background="?attr/AppBackgroundColor"
         android:layoutDirection="rtl"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"

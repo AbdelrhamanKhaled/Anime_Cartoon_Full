@@ -1,15 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="ParentTheme">
-
-        <!-- Customize your theme for only lollipop and above versions. -->
+    <style name="AppTheme" parent="ParentTheme">  // الافتتراضي
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:colorControlHighlight">@color/blue</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:itemBackground">@color/white</item>
+        <item name="AppBackgroundColor">@color/white</item>
+        <item name="colorOnToolbar">@color/black</item>
+        <item name="toolbarColor">@color/white</item>
+        <item name="IconsColor">@color/black</item>
+        <item name="AnimeTextColor_1">@color/AnimeTextColor_1</item>
+        <item name="AnimeTextColor_2">@color/AnimeTextColor_2</item>
+        <item name="headerBackgroundColor">@color/white</item>
+        <item name="navHeaderBackgroundColor">@color/white</item>
+        <item name="navHeaderTextColor">@color/black</item>
+        <item name="header_text_color_1">#CB000000</item>
+        <item name="header_text_color_2">@color/blue</item>
+        <item name="stroke_header_color">@color/default_header_stroke</item>
+        <item name="textHighlightEpisodesTime">@color/default_episode_date_back_color</item>
+        <item name="defaultBtnBackgroundColor">@color/default_btn_color</item>
+        <item name="defaultBtnRippleColor">@color/default_ripple_color</item>
+        <item name="defaultBtnTxtColor">@color/black</item>
+        <item name="infoTextColor_1">@color/black</item>
+        <item name="infoTextColor_2">@color/default_info2_color</item>
+        <item name="info_card_back">@color/white</item>
+        <item name="dialog_background">@color/white</item>
+        <item name="title_color">@color/AnimeTextColor_1</item>
+        <item name="register_msg_color">@color/default_register_msg_color</item>
+        <item name="hint_color">@color/gray</item>
+        <item name="episode_date_title_color">@color/black</item>
+
     </style>
+
+
+    <style name="AppBlackTheme" parent="ParentTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:itemBackground">#1C2433</item>
+        <item name="AppBackgroundColor">@color/black_theme_color</item>
+        <item name="toolbarColor">#1C2433</item>
+        <item name="colorOnToolbar">@color/white</item>
+        <item name="IconsColor">@color/white</item>
+        <item name="android:statusBarColor">#1C2433</item>
+        <item name="AnimeTextColor_1">@color/white</item>
+        <item name="AnimeTextColor_2">#BABABA</item>
+        <item name="headerBackgroundColor">@color/black_theme_color</item>
+        <item name="navHeaderBackgroundColor">@color/black_theme_color</item>
+        <item name="navHeaderTextColor">@color/white</item>
+        <item name="header_text_color_1">@color/white</item>
+        <item name="header_text_color_2">@color/blue</item>
+        <item name="stroke_header_color">@color/black_theme_color</item>
+        <item name="textHighlightEpisodesTime">@color/default_episode_date_back_color</item>
+        <item name="defaultBtnBackgroundColor">#263147</item>
+        <item name="defaultBtnRippleColor">@color/black_theme_color</item>
+        <item name="defaultBtnTxtColor">@color/white</item>
+        <item name="infoTextColor_1">@color/white</item>
+        <item name="title_color">@color/white</item>
+        <item name="info_card_back">#1B212E</item>
+        <item name="infoTextColor_2">#E1E1E1</item>
+        <item name="register_msg_color">#D6D6D6</item>
+        <item name="hint_color">#D6D6D6</item>
+        <item name="dialog_background">#586172</item>
+        <item name="episode_date_title_color">@color/white</item>
+    </style>
+
+
+    <style name="theme_Purple" parent="ParentTheme"> لسه هزبطه :)
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:itemBackground">@color/Purple_theme_color</item>
+        <item name="AppBackgroundColor">@color/Purple_theme_color</item>
+        <item name="toolbarColor">@color/theme_Purple</item>
+        <item name="colorOnToolbar">@color/white</item>
+        <item name="IconsColor">@color/white</item>
+        <item name="android:statusBarColor">@color/theme_Purple</item>
+        <item name="AnimeTextColor_1">@color/white</item>
+        <item name="AnimeTextColor_2">#BABABA</item>
+        <item name="headerBackgroundColor">@color/Purple_theme_color</item>
+        <item name="navHeaderBackgroundColor">@color/Purple_theme_color</item>
+        <item name="navHeaderTextColor">@color/white</item>
+        <item name="header_text_color_1">@color/white</item>
+        <item name="header_text_color_2">@color/blue</item>
+        <item name="stroke_header_color">@color/Purple_theme_color</item>
+        <item name="textHighlightEpisodesTime">@color/default_episode_date_back_color</item>
+        <item name="defaultBtnBackgroundColor">#E5B0FF</item>
+        <item name="defaultBtnRippleColor">#72209A</item>
+        <item name="defaultBtnTxtColor">@color/white</item>
+        <item name="infoTextColor_1">@color/white</item>
+        <item name="title_color">@color/white</item>
+        <item name="info_card_back">#E5B0FF</item>
+        <item name="infoTextColor_2">#E1E1E1</item>
+        <item name="register_msg_color">#D6D6D6</item>
+        <item name="hint_color">#D6D6D6</item>
+        <item name="dialog_background">#586172</item>
+        <item name="episode_date_title_color">@color/white</item>
+    </style>
+
+
+    <style name="settings_app_theme" parent="AppTheme">
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#4D4D4D</item>
+    </style>
+
+    <style name="settings_dark_theme" parent="AppBlackTheme">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/gray</item>
+    </style>
+
+    <declare-styleable name="MyCustomAttributes">
+        <attr name="AppBackgroundColor" format="color"/>
+        <attr name="IconsColor" format="color"/>
+        <attr name="AnimeTextColor_1" format="color"/>
+        <attr name="AnimeTextColor_2" format="color"/>
+        <attr name="infoTextColor_1" format="color"/>
+        <attr name="infoTextColor_2" format="color"/>
+        <attr name="toolbarColor" format="color"/>
+        <attr name="colorOnToolbar" format="color"/>
+        <attr name="toolbarIconsColor" format="color"/>
+        <attr name="textHighlight" format="color"/>
+        <attr name="textHighlightEpisodesTime" format="color"/>
+        <attr name="headerBackgroundColor" format="color"/>
+        <attr name="navHeaderBackgroundColor" format="color"/>
+        <attr name="leaderboardNumbers" format="color"/>
+        <attr name="defaultBtnBackgroundColor" format="color"/>
+        <attr name="defaultBtnRippleColor" format="color"/>
+        <attr name="defaultBtnTxtColor" format="color"/>
+        <attr name="dialogBackgroundColor" format="color"/>
+        <attr name="dialogTextColor" format="color"/>
+        <attr name="navHeaderTextColor" format="color"/>
+        <attr name="header_text_color_1" format="color"/>
+        <attr name="header_text_color_2" format="color"/>
+        <attr name="stroke_header_color" format="color"/>
+        <attr name="title_color" format="color"/>
+        <attr name="info_card_back" format="color"/>
+        <attr name="register_msg_color" format="color"/>
+        <attr name="hint_color" format="color"/>
+        <attr name="dialog_background" format="color"/>
+        <attr name="episode_date_title_color" format="color"/>
+        <attr name="myToolbarStyle" format="integer"/>
+    </declare-styleable>
 
 </resources>

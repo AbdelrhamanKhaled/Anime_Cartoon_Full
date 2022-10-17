@@ -58,7 +58,7 @@
             android:gravity="center"
             android:maxLength="25"
             android:text="@{title}"
-            android:textColor="@color/AnimeTextColor_1"
+            android:textColor="?attr/title_color"
             android:layout_marginBottom="2dp"
             tool:text="Episode Name" />
 

@@ -34,9 +34,6 @@ import com.github.ybq.android.spinkit.style.Circle;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +70,7 @@ public class PlayListsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_play_lists);
         grid = true ;
         createBannerAd();
@@ -269,14 +267,10 @@ public class PlayListsActivity extends AppCompatActivity {
             menu.findItem(R.id.menu_empty_star).setVisible(false);
             menu.findItem(R.id.menu_filled_star).setVisible(true);
             sqliteManager.insertFavoriteCartoon(cartoon);
-            if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                insertCartoonIntoFirebase(cartoon);
         } else if (itemId == R.id.menu_filled_star) {
             menu.findItem(R.id.menu_filled_star).setVisible(false);
             menu.findItem(R.id.menu_empty_star).setVisible(true);
             sqliteManager.deleteFavoriteCartoon(cartoon.getId());
-            if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                deleteCartoonFromFirebase(cartoon);
         }
         else if (item.getItemId() == R.id.grid_or_list) {
             if (grid) {
@@ -298,22 +292,6 @@ public class PlayListsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void deleteCartoonFromFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.removeValue();
-        SQLiteDatabaseManager sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
-        List<Cartoon>  cartoons = sqLiteDatabaseManager.getCartoonsFavoriteData();
-        for (Cartoon car : cartoons) {
-            myRef.push().setValue(car);
-        }
-    }
-
-    private void insertCartoonIntoFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.push().setValue(cartoon);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

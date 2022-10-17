@@ -70,13 +70,13 @@ public class CartoonFragment extends Fragment{
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCartoonBinding.inflate(inflater);
-        initRecyclerview(true);
+        initRecyclerview(true , true);
         initSwipeRefreshLayout();
         initRetrofit();
         return mBinding.getRoot();
     }
 
-    public void initRecyclerview(boolean isGrid) {
+    public void initRecyclerview(boolean isGrid , boolean first_time) {
         mBinding.cartoonsRecyclerview.setHasFixedSize(true);
         adapter = new CartoonsAdapter(getActivity() , isGrid , false);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
@@ -88,6 +88,7 @@ public class CartoonFragment extends Fragment{
         }
         mBinding.cartoonsRecyclerview.setHasFixedSize(true);
         mBinding.cartoonsRecyclerview.setAdapter(adapter);
+        if (!first_time) adapter.updateList(cartoonList);
     }
 
     @Override

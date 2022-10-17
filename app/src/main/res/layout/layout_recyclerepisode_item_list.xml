@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         app:cardCornerRadius="5dp"
         android:layout_margin="6dp"
-        app:cardBackgroundColor="#fff"
+        app:cardBackgroundColor="?attr/info_card_back"
         app:cardElevation="6dp"
         android:layout_gravity="start"
         >
@@ -55,7 +55,7 @@
                 android:layout_toStartOf="@id/seenImg"
                 android:ellipsize="end"
                 android:text="@{title}"
-                android:textColor="@color/AnimeTextColor_1"
+                android:textColor="?attr/title_color"
                 android:textDirection="rtl"
                 tool:text="الحلقة 1 " />
 

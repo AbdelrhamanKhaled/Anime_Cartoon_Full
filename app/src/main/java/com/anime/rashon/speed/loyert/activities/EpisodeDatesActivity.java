@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.adapters.CartoonsAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityEpisodeDatesBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.EpisodeDate;
@@ -47,6 +48,7 @@ public class EpisodeDatesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityEpisodeDatesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.progressBarLayout.setVisibility(View.VISIBLE);
@@ -177,15 +179,6 @@ public class EpisodeDatesActivity extends AppCompatActivity {
 
     private void initRecycleView(RecyclerView recyclerView) {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if((position+1)%10 == 0){
-                    return 3;
-                }
-                return 1;
-            }
-        });
         if (isGrid) {
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
@@ -229,6 +222,7 @@ public class EpisodeDatesActivity extends AppCompatActivity {
             isGrid = !isGrid ;
             updateGridIcon(item);
             prepareRecycleViews();
+            notifyAllAdapters();
         }
         return super.onOptionsItemSelected(item);
     }

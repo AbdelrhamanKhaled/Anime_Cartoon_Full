@@ -28,6 +28,7 @@ import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginMethod;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -35,9 +36,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.io.IOException;
 
@@ -59,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         setContentView(R.layout.activity_register);
         Init();
         SetListenersToButtons();
@@ -237,28 +236,5 @@ public class RegisterActivity extends AppCompatActivity {
         return (email.contains(".com") || email.contains(".Com") && (email.contains("yahoo") || (email.contains("hotmail") || ((email.contains("gmail")) || email.contains("Gmail"))))) ;
     }
 
-    private void SaveAuth(String email , String password) {
-        dialogUtilities.ShowDialog(this);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(Username.getText().toString()).build();
-                if (mAuth.getCurrentUser()!=null)
-                mAuth.getCurrentUser().updateProfile(profileUpdates);
-                Intent intent = new Intent(getBaseContext() , MainActivity.class);
-                dialogUtilities.dismissDialog();
-                startActivity(intent);
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("TAG","On Failure" + e.getMessage());
-                dialogUtilities.dismissDialog();
-                Snackbar.make(Login , "هناك خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
-            }
-        });
-    }
 
 }

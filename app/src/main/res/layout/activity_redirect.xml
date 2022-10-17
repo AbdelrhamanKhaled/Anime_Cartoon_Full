@@ -2,6 +2,7 @@
 <layout>
 
     <LinearLayout
+        android:background="?attr/AppBackgroundColor"
         android:padding="32dp"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,7 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@color/white"
         tools:context=".activities.RedirectActivity">
 
         <ImageView
@@ -25,13 +25,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="يتوفر تحديث اضغط هنا لتحميله"
-            android:textColor="#000000"
+            android:textColor="?attr/infoTextColor_1"
             android:gravity="center"
             android:textSize="20sp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"/>
 
         <Button
+            android:textColor="?attr/defaultBtnTxtColor"
             android:layout_marginTop="32dp"
             android:onClick="openNewApp"
             android:id="@+id/watch"

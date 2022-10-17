@@ -16,6 +16,7 @@ import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.ImgUtilities;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.Utilities;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivitySplashBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
@@ -45,6 +46,7 @@ public class splashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         View decor_View = getWindow().getDecorView();
         Utilities.hideNavBar(decor_View);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -59,7 +61,7 @@ public class splashActivity extends AppCompatActivity {
                 .into(binding.splashImg);
         init();
     }
-    public void  init () {
+    private void  init () {
         disposable = new CompositeDisposable();
         apiService = ApiClient.getClient(this).create(ApiService.class);
         loginUtil = new LoginUtil(this);
@@ -89,6 +91,7 @@ public class splashActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                 Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                Log.i("ab_do" , "error " + e.getMessage());
                             }
                         })
         );

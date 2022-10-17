@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LeaderboardDialog;
 import com.anime.rashon.speed.loyert.adapters.LeaderboardAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityLeaderboardBinding;
 import com.anime.rashon.speed.loyert.model.Feedback;
 import com.anime.rashon.speed.loyert.model.User;
@@ -38,6 +39,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityLeaderboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();

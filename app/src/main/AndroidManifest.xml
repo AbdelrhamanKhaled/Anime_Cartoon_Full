@@ -112,13 +112,6 @@
             android:required="false" />
 
         <activity
-            android:name=".activities.DownloadsActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-        <activity
-            android:name=".activities.FavoriteCartoonsActivity"
-            android:configChanges="orientation|screenSize|layoutDirection"
-            android:noHistory="true" />
-        <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:exported="true"
@@ -140,9 +133,6 @@
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity
             android:name=".activities.EpisodesActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-        <activity
-            android:name=".activities.FavoriteEpisodeActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity android:name=".activities.FeedbacksActivity" />
     </application>

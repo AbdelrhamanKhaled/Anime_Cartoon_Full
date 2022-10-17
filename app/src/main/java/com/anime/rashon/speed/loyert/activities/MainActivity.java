@@ -6,19 +6,19 @@ import static com.anime.rashon.speed.loyert.app.Config.admob;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +37,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -72,8 +71,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
@@ -104,10 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static int selectedType = LATEST_EPISODES;
 
     public static MenuItem search_item ;
-    DatabaseReference FavouriteRef;
-    ValueEventListener FavouriteListener ;
-    ValueEventListener SeenEpisodeslistener;
-    DatabaseReference SeenEpisodesRef ;
     SQLiteDatabaseManager sqLiteDatabaseManager ;
     CartoonFragment cartoonFragment ;
     boolean grid ;
@@ -118,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Config.updateTheme(this);
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         activity = this ;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -178,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         username = view.findViewById(R.id.Username);
         login = view.findViewById(R.id.Login);
-        username.setTextColor(getResources().getColor(R.color.black));
+        //username.setTextColor(getResources().getColor(R.color.black));
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -396,6 +389,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initToolbar(){
         setSupportActionBar(mBinding.includedToolbar.toolbar);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        int theme_id = sharedPreferences.getInt(activity.getString(R.string.THEME_KEY) , activity.getResources().getInteger(R.integer.default_theme));
+        if (theme_id != activity.getResources().getInteger(R.integer.default_theme) && getSupportActionBar()!=null) {
+            TypedValue value = new TypedValue();
+            getTheme().resolveAttribute(R.attr.toolbarColor, value, true);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(value.data));
+        }
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -505,6 +505,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void inflateLatestEpisodesFragment(){
+        if (menu!=null) {
+            menu.findItem(R.id.notification).setVisible(true);
+        }
         showSearchMenu(false);
         Objects.requireNonNull(getSupportActionBar()).setTitle("اخر الحلقات المضافة");
         if (getIntent().getSerializableExtra("list") !=null) {
@@ -526,6 +529,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void replaceLatestEpisodesFragment(){
+        if (menu!=null) {
+            menu.findItem(R.id.notification).setVisible(true);
+        }
         showSearchMenu(false);
         selectedType = LATEST_EPISODES;
         Objects.requireNonNull(getSupportActionBar()).setTitle("أحدث الحلقات");
@@ -680,7 +686,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             grid = !grid ;
             updateGridIcon(item);
             if (cartoonFragment!=null) {
-                cartoonFragment.initRecyclerview(grid);
+                cartoonFragment.initRecyclerview(grid , false);
             }
             else if (LatestEpisodesFragmentFragment!=null) {
                 LatestEpisodesFragmentFragment.initRecyclerview(grid);
@@ -927,6 +933,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void openCartoonFragment(int type, String s , int item_id) {
+        if (menu!=null) {
+            menu.findItem(R.id.notification).setVisible(false);
+        }
         mBinding.navView.setCheckedItem(item_id);
         selectedType = type;
         grid = true;
@@ -1003,10 +1012,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         disposable.dispose();
-        if (FavouriteRef!=null)
-        FavouriteRef.removeEventListener(FavouriteListener);
-        if (SeenEpisodesRef!=null)
-        SeenEpisodesRef.removeEventListener(SeenEpisodeslistener);
         super.onDestroy();
     }
 
@@ -1014,7 +1019,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onReportClicked(Redirect redirect) {
         if(redirect.getRedirect_type().equals("package_name")){
 
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + redirect.getPackage_name())));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + redirect.getPackage_name())));
 
         }
         else if(redirect.getRedirect_type().equals("url")){

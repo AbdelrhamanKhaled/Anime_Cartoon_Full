@@ -1,5 +1,6 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -7,11 +8,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.adapters.DownloadsAdapter;
 import com.anime.rashon.speed.loyert.adapters.EpisodesAdapter;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityEpisodeDownloadsBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
@@ -38,6 +42,7 @@ public class EpisodeDownloadsActivity extends AppCompatActivity implements Downl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         binding = ActivityEpisodeDownloadsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();

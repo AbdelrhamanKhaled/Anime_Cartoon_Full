@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:background="?attr/AppBackgroundColor"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -25,6 +26,8 @@
         android:orientation="vertical">
 
         <EditText
+            android:textColorHint="?attr/hint_color"
+            android:textColor="?attr/infoTextColor_1"
             android:inputType="textPersonName"
             android:imeOptions="actionNext"
             android:id="@+id/Username"
@@ -40,6 +43,8 @@
             android:hint="اسم المستخدم" />
 
         <EditText
+            android:textColorHint="?attr/hint_color"
+            android:textColor="?attr/infoTextColor_1"
             android:imeOptions="actionNext"
             android:id="@+id/Password"
             android:paddingRight="16dp"
@@ -56,6 +61,8 @@
             android:hint="كلمة المرور" />
 
         <EditText
+            android:textColorHint="?attr/hint_color"
+            android:textColor="?attr/infoTextColor_1"
             android:inputType="textEmailAddress"
             android:imeOptions="actionNext"
             android:drawablePadding="4dp"
@@ -73,6 +80,7 @@
             android:hint="البريد الألكتروني" />
 
         <Button
+            android:textColor="?attr/infoTextColor_1"
             android:id="@+id/CreateAccount"
             android:layout_width="163dp"
             android:layout_height="wrap_content"
@@ -87,7 +95,7 @@
             android:id="@+id/Login"
             android:textAlignment="center"
             android:layout_marginTop="20dp"
-            android:textColor="#000C51"
+            android:textColor="?attr/register_msg_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"

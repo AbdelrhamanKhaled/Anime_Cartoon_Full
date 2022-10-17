@@ -87,7 +87,7 @@
             android:gravity="center"
             android:maxLength="25"
             android:text="@{cartoon}"
-            android:textColor="@color/AnimeTextColor_1"
+            android:textColor="?attr/AnimeTextColor_1"
             tool:text="Cartoon Name" />
 
 
@@ -112,7 +112,7 @@
                 android:maxLength="25"
                 android:text="8.27"
                 android:textSize="13sp"
-                android:textColor="@color/AnimeTextColor_2"
+                android:textColor="?attr/AnimeTextColor_2"
                 android:drawablePadding="8dp"
                 android:drawableEnd="@drawable/ic_star"
                 />
@@ -129,7 +129,7 @@
                 android:maxLength="25"
                 android:text="مستمر"
                 android:textSize="13sp"
-                android:textColor="@color/AnimeTextColor_2"
+                android:textColor="?attr/AnimeTextColor_2"
                 />
 
         </LinearLayout>

@@ -9,6 +9,7 @@
 
 
     <FrameLayout
+        android:background="?attr/AppBackgroundColor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
@@ -52,7 +53,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="السبت"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -78,7 +79,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الأحد"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -104,7 +105,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الأثنين"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -130,7 +131,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الثلاثاء"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -156,7 +157,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الإربعاء"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -182,7 +183,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الخميس"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -208,7 +209,7 @@
                                 android:background="@drawable/episode_date_background"
                                 android:padding="@dimen/episode_title_padding"
                                 android:text="الجمعة"
-                                android:textColor="@color/episode_date_title_color"
+                                android:textColor="?attr/episode_date_title_color"
                                 android:textSize="@dimen/episode_date_title_size" />
 
                             <androidx.recyclerview.widget.RecyclerView

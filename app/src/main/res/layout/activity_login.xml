@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:background="?attr/AppBackgroundColor"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +17,7 @@
         android:layout_height="120dp"
         android:src="@drawable/user_profile"
         app:civ_border_width="1dp"
-        app:civ_border_color="#FF000000"/>
+        app:civ_border_color="?attr/infoTextColor_1"/>
 
     <LinearLayout
         android:layoutDirection="rtl"
@@ -27,6 +29,8 @@
 
 
         <EditText
+            android:textColorHint="?attr/hint_color"
+            android:textColor="?attr/infoTextColor_1"
             android:inputType="textEmailAddress"
             android:imeOptions="actionNext"
             android:drawablePadding="4dp"
@@ -43,6 +47,8 @@
             android:hint="البريد الألكتروني" />
 
         <EditText
+            android:textColorHint="?attr/hint_color"
+            android:textColor="?attr/infoTextColor_1"
             android:imeOptions="actionDone"
             android:id="@+id/password"
             android:paddingRight="16dp"
@@ -61,6 +67,7 @@
 
 
         <Button
+            android:textColor="?attr/defaultBtnTxtColor"
             android:id="@+id/Login"
             android:layout_width="163dp"
             android:layout_height="wrap_content"
@@ -75,7 +82,7 @@
             android:id="@+id/or"
             android:textAlignment="center"
             android:layout_marginTop="16dp"
-            android:textColor="@color/gray"
+            android:textColor="?attr/hint_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -117,7 +124,7 @@
             android:id="@+id/Register"
             android:textAlignment="center"
             android:layout_marginTop="32dp"
-            android:textColor="#000C51"
+            android:textColor="?attr/register_msg_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"

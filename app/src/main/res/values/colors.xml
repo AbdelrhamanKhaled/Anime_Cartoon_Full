@@ -42,4 +42,15 @@
 
     <color name="theme_Purple">#aa00ff</color>
     <color name="theme_Deep_Purple">#6200ea</color>
+
+    <color name="black_theme_color">#0e121a</color>
+    <color name="Purple_theme_color">#D37BFF</color>
+    <color name="defualt_highlight">#1A78DBF3</color>
+    <color name="default_header_stroke">#D5D5D5</color>
+    <color name="default_episode_date_back_color">#414BCEF0</color>
+    <color name="default_ripple_color">#9A0197BC</color>
+    <color name="default_btn_color">#9A78DBF3</color>
+    <color name="default_info2_color">#6C6C6C</color>
+    <color name="default_action_icons_color">#3B97C7</color>
+    <color name="default_register_msg_color">#000C51</color>
 </resources>

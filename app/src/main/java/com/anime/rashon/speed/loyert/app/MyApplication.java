@@ -2,8 +2,8 @@ package com.anime.rashon.speed.loyert.app;
 
 import androidx.multidex.MultiDexApplication;
 
-//import com.onesignal.OneSignal;
-import com.verizon.ads.VASAds;
+//import com.onesignal.OneSignal
+// import com.verizon.ads.VASAds;
 
 public class MyApplication extends MultiDexApplication {
 

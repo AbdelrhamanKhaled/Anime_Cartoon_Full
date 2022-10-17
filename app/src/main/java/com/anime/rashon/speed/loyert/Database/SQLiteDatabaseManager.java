@@ -10,9 +10,6 @@ import android.util.Log;
 import com.anime.rashon.speed.loyert.model.Cartoon;
 import com.anime.rashon.speed.loyert.model.Download;
 import com.anime.rashon.speed.loyert.model.Favorite;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +17,9 @@ import java.util.List;
 public class SQLiteDatabaseManager {
 
     SQLHelper helper;
-    FirebaseAuth auth ;
 
     public SQLiteDatabaseManager(Context context) {
         helper = new SQLHelper(context);
-        auth = FirebaseAuth.getInstance() ;
     }
 
     //---------------------------------//

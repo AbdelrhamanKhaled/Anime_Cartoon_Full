@@ -50,6 +50,7 @@
             android:textSize="15sp" />
 
         <Button
+            android:textColor="?attr/defaultBtnTxtColor"
             android:id="@+id/report"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

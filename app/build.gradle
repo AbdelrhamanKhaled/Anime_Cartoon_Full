@@ -58,6 +58,7 @@ android {
             signingConfig signingConfigs.config
             minifyEnabled true
             shrinkResources true
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
 //        release {
@@ -87,13 +88,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.0.8'
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
@@ -102,7 +102,7 @@ dependencies {
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
-    implementation 'com.squareup.picasso:picasso:2.8'
+    //implementation 'com.squareup.picasso:picasso:2.8'
 
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
@@ -139,17 +139,17 @@ dependencies {
     //XGetter
     // implementation 'com.github.KhunHtetzNaing:xGetter:3.0'
 
-//    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.0'
 //    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
 //    implementation 'com.google.android.exoplayer:extension-ima:2.11.1'
 
-    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    implementation 'com.google.android.gms:play-services-ads:21.3.0'
     implementation 'com.google.ads.mediation:facebook:6.11.0.0'
     implementation "androidx.tonyodev.fetch2:xfetch2:3.1.4"
     implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
 
     //verizon Sdk
-    implementation 'com.verizon.ads:android-vas-standard-edition:1.14.0'
+    //implementation 'com.verizon.ads:android-vas-standard-edition:1.14.0'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'androidx.browser:browser:1.4.0'
 
@@ -158,13 +158,9 @@ dependencies {
 
     //firebase:
     implementation platform('com.google.firebase:firebase-bom:30.3.1')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
-    implementation 'com.google.firebase:firebase-firestore:24.2.2'
-    implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.12'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.0'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'org.ocpsoft.prettytime:prettytime:5.0.4.Final'

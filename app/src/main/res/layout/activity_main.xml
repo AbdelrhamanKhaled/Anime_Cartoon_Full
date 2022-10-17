@@ -44,6 +44,7 @@
                             android:scaleType="centerCrop" />
 
                         <FrameLayout
+                            android:background="?attr/AppBackgroundColor"
                             android:id="@+id/content_fragment"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -54,6 +55,7 @@
                     </FrameLayout>
 
                     <LinearLayout
+                        android:background="?attr/AppBackgroundColor"
                         android:id="@+id/add_container"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
@@ -67,13 +69,13 @@
 
             <!-- Navigation View -->
             <com.google.android.material.navigation.NavigationView
-                android:background="@color/white"
+                android:background="?attr/navHeaderBackgroundColor"
                 android:id="@+id/nav_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 app:headerLayout="@layout/layout_header"
-                app:itemTextColor="@color/black"
+                app:itemTextColor="?attr/navHeaderTextColor"
                 app:menu="@menu/nav_menu_items" />
 <!--                app:itemTextAppearance="@style/nav_item_appearance"-->
         </androidx.drawerlayout.widget.DrawerLayout>

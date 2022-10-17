@@ -44,13 +44,14 @@
                 android:ellipsize="start"
                 android:gravity="end"
                 android:textAlignment="textEnd"
-                android:textColor="@color/black"
+                android:textColor="?attr/infoTextColor_1"
                 android:textDirection="rtl"
                 android:textSize="13sp"
                 tools:text="عبدالرحمن خالد" />
 
 
             <TextView
+                android:textColor="?attr/infoTextColor_1"
                 android:id="@+id/dateTxtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,13 +71,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_toStartOf="@id/user_img_ImageView"
+                android:alpha="0.8"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:textAlignment="textStart"
+                android:textColor="?attr/infoTextColor_1"
                 android:textDirection="rtl"
                 android:textSize="15sp"
-                android:alpha="0.8"
-                android:textColor="@color/black"
                 tools:text="Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" />
 
 
@@ -104,6 +105,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:textColor="?attr/infoTextColor_2"
                     android:paddingTop="1dp"
                     android:layout_weight="1"
                     android:id="@+id/replyTxtView"
@@ -118,6 +120,7 @@
 
 
                 <TextView
+                    android:textColor="?attr/infoTextColor_2"
                     android:id="@+id/dislikesTxtView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -131,6 +134,7 @@
 
 
                 <TextView
+                    android:textColor="?attr/infoTextColor_2"
                     android:id="@+id/likesTxtView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

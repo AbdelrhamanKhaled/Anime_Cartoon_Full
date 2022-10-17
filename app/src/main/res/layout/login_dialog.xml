@@ -39,7 +39,8 @@
             android:background="@drawable/watch_back"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:text="تسجيل دخول الأن" />
+            android:text="تسجيل دخول الأن"
+            android:textColor="?attr/defaultBtnTxtColor" />
 
 
     </LinearLayout>

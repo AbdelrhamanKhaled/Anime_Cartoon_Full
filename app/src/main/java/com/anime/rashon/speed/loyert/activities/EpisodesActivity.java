@@ -48,9 +48,6 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.inside4ndroid.jresolver.Jresolver;
 import com.inside4ndroid.jresolver.Model.Jmodel;
 //import com.htetznaing.lowcostvideo.LowCostVideo;
@@ -78,7 +75,6 @@ public class EpisodesActivity extends AppCompatActivity {
 
     Cartoon cartoon;
     Playlist playlist;
-    private FirebaseAuth mAuth;
     private final int VIDEO_REQUEST_CODE = 1;
 
     private CompositeDisposable disposable = new CompositeDisposable();
@@ -108,8 +104,8 @@ public class EpisodesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_episodes);
-        mAuth = FirebaseAuth.getInstance();
         grid = true ;
         order = ASC ;
         initDatabase();
@@ -432,12 +428,6 @@ public class EpisodesActivity extends AppCompatActivity {
 //    }
 
 
-    private void insertEpisodeSeenInFirebase(int id) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("SeenEpisodes");
-        myRef.push().setValue(id);
-    }
-
     private void openServersActivity(int position, Episode episode, String episodeTitle, String thumb, String playlistTitle, String cartoonTitle) {
         Intent intent = new Intent(EpisodesActivity.this, ServersActivity.class);
         intent.putExtra("episode", episode);
@@ -587,15 +577,11 @@ public class EpisodesActivity extends AppCompatActivity {
             menu.findItem(R.id.menu_empty_star).setVisible(false);
             menu.findItem(R.id.menu_filled_star).setVisible(true);
             sqLiteDatabaseManager.insertFavoriteCartoon(cartoon);
-            if (mAuth.getCurrentUser() != null)
-                insertCartoonIntoFirebase(cartoon);
             setResult(RESULT_OK);
         } else if (itemId == R.id.menu_filled_star) {
             menu.findItem(R.id.menu_filled_star).setVisible(false);
             menu.findItem(R.id.menu_empty_star).setVisible(true);
             sqLiteDatabaseManager.deleteFavoriteCartoon(cartoon.getId());
-            if (mAuth.getCurrentUser() != null)
-                deleteCartoonFromFirebase(cartoon);
             setResult(RESULT_OK);
         }
         else if (item.getItemId() == R.id.grid_or_list) {
@@ -620,22 +606,6 @@ public class EpisodesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void deleteCartoonFromFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.removeValue();
-        SQLiteDatabaseManager sqLiteDatabaseManager = new SQLiteDatabaseManager(this);
-        List<Cartoon>  cartoons = sqLiteDatabaseManager.getCartoonsFavoriteData();
-        for (Cartoon car : cartoons) {
-            myRef.push().setValue(car);
-        }
-    }
-
-    private void insertCartoonIntoFirebase(Cartoon cartoon) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("FavouriteCartoon");
-        myRef.push().setValue(cartoon);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

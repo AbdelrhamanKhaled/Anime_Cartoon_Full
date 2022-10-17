@@ -12,17 +12,21 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -31,7 +35,7 @@ import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.Utilities;
-import com.anime.rashon.speed.loyert.activities.InformationActivity;
+import com.anime.rashon.speed.loyert.activities.SettingsActivity;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Episode;
 import com.anime.rashon.speed.loyert.model.UserResponse;
@@ -42,8 +46,6 @@ import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.util.LogicUtils;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.EnqueueAction;
 import com.tonyodev.fetch2.Error;
@@ -87,25 +89,27 @@ public class Config {
         return new Intent(Intent.ACTION_VIEW, uri);
     }
 
-    public static void updateTheme(Activity activity) {
+    public static void updateTheme(AppCompatActivity activity) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         int theme_id = sharedPreferences.getInt(activity.getString(R.string.THEME_KEY) , activity.getResources().getInteger(R.integer.default_theme));
         Log.i("ab_do" , "Theme Id " + theme_id);
 
         if (theme_id == activity.getResources().getInteger(R.integer.default_theme)) {
-            Toast.makeText(activity, "default theme", Toast.LENGTH_SHORT).show();
+            activity.setTheme(R.style.AppTheme);
         }
         else if (theme_id == activity.getResources().getInteger(R.integer.black_theme)) {
-            Toast.makeText(activity, "black_theme", Toast.LENGTH_SHORT).show();
-
+            activity.setTheme(R.style.AppBlackTheme);
         }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
-            Toast.makeText(activity, "theme_Purple", Toast.LENGTH_SHORT).show();
-
+            activity.setTheme(R.style.theme_Purple);
         }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
-            Toast.makeText(activity, "theme_Deep_Purple", Toast.LENGTH_SHORT).show();
 
+        }
+        if (theme_id != activity.getResources().getInteger(R.integer.default_theme) && activity.getSupportActionBar()!=null) {
+            TypedValue value = new TypedValue();
+            activity.getTheme().resolveAttribute(R.attr.toolbarColor, value, true);
+            activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(value.data));
         }
     }
 
@@ -167,7 +171,7 @@ public class Config {
         builder.setTitle("");
         builder.setItems(optionsArr, (dialog, which) -> {
             if(which == 0){
-                openExoPlayerApp(activity, url, episode);
+                openExoPlayerApp(activity, url, episode, null);
             }
             else if(which == 1){
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -414,7 +418,8 @@ public class Config {
         }
     }
 
-    public static void openExoPlayerApp(Activity activity, String url, Episode episode){
+    public static void openExoPlayerApp(Activity activity, String url, Episode episode, FrameLayout progressBarLayout){
+        if (progressBarLayout==null)
         ShowDialog(activity);
         PackageManager packageManager = activity.getPackageManager();
         Intent intent = new Intent("android.intent.action.VIEW");
@@ -425,10 +430,13 @@ public class Config {
              // insert seen episode and increment watched cartoons
             LoginUtil loginUtil = new LoginUtil(activity.getApplicationContext());
             if (loginUtil.userIsLoggedIN() && !UserOptions.getUserOptions().getSeenEpisodesIds().contains(episode.getId())) {
-                insertSeenEpisode(intent , activity, episode, loginUtil);
+                insertSeenEpisode(intent , activity, episode, loginUtil , progressBarLayout);
             }
             else {
+                if (progressBarLayout==null)
                 dismissDialog(activity);
+                else
+                progressBarLayout.setVisibility(View.GONE);
                 startExoPlayer(activity, intent);
             }
         }
@@ -452,7 +460,7 @@ public class Config {
         alertDialog.show();
     }
 
-    private static void insertSeenEpisode(Intent intent , Activity activity, Episode episode, LoginUtil loginUtil) {
+    private static void insertSeenEpisode(Intent intent, Activity activity, Episode episode, LoginUtil loginUtil, FrameLayout progressBarLayout) {
         CompositeDisposable disposable = new CompositeDisposable();
         ApiService apiService = ApiClient.getClient(activity.getApplicationContext()).create(ApiService.class);
         disposable.add(
@@ -465,10 +473,13 @@ public class Config {
                             public void onSuccess(UserResponse response) {
                                 if (!response.isError()) {
                                      UserOptions.getUserOptions().getSeenEpisodesIds().add(episode.getId());
-                                     incrementWatchedEpisodes(intent , activity, episode, loginUtil);
+                                     incrementWatchedEpisodes(intent , activity, episode, loginUtil , progressBarLayout);
                                 }
                                 else {
-                                    dismissDialog(activity);
+                                    if (progressBarLayout==null)
+                                        dismissDialog(activity);
+                                    else
+                                        progressBarLayout.setVisibility(View.GONE);
                                     startExoPlayer(activity, intent);
                                 }
 
@@ -476,14 +487,17 @@ public class Config {
 
                             @Override
                             public void onError(Throwable e) {
-                                dismissDialog(activity);
+                                if (progressBarLayout==null)
+                                    dismissDialog(activity);
+                                else
+                                    progressBarLayout.setVisibility(View.GONE);
                                 startExoPlayer(activity, intent);
                             }
                         })
         );
     }
 
-    private static void incrementWatchedEpisodes(Intent intent, Activity activity, Episode episode, LoginUtil loginUtil) {
+    private static void incrementWatchedEpisodes(Intent intent, Activity activity, Episode episode, LoginUtil loginUtil, FrameLayout progressBarLayout) {
         CompositeDisposable disposable = new CompositeDisposable();
         ApiService apiService = ApiClient.getClient(activity.getApplicationContext()).create(ApiService.class);
         disposable.add(
@@ -494,13 +508,19 @@ public class Config {
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
                             @Override
                             public void onSuccess(UserResponse response) {
+                                if (progressBarLayout==null)
                                     dismissDialog(activity);
+                                else
+                                    progressBarLayout.setVisibility(View.GONE);
                                     startExoPlayer(activity , intent);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                dismissDialog(activity);
+                                if (progressBarLayout==null)
+                                    dismissDialog(activity);
+                                else
+                                    progressBarLayout.setVisibility(View.GONE);
                                 startExoPlayer(activity , intent);
                             }
                         })
@@ -563,4 +583,27 @@ public class Config {
     public static Admob admob;
 
 
+    public static void updateSettingsTheme(SettingsActivity activity) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        int theme_id = sharedPreferences.getInt(activity.getString(R.string.THEME_KEY) , activity.getResources().getInteger(R.integer.default_theme));
+        Log.i("ab_do" , "Theme Id " + theme_id);
+
+        if (theme_id == activity.getResources().getInteger(R.integer.default_theme)) {
+            activity.setTheme(R.style.settings_app_theme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.black_theme)) {
+            activity.setTheme(R.style.settings_dark_theme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
+
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
+
+        }
+        if (theme_id != activity.getResources().getInteger(R.integer.default_theme) && activity.getSupportActionBar()!=null) {
+            TypedValue value = new TypedValue();
+            activity.getTheme().resolveAttribute(R.attr.toolbarColor, value, true);
+            activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(value.data));
+        }
+    }
 }

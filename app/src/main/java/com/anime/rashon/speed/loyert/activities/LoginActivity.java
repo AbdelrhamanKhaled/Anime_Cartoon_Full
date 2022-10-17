@@ -20,6 +20,7 @@ import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.Utilities;
 import com.anime.rashon.speed.loyert.Utilites.dialogUtilities;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
+import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.User;
@@ -34,11 +35,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.List;
 
@@ -53,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     Button Login , Google , Facebook;
     TextView Register ;
     EditText Email , password ;
-    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     dialogUtilities dialogUtilities ;
     LoginUtil loginUtil ;
@@ -70,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.updateTheme(this);
         decor_View = getWindow().getDecorView();
         Utilities.hideNavBar(decor_View);
         setContentView(R.layout.activity_login);
@@ -128,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                 .requestServerAuthCode(getString(R.string.ClientID))
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, options);
-        mAuth = FirebaseAuth.getInstance();
     }
 
     private void signInWithGoogle() {
@@ -141,11 +136,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    private void Load(FirebaseUser firebaseUser) {
-        Intent intent = new Intent(getBaseContext() , MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     private void User_Login(String email , String password) {
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
