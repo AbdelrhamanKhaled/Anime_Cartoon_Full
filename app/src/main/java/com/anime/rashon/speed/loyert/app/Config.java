@@ -6,6 +6,7 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -68,7 +69,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Config {
 
-    public static String video_player_package_name ;
+    public static String video_player_package_name = "" ;
     private static FetchListener fetchListener;
     private static ProgressDialog progressDialog ;
 //    public static final String BASE_URL = "http://dxd-player.com/animelivev/API/";
@@ -414,8 +415,14 @@ public class Config {
     public static void openExoPlayerApp(Activity activity, String url, Episode episode, FrameLayout progressBarLayout){
         if (progressBarLayout==null)
         ShowDialog(activity);
+        openTheApp(activity, url, episode, progressBarLayout);
+    }
+
+
+    private static void openTheApp(Activity activity, String url, Episode episode, FrameLayout progressBarLayout) {
         PackageManager packageManager = activity.getPackageManager();
         Intent intent = new Intent("android.intent.action.VIEW");
+        intent.setComponent(new ComponentName(video_player_package_name,video_player_package_name+".activity.ExoplayerActivity"));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction("quick.launch.me");
         intent.putExtra("url", url);
@@ -430,17 +437,15 @@ public class Config {
             }
         }
         else {
-            if (progressBarLayout==null)
+            if (progressBarLayout ==null)
                 dismissDialog(activity);
             else
                 progressBarLayout.setVisibility(View.GONE);
             installExoPlayerDialog(activity);
         }
+    }
 
-
-        }
-
-    private static void installExoPlayerDialog(Activity activity) {
+    public static void installExoPlayerDialog(Activity activity) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
 
         builder.setMessage("يرجى تثبيت تطبيق المشغل السريع (Quick Player) لتشغيل الفيديو");
@@ -544,11 +549,11 @@ public class Config {
 
 
     private static void openExoPlayerOnPlayStore(Context activity){
-        final String appPackageName = "com.mdax.player.liyhfkpk";
         try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://loyert.page.link/FAST-PLAYER" )));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("appmarket://details?id=" + video_player_package_name )));
+        }
+        catch (android.content.ActivityNotFoundException anfe) {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + video_player_package_name)));
         }
     }
 

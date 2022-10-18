@@ -9,6 +9,8 @@
     <queries>
         <!-- Explicit apps you know in advance about: -->
         <package android:name="com.mojfhr.plasjre" />
+        <package android:name="com.puick.fayew.nqppk" />
+        <package android:name="com.mdax.player.liyhfkpk" />
 
     </queries>
 

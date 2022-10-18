@@ -493,6 +493,8 @@ public interface ApiService {
     @GET("Accses/serverMaintance.php")
     Single<Integer> checkIfServerIsUnderMaintains();
 
+    @GET("Accses/getVideoAppPackageName.php")
+    Single<String> getVideoAppPackageName();
 
 
 }

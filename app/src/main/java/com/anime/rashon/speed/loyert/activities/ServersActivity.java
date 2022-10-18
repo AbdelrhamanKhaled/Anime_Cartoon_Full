@@ -3,6 +3,7 @@ package com.anime.rashon.speed.loyert.activities;
 import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,6 +32,8 @@ import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.network.ApiClient;
+import com.anime.rashon.speed.loyert.network.ApiService;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -42,6 +45,11 @@ import com.inside4ndroid.jresolver.Model.Jmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class ServersActivity extends AppCompatActivity {
 
@@ -542,7 +550,7 @@ public class ServersActivity extends AppCompatActivity {
 
         if (Action == WATCH_ACTION) {
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
-            checkIfCanPlayVideo(url , serverNumber);
+            getVideoAppPackage(url , serverNumber);
         }
 
         else {
@@ -586,6 +594,35 @@ public class ServersActivity extends AppCompatActivity {
             }
         });
         simpleExoPlayer.prepare();
+    }
+
+    private void getVideoAppPackage(String url, int server_number) {
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .getVideoAppPackageName()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<String>() {
+                            @Override
+                            public void onSuccess(String package_name) {
+                                Config.video_player_package_name = package_name ;
+                                if (Config.isPackageInstalled(Config.video_player_package_name , getPackageManager()))
+                                checkIfCanPlayVideo(url , server_number);
+                                else {
+                                    mBinding.progressBarLayout.setVisibility(View.GONE);
+                                    Config.installExoPlayerDialog(ServersActivity.this);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                mBinding.progressBarLayout.setVisibility(View.GONE);
+                                Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
     }
 
     private boolean IsBlockedUrl(String url) {
