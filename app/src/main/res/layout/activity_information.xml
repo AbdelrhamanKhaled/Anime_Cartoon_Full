@@ -158,8 +158,8 @@
                         android:gravity="center"
                         android:paddingStart="24dp"
                         android:paddingEnd="24dp"
-                        android:textColor="?attr/defaultBtnTxtColor"
-                        android:text="مشاهدة المسلسل" />
+                        android:text="مشاهدة المسلسل"
+                        android:textColor="?attr/defaultBtnTxtColor" />
 
 
                     <LinearLayout

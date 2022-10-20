@@ -437,7 +437,7 @@ public class ServersActivity extends AppCompatActivity {
                             builder.setCancelable(true);
                             builder.setTitle("اختار جودة الحلقة");
                             builder.setItems(qualities, (dialog, which) -> {
-                                handleAction(serverNumber, urls[which].toString(), Action);
+                                handleAction(serverNumber, urls[which].toString(), Action , true);
                             });
 
                             AlertDialog dialog = builder.create();
@@ -453,7 +453,7 @@ public class ServersActivity extends AppCompatActivity {
                         else {
                             //If single
                             String url = vidURL.get(0).getUrl();
-                            handleAction(serverNumber, url, Action);
+                            handleAction(serverNumber, url, Action , true);
                         }
                     }
 
@@ -477,7 +477,7 @@ public class ServersActivity extends AppCompatActivity {
                     Toast.makeText(this, "هذا السيرفر غير متاح للتحميل", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                handleAction(serverNumber, videoUrl, Action);
+                handleAction(serverNumber, videoUrl, Action , false);
             }
 //        mBinding.progressBarLayout.setVisibility(View.GONE);
         }
@@ -525,7 +525,7 @@ public class ServersActivity extends AppCompatActivity {
         checkIfAllServerIsDisabled();
     }
 
-    private void handleAction(int serverNumber, String url, int Action) {
+    private void handleAction(int serverNumber, String url, int Action , boolean isExtractedUrl) {
         if (episode.isError()) {
             turnOffServer(serverNumber);
             if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
@@ -550,7 +550,7 @@ public class ServersActivity extends AppCompatActivity {
 
         if (Action == WATCH_ACTION) {
             mBinding.progressBarLayout.setVisibility(View.VISIBLE);
-            getVideoAppPackage(url , serverNumber);
+            getVideoAppPackage(url , serverNumber , isExtractedUrl);
         }
 
         else {
@@ -596,7 +596,7 @@ public class ServersActivity extends AppCompatActivity {
         simpleExoPlayer.prepare();
     }
 
-    private void getVideoAppPackage(String url, int server_number) {
+    private void getVideoAppPackage(String url, int server_number, boolean isExtractedUrl) {
         CompositeDisposable disposable = new CompositeDisposable();
         ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
         disposable.add(
@@ -608,8 +608,14 @@ public class ServersActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(String package_name) {
                                 Config.video_player_package_name = package_name ;
-                                if (Config.isPackageInstalled(Config.video_player_package_name , getPackageManager()))
-                                checkIfCanPlayVideo(url , server_number);
+                                if (Config.isPackageInstalled(Config.video_player_package_name , getPackageManager())) {
+                                    if (isExtractedUrl) {
+                                        // direct start play the video
+                                        Config.openExoPlayerApp(ServersActivity.this, url, episode , mBinding.progressBarLayout);
+                                    }
+                                    else
+                                    checkIfCanPlayVideo(url, server_number);
+                                }
                                 else {
                                     mBinding.progressBarLayout.setVisibility(View.GONE);
                                     Config.installExoPlayerDialog(ServersActivity.this);

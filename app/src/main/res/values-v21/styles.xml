@@ -68,35 +68,66 @@
     </style>
 
 
-    <style name="theme_Purple" parent="ParentTheme"> لسه هزبطه :)
+    <style name="GreenTheme" parent="ParentTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:itemBackground">@color/Purple_theme_color</item>
-        <item name="AppBackgroundColor">@color/Purple_theme_color</item>
-        <item name="toolbarColor">@color/theme_Purple</item>
-        <item name="colorOnToolbar">@color/white</item>
+        <item name="android:itemBackground">#1C2433</item>
+        <item name="AppBackgroundColor">#99F19D</item>
+        <item name="toolbarColor">#215E23</item>
+        <item name="colorOnToolbar">@color/black</item>
         <item name="IconsColor">@color/white</item>
-        <item name="android:statusBarColor">@color/theme_Purple</item>
+        <item name="android:statusBarColor">#1C2433</item>
         <item name="AnimeTextColor_1">@color/white</item>
         <item name="AnimeTextColor_2">#BABABA</item>
-        <item name="headerBackgroundColor">@color/Purple_theme_color</item>
-        <item name="navHeaderBackgroundColor">@color/Purple_theme_color</item>
+        <item name="headerBackgroundColor">@color/black_theme_color</item>
+        <item name="navHeaderBackgroundColor">@color/black_theme_color</item>
         <item name="navHeaderTextColor">@color/white</item>
         <item name="header_text_color_1">@color/white</item>
         <item name="header_text_color_2">@color/blue</item>
-        <item name="stroke_header_color">@color/Purple_theme_color</item>
+        <item name="stroke_header_color">@color/black_theme_color</item>
         <item name="textHighlightEpisodesTime">@color/default_episode_date_back_color</item>
-        <item name="defaultBtnBackgroundColor">#E5B0FF</item>
-        <item name="defaultBtnRippleColor">#72209A</item>
+        <item name="defaultBtnBackgroundColor">#263147</item>
+        <item name="defaultBtnRippleColor">@color/black_theme_color</item>
         <item name="defaultBtnTxtColor">@color/white</item>
         <item name="infoTextColor_1">@color/white</item>
         <item name="title_color">@color/white</item>
-        <item name="info_card_back">#E5B0FF</item>
+        <item name="info_card_back">#1B212E</item>
         <item name="infoTextColor_2">#E1E1E1</item>
         <item name="register_msg_color">#D6D6D6</item>
         <item name="hint_color">#D6D6D6</item>
-        <item name="dialog_background">#586172</item>
+        <item name="dialog_background">#B8F4BA</item>
         <item name="episode_date_title_color">@color/white</item>
+    </style>
+
+    <style name="theme_Purple" parent="ParentTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:itemBackground">#ECC6FF</item>
+        <item name="AppBackgroundColor">@color/Purple_theme_color</item>
+        <item name="toolbarColor">#D174FF</item>
+        <item name="colorOnToolbar">@color/white</item>
+        <item name="IconsColor">@color/white</item>
+        <item name="android:statusBarColor">#D174FF</item>
+        <item name="AnimeTextColor_1">@color/black</item>
+        <item name="AnimeTextColor_2">#707070</item>
+        <item name="headerBackgroundColor">#D174FF</item>
+        <item name="navHeaderBackgroundColor">#D174FF</item>
+        <item name="navHeaderTextColor">@color/black</item>
+        <item name="header_text_color_1">#CB000000</item>
+        <item name="header_text_color_2">@color/blue</item>
+        <item name="stroke_header_color">#9D54C1</item>
+        <item name="textHighlightEpisodesTime">@color/default_episode_date_back_color</item>
+        <item name="defaultBtnBackgroundColor">#AB3BE3</item>
+        <item name="defaultBtnRippleColor">#9917DA</item>
+        <item name="defaultBtnTxtColor">@color/black</item>
+        <item name="infoTextColor_1">@color/black</item>
+        <item name="infoTextColor_2">@color/default_info2_color</item>
+        <item name="info_card_back">@color/white</item>
+        <item name="dialog_background">@color/white</item>
+        <item name="title_color">@color/AnimeTextColor_1</item>
+        <item name="register_msg_color">@color/default_register_msg_color</item>
+        <item name="hint_color">@color/gray</item>
+        <item name="episode_date_title_color">@color/black</item>
     </style>
 
 
@@ -108,6 +139,16 @@
     <style name="settings_dark_theme" parent="AppBlackTheme">
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/gray</item>
+    </style>
+
+    <style name="settings_green_theme" parent="GreenTheme">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/gray</item>
+    </style>
+
+    <style name="settings_purple_theme" parent="theme_Purple">
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#4D4D4D</item>
     </style>
 
     <declare-styleable name="MyCustomAttributes">

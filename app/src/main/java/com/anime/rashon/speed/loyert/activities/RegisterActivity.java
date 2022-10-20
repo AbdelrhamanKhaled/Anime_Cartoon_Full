@@ -150,87 +150,77 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
         //SaveAuth(email , Password.getText().toString());
-        createNewUser(email , Password.getText().toString() , Username.getText().toString());
-    }
-
-    private void createNewUser(String email, String password, String username) {
         dialogUtilities.ShowDialog(this);
-        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
         disposable.add(
                 apiService
-                        .createNewUserWithEmail(email, password, username , "")
+                        .checkIfEmailExits(email)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
                             @Override
-                            public void onSuccess(UserResponse userResponse) {
-                                if (!userResponse.isError()) {
-                                    saveUserImg(userResponse.getUser().getId(), username , LoginMethod.EMAIL);
+                            public void onSuccess(UserResponse response) {
+                                if (response.getCode() == Constants.USER_ALREADY_EXISTS) {
+                                    dialogUtilities.dismissDialog();
+                                    Snackbar.make(Login , "هذا الحساب موجود بالفعل !" , Snackbar.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    int code = userResponse.getCode();
-                                    if (code == Constants.USER_ALREADY_EXISTS) {
-                                        dialogUtilities.dismissDialog();
-                                        Snackbar.make(Login , "هذا الحساب موجود بالفعل !" , Snackbar.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        dialogUtilities.dismissDialog();
-                                        Snackbar.make(Login , "هناك خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
-                                    }
+                                       sendVerifyCode(email);
                                 }
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 dialogUtilities.dismissDialog();
-                                Snackbar.make(Login , "حدث خطأ ما يرجي إعادة المحاولة" , Snackbar.LENGTH_SHORT).show();
+                                Log.i("ab_do", "error when make report");
+                                Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
                             }
                         })
         );
     }
 
-    private void saveUserImg(int user_id, String username , LoginMethod loginMethod) {
-        // add api call to save user img :) and get the url of the saved img !
-        if (uploadedPhotoBitmap==null) {
-            load("", loginMethod, username, user_id);
-            return;
-        }
-        String base64Img = ImgUtilities.getBase64Image(uploadedPhotoBitmap);
-        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
-        CompositeDisposable disposable = new CompositeDisposable();
-        disposable.add(
-                apiService
-                        .saveUserImg(base64Img , user_id)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<String>() {
-                            @Override
-                            public void onSuccess(String imgUrl) {
-                                if (imgUrl.contains("null")) {
-                                    Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
-                                }
-                                load(imgUrl, loginMethod, username, user_id);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                dialogUtilities.dismissDialog();
-                                Toast.makeText(getApplicationContext(), "حدث خطأ ما أثناء حفظ الصورة", Toast.LENGTH_SHORT).show();
-                                load("", loginMethod, username, user_id);
-                            }
-                        })
-        );
-    }
-
-    private void load(String imgUrl, LoginMethod loginMethod, String username, int user_id) {
-        loginUtil.saveLoginInformation(loginMethod, username, imgUrl, user_id);
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-        dialogUtilities.dismissDialog();
+    private void goToVerifyActivity(String email , int code) {
+        Intent intent = new Intent(getBaseContext() , OtpVerifyActivity.class);
+        intent.putExtra("email" , email);
+        intent.putExtra("code" , code);
+        intent.putExtra("password" , Password.getText().toString());
+        intent.putExtra("username" , Username.getText().toString());
+        if (uploadedImg!=null)
+        intent.putExtra("photo" , uploadedImg.toString());
         startActivity(intent);
         finish();
     }
 
+    private void sendVerifyCode(String email) {
+        int code = (int)(Math.random()*9000)+1000;
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .sendOtpToEmail(email, code)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @Override
+                            public void onSuccess(UserResponse response) {
+                                if (!response.isError()) {
+                                    dialogUtilities.dismissDialog();
+                                    goToVerifyActivity(email  , code);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do", "error when make report");
+                                Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+
+    }
 
     private boolean validEmail(String email) {
         return (email.contains(".com") || email.contains(".Com") && (email.contains("yahoo") || (email.contains("hotmail") || ((email.contains("gmail")) || email.contains("Gmail"))))) ;

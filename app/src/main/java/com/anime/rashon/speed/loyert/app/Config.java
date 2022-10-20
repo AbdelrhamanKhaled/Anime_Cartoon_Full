@@ -105,6 +105,9 @@ public class Config {
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
             activity.setTheme(R.style.theme_Purple);
         }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_green)) {
+            activity.setTheme(R.style.GreenTheme);
+        }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
 
         }
@@ -596,8 +599,11 @@ public class Config {
         else if (theme_id == activity.getResources().getInteger(R.integer.black_theme)) {
             activity.setTheme(R.style.settings_dark_theme);
         }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_green)) {
+            activity.setTheme(R.style.settings_green_theme);
+        }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
-
+            activity.setTheme(R.style.settings_purple_theme);
         }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
 

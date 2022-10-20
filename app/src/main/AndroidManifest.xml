@@ -7,14 +7,12 @@
          location permissions for the "MyLocation" functionality.
     -->
     <queries>
+
         <!-- Explicit apps you know in advance about: -->
         <package android:name="com.mojfhr.plasjre" />
         <package android:name="com.puick.fayew.nqppk" />
         <package android:name="com.mdax.player.liyhfkpk" />
-
-    </queries>
-
-<!--    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>-->
+    </queries> <!-- <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/> -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -31,9 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".NoNetworkActivity"
-            android:exported="false" />
+
         <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
@@ -139,8 +135,11 @@
             android:name=".activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
         <activity android:name=".activities.FeedbacksActivity" />
-        <activity android:name=".activities.NoNetworkActivity"  android:noHistory="true" android:launchMode="singleTask"
-            />
+        <activity
+            android:name=".activities.NoNetworkActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" />
+        <activity android:name=".activities.OtpVerifyActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

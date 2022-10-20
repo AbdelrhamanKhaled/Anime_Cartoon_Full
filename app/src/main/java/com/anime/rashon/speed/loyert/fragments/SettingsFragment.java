@@ -211,6 +211,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_Deep_Purple)).apply();
         } else if (color == getResources().getColor(R.color.theme_Purple)) {
             sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_Purple)).apply();
+        }else if (color == getResources().getColor(R.color.theme_Purple)) {
+            sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_Purple)).apply();
+        }else if (color == getResources().getColor(R.color.theme_green)) {
+            sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_green)).apply();
         }
         sharedPreferences.edit().putInt(getString(R.string.CURRENT_COLOR_KEY), color).commit();
         finishSettingsActivity();

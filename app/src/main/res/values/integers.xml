@@ -5,4 +5,5 @@
     <integer name="black_theme" >1</integer>
     <integer name="theme_Purple" >2</integer>
     <integer name="theme_Deep_Purple" >3</integer>
+    <integer name="theme_green" >4</integer>
 </resources>

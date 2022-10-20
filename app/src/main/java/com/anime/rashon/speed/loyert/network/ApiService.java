@@ -454,6 +454,20 @@ public interface ApiService {
     );
 
 
+    @FormUrlEncoded
+    @POST("Accses/sendOTP.php")
+    Single<UserResponse> sendOtpToEmail(
+            @Field("email") String email,
+            @Field("code") int code
+    );
+
+    @FormUrlEncoded
+    @POST("Accses/checkIfEmailExits.php")
+    Single<UserResponse> checkIfEmailExits(
+            @Field("email") String email
+    );
+
+
     @GET("UserLoggedOptions/makeReport.php")
     Single<UserResponse> makeFeedbackReport(
             @Query("user_id") int userId,
@@ -495,6 +509,8 @@ public interface ApiService {
 
     @GET("Accses/getVideoAppPackageName.php")
     Single<String> getVideoAppPackageName();
+
+
 
 
 }
