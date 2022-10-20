@@ -462,11 +462,16 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
+    @POST("Accses/sendPasswordToEmail.php")
+    Single<UserResponse> sendPasswordToEmail(
+            @Field("email") String email
+    );
+
+    @FormUrlEncoded
     @POST("Accses/checkIfEmailExits.php")
     Single<UserResponse> checkIfEmailExits(
             @Field("email") String email
     );
-
 
     @GET("UserLoggedOptions/makeReport.php")
     Single<UserResponse> makeFeedbackReport(

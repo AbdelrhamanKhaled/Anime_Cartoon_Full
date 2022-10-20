@@ -46,8 +46,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
-    Button Login , Google , Facebook;
-    TextView Register ;
+    Button Login , Google , Facebook ;
+    TextView Register , forgetPassword;
     EditText Email , password ;
     private GoogleSignInClient mGoogleSignInClient;
     dialogUtilities dialogUtilities ;
@@ -111,10 +111,16 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         Google = findViewById(R.id.google);
         Facebook = findViewById(R.id.facebook);
+        forgetPassword = findViewById(R.id.forgetPassword);
         dialogUtilities = new dialogUtilities();
         loginUtil = new LoginUtil(this);
         prepareSignInWithGoogle();
-
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext() , forgetPasswordActivity.class));
+            }
+        });
     }
 
     private void prepareSignInWithGoogle() {

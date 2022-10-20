@@ -319,7 +319,11 @@ public class InformationActivity extends AppCompatActivity {
                                     finish();
                                     return;
                                 }
-                                InformationActivity.this.updateUI(information);
+                                try {
+                                    InformationActivity.this.updateUI(information);
+                                }catch (Exception exception) {
+                                    Log.i("ab_do" , exception.getLocalizedMessage());
+                                }
                                 binding.progressBarLayout.setVisibility(View.GONE);
                             }
 

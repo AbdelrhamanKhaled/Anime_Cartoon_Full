@@ -822,6 +822,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         int itemId = item.getItemId();//No Action
         if (itemId == R.id.latest_episodes) {
+            showSearchMenu(false);
             mBinding.navView.setCheckedItem(itemId);
             cartoonFragment = null ;
             grid = true ;

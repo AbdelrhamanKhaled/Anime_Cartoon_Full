@@ -215,7 +215,7 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                 Log.i("ab_do", "error when make report");
-                                Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         })
         );

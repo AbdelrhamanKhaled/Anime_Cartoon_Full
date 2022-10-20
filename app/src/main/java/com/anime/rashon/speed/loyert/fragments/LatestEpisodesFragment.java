@@ -155,7 +155,7 @@ public class LatestEpisodesFragment extends Fragment {
     public void onDestroy() {
         if (disposable!=null)
         disposable.dispose();
-        MainActivity.search_item.setVisible(true);
+        //MainActivity.search_item.setVisible(true);
         super.onDestroy();
     }
 
