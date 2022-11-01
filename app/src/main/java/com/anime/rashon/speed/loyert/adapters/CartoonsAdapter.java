@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.InformationActivity;
 import com.anime.rashon.speed.loyert.activities.MainActivity;
@@ -101,8 +102,17 @@ public class CartoonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 default:
                     cartoonHolder.gridBinding.statues.setText("غير محدد");
             }
-        } else {
+        }
+        else {
             cartoonHolder.listBinding.setCartoon(cartoon);
+            cartoonHolder.listBinding.date.setText(cartoon.getView_date());
+            cartoonHolder.listBinding.category.setText(cartoon.getCategory());
+            if(cartoon.getType() == Constants.IS_FILM) {
+                cartoonHolder.listBinding.type.setText("فيلم");
+            }
+            else {
+                cartoonHolder.listBinding.type.setText("مسلسل");
+            }
             if (isEpisodesDates) {
                 cartoonHolder.listBinding.cartoonTitle.setText(cartoon.getEpisodeDateTitle());
             } else {

@@ -21,6 +21,9 @@ public class CartoonWithInfo extends Cartoon {
     @SerializedName("status")
     @Expose
     private Integer status;
+    @SerializedName("category")
+    @Expose
+    private String category;
 
     // used for episode dates activity
     private String episodeDateTitle ;
@@ -79,5 +82,13 @@ public class CartoonWithInfo extends Cartoon {
             return false;
         }
         return Objects.equals(((CartoonWithInfo) obj).getId(), this.getId());
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

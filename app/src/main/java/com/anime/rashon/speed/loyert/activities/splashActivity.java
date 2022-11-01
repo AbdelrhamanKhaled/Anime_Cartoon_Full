@@ -24,6 +24,7 @@ import com.anime.rashon.speed.loyert.databinding.ActivitySplashBinding;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.User;
+import com.anime.rashon.speed.loyert.model.UserData;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -92,8 +93,7 @@ public class splashActivity extends AppCompatActivity {
             binding.msg.setVisibility(View.VISIBLE);
             binding.msg.setAnimation(AnimationUtils.loadAnimation(this , R.anim.fade_text));
             user_id = loginUtil.getCurrentUser().getId();
-            // check first is not blocked
-            checkIfUserIsNotBlocked();
+            loadUserData();
         }
         else {
             binding.msg.setVisibility(View.GONE);
@@ -101,44 +101,34 @@ public class splashActivity extends AppCompatActivity {
         }
     }
 
-    private void checkIfUserIsNotBlocked() {
+    private void loadUserData() {
         disposable.add(
                 apiService
-                        .getUserBlockedStatue(user_id)
+                        .LoadUserData(user_id)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<Integer>() {
+                        .subscribeWith(new DisposableSingleObserver<UserData>() {
                             @Override
-                            public void onSuccess(Integer statue) {
-                                Log.i("ab_do" , "Statue = " + statue);
-                               if (statue == User.IS_BLOCKED) {
-                                   // sign out the user
-                                   Log.i("ab_do" , "user is blocked");
-                                   loginUtil.signOut();
-                                   loadLatestEpisodes();
-                               }
-                               else if (statue == User.IS_NOT_BLOCKED) {
-                                   // load normally
-                                   loadFavouriteCartoons();
-                               }
-                               else {
-                                   Log.i("ab_do" , "user block statues is not defined");
-                                   loadLatestEpisodes();
-                               }
+                            public void onSuccess(UserData userData) {
+                                List<EpisodeWithInfo> episodeList = new ArrayList<>(userData.getLatestEpisodes());
+                                Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                intent.putExtra("list" , (Serializable) episodeList);
+                                intent.putExtra("data" , userData);
+                                startActivity(intent);
+                                finish();
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.i("ab_do" , "error get block statue " + e.getMessage());
-                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(splashActivity.this,  e.getMessage(), Toast.LENGTH_SHORT).show();
                                 if (!isNetworkConnected(splashActivity.this))
-                                openNoNetworkActivity();
+                                    openNoNetworkActivity();
                                 else  Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
-
                             }
                         })
         );
     }
+
 
     private void loadWatchLaterCartoons() {
         disposable.add(

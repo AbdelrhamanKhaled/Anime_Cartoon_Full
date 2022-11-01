@@ -40,6 +40,9 @@ public class EpisodeDate implements Serializable {
     @SerializedName("status")
     @Expose
     private Integer status;
+    @SerializedName("category")
+    @Expose
+    private String category;
 
     public EpisodeDate() {
     }
@@ -143,5 +146,13 @@ public class EpisodeDate implements Serializable {
 
     public void setClassification(int classification) {
         this.classification = classification;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -1,4 +1,6 @@
 package com.anime.rashon.speed.loyert.activities;
+import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -23,7 +25,9 @@ import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
+import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.User;
+import com.anime.rashon.speed.loyert.model.UserData;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -36,6 +40,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -168,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     loginUtil.saveLoginInformation(LoginMethod.EMAIL , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
                                     user_id = userResponse.getUser().getId();
-                                    loadFavouriteCartoons();
+                                    loadUserData();
                                 }
                                 else {
                                     int code = userResponse.getCode();
@@ -259,7 +265,7 @@ public class LoginActivity extends AppCompatActivity {
         CompositeDisposable disposable = new CompositeDisposable();
         disposable.add(
                 apiService
-                        .createNewUserWithToken(idToken , email, displayName, photoUrl.toString())
+                        .createNewUserWithGoogleToken(idToken , email, displayName, photoUrl.toString())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
@@ -275,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
                                             return;
                                         }
                                         loginUtil.saveLoginInformation(LoginMethod.GOOGLE , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
-                                        loadFavouriteCartoons();
+                                        loadUserData();
                                     }
                                     else {
                                         loginUtil.saveLoginInformation(LoginMethod.GOOGLE , "" , photoUrl.toString() , userResponse.getUser().getId());
@@ -317,6 +323,39 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         })
         );
+    }
+
+    private void loadUserData() {
+        disposable.add(
+                apiService
+                        .LoadUserData(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserData>() {
+                            @Override
+                            public void onSuccess(UserData userData) {
+                                List<EpisodeWithInfo> episodeList = new ArrayList<>(userData.getLatestEpisodes());
+                                Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                intent.putExtra("list" , (Serializable) episodeList);
+                                intent.putExtra("data" , userData);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(LoginActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(LoginActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void openNoNetworkActivity() {
+        startActivity(new Intent(getBaseContext() , NoNetworkActivity.class));
+        finish();
     }
 
     private void loadSeenEpisodes() {

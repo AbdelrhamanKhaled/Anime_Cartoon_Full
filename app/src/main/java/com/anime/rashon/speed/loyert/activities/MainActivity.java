@@ -2,6 +2,7 @@ package com.anime.rashon.speed.loyert.activities;
 
 import static com.anime.rashon.speed.loyert.Constants.Constants.LATEST_EPISODES;
 import static com.anime.rashon.speed.loyert.app.Config.admob;
+import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -53,6 +54,7 @@ import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.MessageDialog;
 import com.anime.rashon.speed.loyert.Utilites.sharedPreferencesUtil;
 import com.anime.rashon.speed.loyert.app.Config;
+import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.databinding.ActivityMainBinding;
 import com.anime.rashon.speed.loyert.fragments.CartoonFragment;
 import com.anime.rashon.speed.loyert.fragments.LatestEpisodesFragment;
@@ -62,6 +64,7 @@ import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.model.User;
+import com.anime.rashon.speed.loyert.model.UserData;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
@@ -126,10 +129,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("ab_do" , " time = " + System.currentTimeMillis());
         initToolbar();
         initNavDrawer();
+        ImportUserData();
         checkIfServerIsUnderMaintenance();
         getRedirect(savedInstanceState);
-        updateSeenEpisodes();
-        updateFavouriteCartoon();
+        if(loginUtil.userIsLoggedIN()&&loginUtil.getCurrentUser()!=null)
+        checkIfUserIsNotBlocked(loginUtil.getCurrentUser().getId());
         //test();
         //Print onesignal token
         /*OneSignal.idsAvailable((userId, registrationId) -> {
@@ -138,6 +142,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("debug", "registrationId:" + registrationId);
 
         });*/
+    }
+
+    private void ImportUserData() {
+        if (getIntent().getSerializableExtra("data") !=null) {
+            UserData userData = (UserData) getIntent().getSerializableExtra("data");
+            UserOptions.getUserOptions().setFavouriteCartoons(userData.getFavouriteCartoons());
+            UserOptions.getUserOptions().setWatchLaterCartoons(userData.getWatchLaterCartoons());
+            UserOptions.getUserOptions().setWatchedCartoons(userData.getWatchCartoons());
+            UserOptions.getUserOptions().setSeenEpisodesIds(userData.getSeenEpisodesIds());
+        }
     }
 
     private void checkIfServerIsUnderMaintenance() {
@@ -1051,5 +1065,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect.getUrl()));
             startActivity(browserIntent);
         }
+    }
+
+    private void checkIfUserIsNotBlocked(int user_id) {
+        disposable.add(
+                apiService
+                        .getUserBlockedStatue(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Integer>() {
+                            @Override
+                            public void onSuccess(Integer statue) {
+                                Log.i("ab_do" , "Statue = " + statue);
+                                if (statue == User.IS_BLOCKED) {
+                                    // sign out the user
+                                    Log.i("ab_do" , "user is blocked");
+                                    loginUtil.signOut();
+                                    startActivity(new Intent(getBaseContext() , LoginActivity.class));
+                                    finish();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("ab_do" , "error get block statue " + e.getMessage());
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(MainActivity.this))
+                                    openNoNetworkActivity();
+                            }
+                        })
+        );
+    }
+    private void openNoNetworkActivity() {
+        startActivity(new Intent(getBaseContext() , NoNetworkActivity.class));
+        finish();
     }
 }

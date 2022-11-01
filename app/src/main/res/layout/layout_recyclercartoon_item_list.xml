@@ -50,6 +50,7 @@
 
 
             <TextView
+                android:fontFamily="@font/h_sb"
                 android:id="@+id/cartoon_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,6 +62,48 @@
                 android:textColor="?attr/AnimeTextColor_1"
                 tool:text="Cartoon Name" />
 
+
+            <TextView
+                android:fontFamily="@font/h_sb"
+                android:textSize="13sp"
+                android:id="@+id/statues"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:maxLength="25"
+                android:maxLines="1"
+                android:textColor="?attr/AnimeTextColor_2"
+                tool:text="مكتمل" />
+
+            <TextView
+                android:fontFamily="@font/h_sb"
+                android:textSize="13sp"
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:textColor="?attr/AnimeTextColor_2"
+                tool:text=""
+                android:singleLine="true" />
+
+            <TextView
+                android:fontFamily="@font/h_sb"
+                android:textSize="13sp"
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:maxLength="25"
+                android:maxLines="1"
+                android:textColor="?attr/AnimeTextColor_2"
+                tool:text="2018" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,10 +114,11 @@
 
 
                 <TextView
-                    android:id="@+id/statues"
+                    android:fontFamily="@font/h_sb"
+                    android:id="@+id/type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="12dp"
+                    android:layout_marginRight="6dp"
                     android:ellipsize="end"
                     android:gravity="left"
                     android:maxLength="25"
@@ -88,7 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_star"
-                    android:drawablePadding="8dp"
+                    android:drawablePadding="4dp"
                     android:ellipsize="end"
                     android:gravity="left"
                     android:maxLength="25"

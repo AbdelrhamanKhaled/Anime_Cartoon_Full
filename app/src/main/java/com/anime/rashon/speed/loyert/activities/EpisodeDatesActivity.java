@@ -126,6 +126,7 @@ public class EpisodeDatesActivity extends AppCompatActivity {
         cartoon.setTitle(episodeDate.getTitle());
         cartoon.setThumb(episodeDate.getThumb());
         cartoon.setClassification(episodeDate.getClassification());
+        cartoon.setCategory(episodeDate.getCategory());
         return cartoon ;
     }
 

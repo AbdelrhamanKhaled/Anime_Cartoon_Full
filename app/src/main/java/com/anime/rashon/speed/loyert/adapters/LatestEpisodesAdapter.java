@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
@@ -12,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
 import com.anime.rashon.speed.loyert.activities.InformationActivity;
@@ -108,11 +110,22 @@ public class LatestEpisodesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 listBinding.setCartoon(episode.getCartoon().getTitle());
 
-                if (!TextUtils.isEmpty(episode.getTitle())) {
-                    listBinding.setTitle(episode.getTitle());
-                } else {
-                    listBinding.setTitle("الحلقة " + (position + 1));
+                if (episode.getCartoon().getType() == Constants.IS_FILM) {
+                    listBinding.type.setText("فيلم");
+                    listBinding.title.setVisibility(View.GONE);
                 }
+                  else {
+                    listBinding.type.setText("مسلسل");
+                    listBinding.title.setVisibility(View.VISIBLE);
+                    if (!TextUtils.isEmpty(episode.getTitle())) {
+                        listBinding.setTitle(episode.getTitle());
+                    } else {
+                        listBinding.setTitle("الحلقة " + (position + 1));
+                    }
+                }
+
+                listBinding.date.setText(episode.getCartoon().getView_date());
+
 
                 if (sqLiteDatabaseManager.isEpisodeSeen(episode.getId())) {
                    listBinding.seenImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.eye));

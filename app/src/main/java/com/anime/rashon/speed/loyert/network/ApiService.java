@@ -13,6 +13,7 @@ import com.anime.rashon.speed.loyert.model.Playlist;
 import com.anime.rashon.speed.loyert.model.Redirect;
 import com.anime.rashon.speed.loyert.model.Report;
 import com.anime.rashon.speed.loyert.model.User;
+import com.anime.rashon.speed.loyert.model.UserData;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 
 import java.security.spec.ECPoint;
@@ -146,6 +147,15 @@ public interface ApiService {
             @Field("photo_Uri") String photo_Uri
     );
 
+    @FormUrlEncoded
+    @POST("Accses/RegisterWithGoogle.php")
+    Single<UserResponse> createNewUserWithGoogleToken(
+            @Field("token") String token,
+            @Field("email") String email,
+            @Field("name") String name,
+            @Field("photo_Uri") String photo_Uri
+    );
+
 
     @GET("cartoon_with_info/searchCartoon.php")
     Single<List<CartoonWithInfo>> searchCartoon(
@@ -182,6 +192,11 @@ public interface ApiService {
 
     @GET("UserLoggedOptions/getAllSeenEpisodes.php")
     Single<List<Integer>> getAllSeenEpisodes(
+            @Query("user_id") int userId
+    );
+
+    @GET("UserLoggedOptions/loadUserData.php")
+    Single<UserData> LoadUserData(
             @Query("user_id") int userId
     );
 

@@ -1,5 +1,7 @@
 package com.anime.rashon.speed.loyert.activities;
 
+import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +18,7 @@ import com.anime.rashon.speed.loyert.app.UserOptions;
 import com.anime.rashon.speed.loyert.model.CartoonWithInfo;
 import com.anime.rashon.speed.loyert.model.EpisodeWithInfo;
 import com.anime.rashon.speed.loyert.model.User;
+import com.anime.rashon.speed.loyert.model.UserData;
 import com.anime.rashon.speed.loyert.model.UserResponse;
 import com.anime.rashon.speed.loyert.network.ApiClient;
 import com.anime.rashon.speed.loyert.network.ApiService;
@@ -168,7 +171,7 @@ public class FacebookAuthActivity extends AppCompatActivity {
                                             return;
                                         }
                                         loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , userResponse.getUser().getName() , userResponse.getUser().getPhoto_url() , userResponse.getUser().getId());
-                                        loadFavouriteCartoons();
+                                        loadUserData();
                                     }
                                     else {
                                         loginUtil.saveLoginInformation(LoginMethod.FACEBOOK , name , photo_url , userResponse.getUser().getId());
@@ -223,6 +226,38 @@ public class FacebookAuthActivity extends AppCompatActivity {
                             }
                         })
         );
+    }
+    private void loadUserData() {
+        disposable.add(
+                apiService
+                        .LoadUserData(user_id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserData>() {
+                            @Override
+                            public void onSuccess(UserData userData) {
+                                List<EpisodeWithInfo> episodeList = new ArrayList<>(userData.getLatestEpisodes());
+                                Intent intent = new Intent(getBaseContext() , MainActivity.class);
+                                intent.putExtra("list" , (Serializable) episodeList);
+                                intent.putExtra("data" , userData);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                //Toast.makeText(splashActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                                if (!isNetworkConnected(FacebookAuthActivity.this))
+                                    openNoNetworkActivity();
+                                else  Toast.makeText(FacebookAuthActivity.this, "حدث خطأ ما", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
+
+    private void openNoNetworkActivity() {
+        startActivity(new Intent(getBaseContext() , NoNetworkActivity.class));
+        finish();
     }
 
     private void loadSeenEpisodes() {
