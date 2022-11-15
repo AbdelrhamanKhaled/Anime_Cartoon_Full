@@ -1,6 +1,7 @@
 package com.anime.rashon.speed.loyert.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
@@ -119,6 +120,7 @@ public class EpisodesActivity extends AppCompatActivity {
         getEpisodes();
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     protected void onResume() {
         if(adapter!=null)
@@ -384,7 +386,7 @@ public class EpisodesActivity extends AppCompatActivity {
                 public void onError() {
                     //Error
                     episode.setError(true);
-                    Toast.makeText(getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext() , "السيرفر غير متاح يرجي تجربة سيرفر آخر" , Toast.LENGTH_LONG).show();
                 }
             });
             jresolver.find(episode.getVideo());
@@ -607,6 +609,7 @@ public class EpisodesActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 

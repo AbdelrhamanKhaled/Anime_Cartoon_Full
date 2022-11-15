@@ -8,18 +8,17 @@
             android:checkable="true"
             />
 
-        <item
-            android:id="@+id/translation_anime"
-            android:icon="@drawable/translation"
-            android:title="المترجم"
-            android:checkable="true"
-           />
+    <item
+        android:id="@+id/translation_anime"
+        android:checkable="true"
+        android:icon="@drawable/translation"
+        android:title="الأنمي المترجم" />
 
-        <item
-            android:icon="@drawable/cartoons"
-            android:id="@+id/anime"
-            android:checkable="true"
-            android:title="المدبلج" />
+    <item
+        android:id="@+id/anime"
+        android:checkable="true"
+        android:icon="@drawable/cartoons"
+        android:title="الكرتون المدبلج" />
 
 
         <item
@@ -34,19 +33,18 @@
                 android:checkable="true"
                 android:title="الأفلام المدبلجة" />
 
-        <item
-            android:icon="@drawable/new_1"
-            android:id="@+id/new_cartoon"
-            android:checkable="true"
-            android:title="المستمر" />
+    <item
+        android:id="@+id/new_cartoon"
+        android:checkable="true"
+        android:icon="@drawable/new_1"
+        android:title="الأنمي المستمر" />
 
-        <item
-            android:icon="@drawable/hourglass"
-            android:id="@+id/anime_time"
-            android:checkable="true"
-            android:title="مواعيد الحلقات" />
-
-            <item
+    <item
+        android:id="@+id/anime_time"
+        android:checkable="true"
+        android:icon="@drawable/hourglass"
+        android:title="مواعيد الحلقات" />
+    <item
                 android:icon="@drawable/trending"
                 android:id="@+id/most_viewed"
                 android:checkable="true"

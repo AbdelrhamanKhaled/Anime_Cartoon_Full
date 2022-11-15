@@ -6,4 +6,7 @@
     <integer name="theme_Purple" >2</integer>
     <integer name="theme_Deep_Purple" >3</integer>
     <integer name="theme_green" >4</integer>
+    <integer name="theme_red" >5</integer>
+    <integer name="theme_blue" >6</integer>
+    <integer name="theme_Gray" >7</integer>
 </resources>

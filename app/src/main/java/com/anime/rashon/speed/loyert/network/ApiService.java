@@ -19,6 +19,7 @@ import com.anime.rashon.speed.loyert.model.UserResponse;
 import java.security.spec.ECPoint;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -82,7 +83,7 @@ public interface ApiService {
 
 
 
-    @GET("admob/animecartoonafterdelete.php")
+    @GET("admob/readOne.php")
     Single<Admob> getAdmob(
     );
 
@@ -531,6 +532,6 @@ public interface ApiService {
     Single<String> getVideoAppPackageName();
 
 
-
-
+    @GET("Accses/getDownloadAppPackageName.php")
+    Single<String> getDownloadAppPackageName();
 }

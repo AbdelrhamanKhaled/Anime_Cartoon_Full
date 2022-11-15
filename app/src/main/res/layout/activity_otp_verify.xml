@@ -34,7 +34,7 @@
             android:layout_marginTop="16dp"
             android:alpha="0.8"
             android:gravity="center"
-            android:text=" يرجي إدخال الكود المرسل إلي بريدك الإلكتروني والمكون من 4 أرقام"
+            android:text=" يرجي إدخال الرمز المرسل إلي بريدك الإلكتروني والمكون من 4 أرقام"
             android:textColor="?attr/infoTextColor_1"
             android:textSize="20sp" />
 
@@ -102,7 +102,7 @@
             android:layout_marginTop="24dp"
             android:alpha="0.8"
             android:gravity="center"
-            android:text="لم يتم إرسال الكود ؟ إعادة الإرسال"
+            android:text="لم يتم إرسال الرمز ؟ إعادة الإرسال"
             android:textColor="?attr/register_msg_color"
             android:textSize="18sp"
             android:textStyle="bold" />

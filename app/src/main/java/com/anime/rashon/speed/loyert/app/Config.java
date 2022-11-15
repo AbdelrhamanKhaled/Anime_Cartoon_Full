@@ -1,6 +1,7 @@
 package com.anime.rashon.speed.loyert.app;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -34,8 +35,10 @@ import androidx.preference.PreferenceManager;
 
 import com.anime.rashon.speed.loyert.Database.SQLiteDatabaseManager;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.DownloadNeededAppDialog;
 import com.anime.rashon.speed.loyert.Utilites.LoginUtil;
 import com.anime.rashon.speed.loyert.Utilites.Utilities;
+import com.anime.rashon.speed.loyert.activities.ServersActivity;
 import com.anime.rashon.speed.loyert.activities.SettingsActivity;
 import com.anime.rashon.speed.loyert.model.Admob;
 import com.anime.rashon.speed.loyert.model.Episode;
@@ -70,11 +73,12 @@ import io.reactivex.schedulers.Schedulers;
 public class Config {
 
     public static String video_player_package_name = "" ;
+    public static String video_download_package_name = "" ;
     private static FetchListener fetchListener;
     private static ProgressDialog progressDialog ;
 //    public static final String BASE_URL = "http://dxd-player.com/animelivev/API/";
     static BroadcastReceiver receiver ;
-    public static final String BASE_URL = "https://dxd-downloader.com/Abdulrahman/API/";
+    public static final String BASE_URL = "https://apps-anime.com/Abdulrahman/API/";
 
     public static int numOfItemsBetweenAds = 30;
 
@@ -105,11 +109,20 @@ public class Config {
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
             activity.setTheme(R.style.theme_Purple);
         }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
+            activity.setTheme(R.style.DeepPurpleTheme);
+        }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_green)) {
             activity.setTheme(R.style.GreenTheme);
         }
-        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
-
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_red)) {
+            activity.setTheme(R.style.redTheme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_blue)) {
+            activity.setTheme(R.style.theme_blue);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Gray)) {
+            activity.setTheme(R.style.themeGray);
         }
         if (theme_id != activity.getResources().getInteger(R.integer.default_theme) && activity.getSupportActionBar()!=null) {
             TypedValue value = new TypedValue();
@@ -124,7 +137,7 @@ public class Config {
         sharingIntent.setType("text/plain");
         String shareBody = "حمل التطبيق من هنا" +
                 "\n\n" +
-                "https://play.google.com/store/apps/details?id=" + context.getPackageName();
+                "https://apps-anime.com";
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.app_name));
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         context.startActivity(Intent.createChooser(sharingIntent, "مشاركة من خلال"));
@@ -138,6 +151,7 @@ public class Config {
     }
 
     public static void ShowDialog(Context context) {
+        if (progressDialog!=null && progressDialog.isShowing()) return;
         //setting up progress dialog
         progressDialog = new ProgressDialog(context);
         try {
@@ -145,7 +159,8 @@ public class Config {
             progressDialog.setContentView(R.layout.progress_dialog);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }catch (Exception exception) {
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        } catch (Exception exception) {
 
         }
 
@@ -156,17 +171,17 @@ public class Config {
     {
 
         if (episode.isError()) {
-            Toast.makeText(activity.getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(activity.getApplicationContext() , "السيرفر معطل يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
             return;
         }
 
         if (url!=null && (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/"))) {
-            Toast.makeText(activity.getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(activity.getApplicationContext() , "السيرفر معطل يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
             return;
         }
 
         if (episode.getVideo()!=null && (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/"))) {
-            Toast.makeText(activity.getApplicationContext() , "حدث خطأ ما يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
+            Toast.makeText(activity.getApplicationContext() , "السيرفر معطل يرجي تجربة سيرفر أخر" , Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -199,108 +214,141 @@ public class Config {
 
     public static void startDownloadingEpisode(Activity activity, String url, Episode episode,
                                                String playlistTitle, String cartoonTitle) {
+          ShowDialog(activity);
+          if (video_download_package_name.isEmpty()) {
+              // load package first :
+              getDownloadAppPackage(activity, url, episode, playlistTitle, cartoonTitle);
+          }
+          else
+          handleDownloadProcess(activity, url, episode, playlistTitle, cartoonTitle);
 
-        ShowDialog(activity);
-          if (!isPackageInstalled ( "com.mojfhr.plasjre" , activity.getPackageManager())) {
-              showDownloadDownloaderAppDialog(activity);
-              progressDialog.dismiss();
-              return;
-           }
-          // check if can download with fetch :
-           Fetch fetch = Fetch.Impl.getInstance(new FetchConfiguration.Builder(activity).build());
-           String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" +
-                   episode.getTitle() + UUID.randomUUID().toString() + ".mp4" ;
-           fetchListener = new FetchListener() {
-               @Override
-               public void onAdded(@NonNull Download download) {
+    }
 
-               }
+    private static void getDownloadAppPackage(Activity activity, String url, Episode episode, String playlistTitle, String cartoonTitle) {
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(activity.getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .getDownloadAppPackageName()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<String>() {
+                            @Override
+                            public void onSuccess(String package_name) {
+                                Config.video_download_package_name = package_name ;
+                                handleDownloadProcess(activity, url, episode, playlistTitle, cartoonTitle);
+                            }
 
-               @Override
-               public void onQueued(@NonNull Download download, boolean b) {
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissDialog(activity);
+                                Toast.makeText(activity, "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
 
-               }
+    private static void handleDownloadProcess(Activity activity, String url, Episode episode, String playlistTitle, String cartoonTitle) {
+        if (!isPackageInstalled (video_download_package_name , activity.getPackageManager())) {
+            dismissDialog(activity);
+            showDownloadDownloaderAppDialog(activity);
+            return;
+         }
+        // check if can download with fetch :
+        Fetch fetch = Fetch.Impl.getInstance(new FetchConfiguration.Builder(activity).build());
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" +
+                episode.getTitle() + UUID.randomUUID().toString() + ".mp4" ;
+        fetchListener = new FetchListener() {
+            @Override
+            public void onAdded(@NonNull Download download) {
 
-               @Override
-               public void onWaitingNetwork(@NonNull Download download) {
+            }
 
-               }
+            @Override
+            public void onQueued(@NonNull Download download, boolean b) {
 
-               @Override
-               public void onCompleted(@NonNull Download download) {
+            }
 
-               }
+            @Override
+            public void onWaitingNetwork(@NonNull Download download) {
 
-               @Override
-               public void onError(@NonNull Download download, @NonNull Error error, @Nullable Throwable throwable) {
-                           if (error.getValue() == Error.REQUEST_NOT_SUCCESSFUL.getValue()) {
-                               Log.i("ab_do" , "anime REQUEST_NOT_SUCCESSFUL");
-                               endFetch(download, fetch);
-                               //startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
-                               Toast.makeText(activity, "حدث خطأ .. يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
-                           }
-               }
+            }
 
-               @Override
-               public void onDownloadBlockUpdated(@NonNull Download download, @NonNull DownloadBlock downloadBlock, int i) {
+            @Override
+            public void onCompleted(@NonNull Download download) {
 
-               }
+            }
 
-               @Override
-               public void onStarted(@NonNull Download download, @NonNull List<? extends DownloadBlock> list, int i) {
-                   Log.i("ab_do" , "start with anime");
-                   // the download can be downloaded with fetch
-                   endFetch(download, fetch);
-                   openDownloaderApp(activity, playlistTitle , url, cartoonTitle, episode);
-               }
+            @Override
+            public void onError(@NonNull Download download, @NonNull Error error, @Nullable Throwable throwable) {
+                        if (error.getValue() == Error.REQUEST_NOT_SUCCESSFUL.getValue()) {
+                            Log.i("ab_do" , "anime REQUEST_NOT_SUCCESSFUL");
+                            endFetch(download, fetch);
+                            //startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
+                            Toast.makeText(activity, "حدث خطأ .. يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
+                        }
+            }
 
-               @Override
-               public void onProgress(@NonNull Download download, long l, long l1) {
+            @Override
+            public void onDownloadBlockUpdated(@NonNull Download download, @NonNull DownloadBlock downloadBlock, int i) {
 
-               }
+            }
 
-               @Override
-               public void onPaused(@NonNull Download download) {
+            @Override
+            public void onStarted(@NonNull Download download, @NonNull List<? extends DownloadBlock> list, int i) {
+                Log.i("ab_do" , "start with anime");
+                // the download can be downloaded with fetch
+                endFetch(download, fetch);
+                openDownloaderApp(activity, playlistTitle, url, cartoonTitle, episode);
+            }
 
-               }
+            @Override
+            public void onProgress(@NonNull Download download, long l, long l1) {
 
-               @Override
-               public void onResumed(@NonNull Download download) {
+            }
 
-               }
+            @Override
+            public void onPaused(@NonNull Download download) {
 
-               @Override
-               public void onCancelled(@NonNull Download download) {
+            }
 
-               }
+            @Override
+            public void onResumed(@NonNull Download download) {
 
-               @Override
-               public void onRemoved(@NonNull Download download) {
+            }
 
-               }
+            @Override
+            public void onCancelled(@NonNull Download download) {
 
-               @Override
-               public void onDeleted(@NonNull Download download) {
+            }
 
-               }
-           };
-           fetch.addListener(fetchListener);
-           Request request = new Request(url, path);
-           request.setEnqueueAction(EnqueueAction.INCREMENT_FILE_NAME);
-           fetch.enqueue(request,updatedRequest -> {
-               //Request was successfully enqueued for download.
-               Log.i("ab_do" , "enqueued ");
+            @Override
+            public void onRemoved(@NonNull Download download) {
 
-           }, error -> {
-               Log.i("ab_do" , "error on enqueee " + error.toString());
-               endFetch(null , fetch);
-               try {
-                   File file = new File(request.getFile());
-                   file.delete();
-               }
-               catch (Exception exception) {}
-               startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
-           });
+            }
+
+            @Override
+            public void onDeleted(@NonNull Download download) {
+
+            }
+        };
+        fetch.addListener(fetchListener);
+        Request request = new Request(url, path);
+        request.setEnqueueAction(EnqueueAction.INCREMENT_FILE_NAME);
+        fetch.enqueue(request,updatedRequest -> {
+            //Request was successfully enqueued for download.
+            Log.i("ab_do" , "enqueued ");
+
+        }, error -> {
+            Log.i("ab_do" , "error on enqueee " + error.toString());
+            endFetch(null , fetch);
+            try {
+                File file = new File(request.getFile());
+                file.delete();
+            }
+            catch (Exception exception) {}
+            startDownloadViaDownloadManager(activity, url, episode, playlistTitle, cartoonTitle);
+        });
 //          String googleUserContentURl = "https://lh3.googleusercontent.com";
 //        if (url.contains(googleUserContentURl)) {
 //            // this url can`t be handled with downloader app
@@ -308,9 +356,9 @@ public class Config {
 //        }
 //        else
 //            openDownloaderApp(activity, url, cartoonTitle, episode);
-
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private static void endFetch(Download download, Fetch fetch) {
         fetch.removeListener(fetchListener);
         if (download != null) {
@@ -326,6 +374,7 @@ public class Config {
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     private static void startDownloadViaDownloadManager(Activity activity, String url, Episode episode, String playlistTitle, String cartoonTitle) {
 //        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
 //        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", url);
@@ -377,6 +426,7 @@ public class Config {
         }
         IntentFilter intentFilter = new IntentFilter("anime.saveData");
         receiver = new BroadcastReceiver() {
+            @SuppressLint("SuspiciousIndentation")
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.i("ab_do" ,"FromDownloader ");
@@ -397,25 +447,32 @@ public class Config {
     }
 
     private static void showDownloadDownloaderAppDialog(Activity activity) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
-        builder.setMessage("يرجى تثبيت تطبيق تحميل الفيديو (Quick Downloader) لاكمال تحميل الحلقة");
-        builder.setCancelable(true);
-        builder.setPositiveButton("حسنا", (dialog, which) -> openDownloaderAppOnPlayStore(activity));
-        builder.setNegativeButton("الغاء", (dialog, which) -> dialog.dismiss());
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        DownloadNeededAppDialog dialog = new DownloadNeededAppDialog(activity ,false);
+        dialog.showDialog();
+
     }
 
-    private static void openDownloaderAppOnPlayStore(Activity activity) {
-        final String appPackageName = "com.mojfhr.plasjre";
+    public static void openDownloaderAppOnPlayStore(Activity activity) {
         try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://loyert.page.link/FAST-DOWNLOADER" )));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("samsungapps://ProductDetail/" + video_download_package_name )));
+        }
+        catch (android.content.ActivityNotFoundException anfe) {
+            Log.i("new_abdo" , "cannot open samsung market");
+            // try to open the huawei market
+            try {
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("appmarket://details?id=" + video_download_package_name )));
+            }
+            catch (android.content.ActivityNotFoundException anfe2) {
+                Log.i("new_abdo" , "cannot open huawei market");
+                // try to open the play store market
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + video_download_package_name)));
+            }
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     public static void openExoPlayerApp(Activity activity, String url, Episode episode, FrameLayout progressBarLayout){
+        Log.i("new_abdo" , "openExoPlayerApp" );
         if (progressBarLayout==null)
         ShowDialog(activity);
         openTheApp(activity, url, episode, progressBarLayout);
@@ -449,16 +506,8 @@ public class Config {
     }
 
     public static void installExoPlayerDialog(Activity activity) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.AlertDialogTheme);
-
-        builder.setMessage("يرجى تثبيت تطبيق المشغل السريع (Quick Player) لتشغيل الفيديو");
-        builder.setCancelable(true);
-        builder.setPositiveButton("حسنا", (dialog, which) -> openExoPlayerOnPlayStore(activity));
-
-        builder.setNegativeButton("الغاء", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+          DownloadNeededAppDialog dialog = new DownloadNeededAppDialog(activity ,true);
+          dialog.showDialog();
     }
 
     private static void insertSeenEpisode(Intent intent, Activity activity, Episode episode, LoginUtil loginUtil, FrameLayout progressBarLayout) {
@@ -507,6 +556,7 @@ public class Config {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<UserResponse>() {
+                            @SuppressLint("SuspiciousIndentation")
                             @Override
                             public void onSuccess(UserResponse response) {
                                 if (progressBarLayout==null)
@@ -531,6 +581,7 @@ public class Config {
     public static void dismissDialog(Activity activity) {
         try {
             progressDialog.dismiss();
+            progressDialog = null ;
         }catch (Exception exception) {
           Log.i("ab_do" , "dismiss dialog error " + exception.getMessage());
         }
@@ -551,13 +602,24 @@ public class Config {
     }
 
 
-    private static void openExoPlayerOnPlayStore(Context activity){
+    public static void openExoPlayerOnPlayStore(Context activity){
+        // try to open the samsung market
         try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("appmarket://details?id=" + video_player_package_name )));
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("samsungapps://ProductDetail/" + video_player_package_name )));
         }
         catch (android.content.ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + video_player_package_name)));
+            Log.i("new_abdo" , "cannot open samsung market");
+            // try to open the huawei market
+            try {
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("appmarket://details?id=" + video_player_package_name )));
+            }
+            catch (android.content.ActivityNotFoundException anfe2) {
+                Log.i("new_abdo" , "cannot open huawei market");
+                // try to open the play store market
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + video_player_package_name)));
+            }
         }
+
     }
 
     public static void loadNativeAd(Context context, TemplateView templateView){
@@ -599,15 +661,27 @@ public class Config {
         else if (theme_id == activity.getResources().getInteger(R.integer.black_theme)) {
             activity.setTheme(R.style.settings_dark_theme);
         }
-        else if (theme_id == activity.getResources().getInteger(R.integer.theme_green)) {
-            activity.setTheme(R.style.settings_green_theme);
-        }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Purple)) {
             activity.setTheme(R.style.settings_purple_theme);
         }
         else if (theme_id == activity.getResources().getInteger(R.integer.theme_Deep_Purple)) {
-
+            activity.setTheme(R.style.settings_theme_Deep_Purple);
         }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_green)) {
+            activity.setTheme(R.style.settings_green_theme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_blue)) {
+            activity.setTheme(R.style.settings_blue_theme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_red)) {
+            activity.setTheme(R.style.settings_red_theme);
+        }
+        else if (theme_id == activity.getResources().getInteger(R.integer.theme_Gray)) {
+            activity.setTheme(R.style.settings_Gray_theme);
+        }
+
+
+
         if (theme_id != activity.getResources().getInteger(R.integer.default_theme) && activity.getSupportActionBar()!=null) {
             TypedValue value = new TypedValue();
             activity.getTheme().resolveAttribute(R.attr.toolbarColor, value, true);

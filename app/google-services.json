@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "1060013347113",
-    "project_id": "animeapp-b20a7",
-    "storage_bucket": "animeapp-b20a7.appspot.com"
+    "project_number": "28446293897",
+    "project_id": "anime-cartoon-full-ads",
+    "storage_bucket": "anime-cartoon-full-ads.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1060013347113:android:893b1d6c4657bf577ae738",
+        "mobilesdk_app_id": "1:28446293897:android:03a3ca86c96041e069ab58",
         "android_client_info": {
           "package_name": "com.anime.rashon.speed.loyert"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1060013347113-68c5fhb6ii0grn7gp9vagenbh45f6a8t.apps.googleusercontent.com",
+          "client_id": "28446293897-l2dus5np7vs76aralc36rms919vuuc8e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.anime.rashon.speed.loyert",
-            "certificate_hash": "b3a233e65a275b505f61d709db17ec617dfbb302"
+            "certificate_hash": "b2493c050fcec9ba695c32969d79deeb928963d1"
           }
         },
         {
-          "client_id": "1060013347113-51t8rn3mjtisa1hfue802n5sk3oslnko.apps.googleusercontent.com",
+          "client_id": "28446293897-30o9b0aesf5uklveerdbolcchha4mov1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCJ719BO-cPprAEEMTZdoQEGHn6mmJxUjM"
+          "current_key": "AIzaSyBAFt63-yNEqs2f_P8Db8u8xTXrKHeHaSE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1060013347113-51t8rn3mjtisa1hfue802n5sk3oslnko.apps.googleusercontent.com",
+              "client_id": "28446293897-30o9b0aesf5uklveerdbolcchha4mov1.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

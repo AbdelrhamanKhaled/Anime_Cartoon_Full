@@ -2,8 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="ParentTheme">
-        <item name="android:fontFamily">@font/h_sb</item>
-        <item name="fontFamily">@font/h_sb</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:itemBackground">@color/white</item>
@@ -13,8 +11,6 @@
     </style>
 
     <style name="AppBlackTheme" parent="ParentTheme">
-        <item name="android:fontFamily">@font/h_sb</item>
-        <item name="fontFamily">@font/h_sb</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:itemBackground">@color/white</item>

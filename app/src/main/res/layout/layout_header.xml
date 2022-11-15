@@ -39,7 +39,7 @@
 		android:layout_below="@id/user_profile"
 		android:maxWidth="300dp"
 		android:gravity="center_horizontal"
-		android:text="لم يتم تسجيل الدخول بعد"
+		android:text="لم تقم بتسجيل الدخول"
 		android:textSize="15sp" />
 
 

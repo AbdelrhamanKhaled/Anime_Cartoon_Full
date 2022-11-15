@@ -4,6 +4,7 @@ import static com.anime.rashon.speed.loyert.Constants.Constants.LATEST_EPISODES;
 import static com.anime.rashon.speed.loyert.app.Config.admob;
 import static com.anime.rashon.speed.loyert.app.Config.isNetworkConnected;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityResultLauncher<String> activityResultRegistry ;
     LoginDialog loginDialog ;
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ImageView user_profile = view.findViewById(R.id.user_profile);
         initUploadPhotoRegister(user_profile);
         user_profile.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SuspiciousIndentation")
             @Override
             public void onClick(View v) {
                 Log.i("ab_do" , "ClickedProfile");
@@ -369,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+      @SuppressLint("SuspiciousIndentation")
       private void checkTheEpisodesInDatabase(int id) {
             if (!sqLiteDatabaseManager.isEpisodeSeen(id))
             sqLiteDatabaseManager.insertSeenEpisode(id);
@@ -542,6 +546,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mBinding.drawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private void inflateLatestEpisodesFragment(){
         if (menu!=null) {
             menu.findItem(R.id.notification).setVisible(true);
@@ -599,6 +604,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     public void getNewCartoons(){
          cartoonFragment = (CartoonFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.cartoon_fragment));
          if (cartoonFragment!=null)
@@ -666,6 +672,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         searchView.setQueryHint("   أبحث هنا ");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+            @SuppressLint("SuspiciousIndentation")
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if(!TextUtils.isEmpty(s)){
@@ -737,10 +744,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             sharedPreferences.edit().putBoolean("notify" , active_notification).commit();
             updateNotificationIcon(item);
             if (active_notification) {
-                showSnackMsg("تم تفعيل الإشعارات بنجاح");
+                showSnackMsg("سيتم إعلامك بالحلقات الجديده");
             }
             else {
-                showSnackMsg("تم إلغاء تفعيل الإشعارات بنجاح");
+                showSnackMsg("لن يتم إعلامك بالحلقات الجديده");
             }
 
         }
@@ -942,7 +949,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        }
 //        else if (itemId == R.id.contact_us) {
 //            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-//                    "mailto", "contactus.developerapps@gmail.com", null));
+//                    "mailto", "support@apps-anime.com", null));
 //            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "");
 //            startActivity(Intent.createChooser(emailIntent, "Send email"));
 //        }

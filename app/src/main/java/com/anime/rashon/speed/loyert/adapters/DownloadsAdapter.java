@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -13,13 +15,21 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.activities.ServersActivity;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.DownloadedEpisodeItemviewBinding;
 import com.anime.rashon.speed.loyert.model.Episode;
+import com.anime.rashon.speed.loyert.network.ApiClient;
+import com.anime.rashon.speed.loyert.network.ApiService;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.DownloadHolder> {
 
@@ -58,6 +68,11 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.Down
         holder.mBinding.play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Config.video_player_package_name.isEmpty()) {
+                    // load package name of video App First
+                    getVideoAppPackage(episode);
+                }
+                else
                 Config.openExoPlayerApp(mContext, episode.getVideo_url(), episode, null);
             }
         });
@@ -85,6 +100,32 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.Down
         });
     }
 
+
+    private void getVideoAppPackage(Episode episode) {
+        Log.i("new_abdo" , "getVideoAppPackage" );
+        Config.ShowDialog(mContext);
+        CompositeDisposable disposable = new CompositeDisposable();
+        ApiService apiService = ApiClient.getClient(mContext.getApplicationContext()).create(ApiService.class);
+        disposable.add(
+                apiService
+                        .getVideoAppPackageName()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<String>() {
+                            @Override
+                            public void onSuccess(String package_name) {
+                                Config.video_player_package_name = package_name ;
+                                Config.openExoPlayerApp(mContext, episode.getVideo_url(), episode, null);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Config.dismissDialog(mContext);
+                                Toast.makeText(mContext.getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+        );
+    }
 
     @Override
     public int getItemCount() {

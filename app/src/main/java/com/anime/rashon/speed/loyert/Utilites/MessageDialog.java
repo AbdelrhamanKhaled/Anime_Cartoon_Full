@@ -16,6 +16,7 @@ public class MessageDialog {
     private final String msg ;
     private final Dialog dialog ;
     private final Context context ;
+    Button go , close ;
     MessageDialog.onMsgBtnClickListener onMsgBtnClickListener ;
     Redirect redirect ;
 
@@ -33,8 +34,8 @@ public class MessageDialog {
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_back);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        Button go = dialog.findViewById(R.id.go);
-        Button close = dialog.findViewById(R.id.close);
+        go = dialog.findViewById(R.id.go);
+        close = dialog.findViewById(R.id.close);
         TextView msgTxtView = dialog.findViewById(R.id.msgTxt);
         msgTxtView.setText(msg);
         close.setOnClickListener(new View.OnClickListener() {
@@ -76,5 +77,6 @@ public class MessageDialog {
     public interface onMsgBtnClickListener {
         void onReportClicked(Redirect redirect);
     }
+
 
 }

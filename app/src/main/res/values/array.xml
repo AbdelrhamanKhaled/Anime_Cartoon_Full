@@ -6,6 +6,8 @@
         <item name="theme_Purple">@color/theme_Purple</item>
         <item name="theme_Deep_Purple">@color/theme_Deep_Purple</item>
         <item name="theme_green">@color/theme_green</item>
-
+        <item name="theme_red">@color/theme_red</item>
+        <item name="theme_blue">@color/theme_blue</item>
+        <item name="theme_Gray">@color/theme_Gray</item>
     </array>
 </resources>

@@ -30,9 +30,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".forgetPasswordActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

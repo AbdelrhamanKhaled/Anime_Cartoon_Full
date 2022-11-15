@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -146,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (Password.getText().length()<6) {
-            Snackbar.make(CreateAccount , "يجب أن تكون كلمة المرور أطول من 6 حروف" , Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(CreateAccount , "يجب أن تكون كلمة السر أطول من 6 حروف" , Snackbar.LENGTH_SHORT).show();
             return;
         }
         //SaveAuth(email , Password.getText().toString());
@@ -180,6 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
         );
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private void goToVerifyActivity(String email , int code) {
         Intent intent = new Intent(getBaseContext() , OtpVerifyActivity.class);
         intent.putExtra("email" , email);

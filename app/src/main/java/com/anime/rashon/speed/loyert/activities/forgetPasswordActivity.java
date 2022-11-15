@@ -97,11 +97,11 @@ public class forgetPasswordActivity extends AppCompatActivity {
                                     binding.progressBarLayout.setVisibility(View.GONE);
                                     startActivity(new Intent(getBaseContext() , LoginActivity.class));
                                     finish();
-                                    Toast.makeText(getApplicationContext(), "تم إرسال كلمة المرور إلي البريد الخاص بك", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "تم إرسال كلمة السر إلي البريد الخاص بك", Toast.LENGTH_SHORT).show();
                                 }
                                 else {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), "لا يمكن إرسالة كلمة مرور إلي هذا الحساب", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "لا يمكن إرسالة كلمة السر إلي هذا الحساب", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

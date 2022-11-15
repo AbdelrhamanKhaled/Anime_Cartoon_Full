@@ -28,6 +28,7 @@ import androidx.preference.PreferenceManager;
 
 import com.anime.rashon.speed.loyert.Constants.Constants;
 import com.anime.rashon.speed.loyert.R;
+import com.anime.rashon.speed.loyert.Utilites.DownloadNeededAppDialog;
 import com.anime.rashon.speed.loyert.Utilites.ServerReportDialog;
 import com.anime.rashon.speed.loyert.app.Config;
 import com.anime.rashon.speed.loyert.databinding.ActivityServersBinding;
@@ -51,7 +52,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class ServersActivity extends AppCompatActivity {
+public class ServersActivity extends AppCompatActivity implements DownloadNeededAppDialog.ClickListener {
 
     ActivityServersBinding mBinding;
     Episode episode;
@@ -410,10 +411,12 @@ public class ServersActivity extends AppCompatActivity {
             Toast.makeText(ServersActivity.this, "من فضلك تأكد من اتصالك بالانترنت", Toast.LENGTH_SHORT).show();
         }
         else {
+            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
             //Check if needs xgetter
             if (needsXGetter == 1) { //Needs extractions
                 if (Action == DOWNLOAD_ACTION)
                 if (IsBlockedUrl(videoUrl)) {
+                    mBinding.progressBarLayout.setVisibility(View.GONE);
                     return;
                 }
                 Log.i("ab_do", "needsXGetter");
@@ -464,7 +467,7 @@ public class ServersActivity extends AppCompatActivity {
                         episode.setError(true);
                         turnOffServer(serverNumber);
                         if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-                        Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ServersActivity.this, "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -473,6 +476,7 @@ public class ServersActivity extends AppCompatActivity {
             }
             else {
                 if (Action == DOWNLOAD_ACTION) {
+                    mBinding.progressBarLayout.setVisibility(View.GONE);
                     // block any download to the url that don`t need to extraction
                     Toast.makeText(this, "هذا السيرفر غير متاح للتحميل", Toast.LENGTH_SHORT).show();
                     return;
@@ -484,6 +488,7 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void turnOffServer(int serverNumber) {
+        mBinding.progressBarLayout.setVisibility(View.GONE);
         switch (serverNumber) {
             case 1:
                 mBinding.active1.setImageResource(R.drawable.not_active);
@@ -526,35 +531,41 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void handleAction(int serverNumber, String url, int Action , boolean isExtractedUrl) {
+        mBinding.progressBarLayout.setVisibility(View.VISIBLE);
         if (episode.isError()) {
             turnOffServer(serverNumber);
             if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (url.startsWith("https://vudeo.net/") || url.startsWith("https://vudeo.io/") || url.startsWith("https://m3.vudeo.io/")) {
             turnOffServer(serverNumber);
             if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (episode.getVideo().startsWith("https://vudeo.net/") || episode.getVideo().startsWith("https://vudeo.io/") || episode.getVideo().startsWith("https://m3.vudeo.io/")) {
             turnOffServer(serverNumber);
             if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-            Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_LONG).show();
             return;
         }
 
 
         if (Action == WATCH_ACTION) {
-            mBinding.progressBarLayout.setVisibility(View.VISIBLE);
-            getVideoAppPackage(url , serverNumber , isExtractedUrl);
+            if (Config.video_player_package_name.isEmpty()) {
+                // load package name of video App First
+                getVideoAppPackage(url, serverNumber, isExtractedUrl);
+            }
+            else {
+                handleWatchAction(serverNumber, url, isExtractedUrl);
+            }
         }
 
         else {
-
+            mBinding.progressBarLayout.setVisibility(View.GONE);
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
@@ -565,6 +576,20 @@ public class ServersActivity extends AppCompatActivity {
                 if (IsBlockedUrl(url)) return;
                 Config.startDownloadingEpisode(this, url, episode, getIntent().getStringExtra("playlistTitle"), getIntent().getStringExtra("cartoonTitle"));
             }
+        }
+    }
+
+    private void handleWatchAction(int serverNumber, String url, boolean isExtractedUrl) {
+        if (Config.isPackageInstalled(Config.video_player_package_name, getPackageManager())) {
+            if (isExtractedUrl) {
+                // direct start play the video
+                Config.openExoPlayerApp(ServersActivity.this, url, episode, mBinding.progressBarLayout);
+            } else
+                checkIfCanPlayVideo(url, serverNumber);
+        }
+        else {
+            mBinding.progressBarLayout.setVisibility(View.GONE);
+            Config.installExoPlayerDialog(ServersActivity.this);
         }
     }
 
@@ -582,7 +607,7 @@ public class ServersActivity extends AppCompatActivity {
                 //simpleExoPlayer.release();
                 turnOffServer(server_number);
                 if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-                Toast.makeText(ServersActivity.this, "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ServersActivity.this, "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -597,6 +622,7 @@ public class ServersActivity extends AppCompatActivity {
     }
 
     private void getVideoAppPackage(String url, int server_number, boolean isExtractedUrl) {
+        Log.i("new_abdo" , "getVideoAppPackage" );
         CompositeDisposable disposable = new CompositeDisposable();
         ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
         disposable.add(
@@ -608,18 +634,7 @@ public class ServersActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(String package_name) {
                                 Config.video_player_package_name = package_name ;
-                                if (Config.isPackageInstalled(Config.video_player_package_name , getPackageManager())) {
-                                    if (isExtractedUrl) {
-                                        // direct start play the video
-                                        Config.openExoPlayerApp(ServersActivity.this, url, episode , mBinding.progressBarLayout);
-                                    }
-                                    else
-                                    checkIfCanPlayVideo(url, server_number);
-                                }
-                                else {
-                                    mBinding.progressBarLayout.setVisibility(View.GONE);
-                                    Config.installExoPlayerDialog(ServersActivity.this);
-                                }
+                                handleWatchAction(server_number , url , isExtractedUrl);
                             }
 
                             @Override
@@ -719,7 +734,7 @@ public class ServersActivity extends AppCompatActivity {
                     episode.setError(true);
                     mBinding.progressBarLayout.setVisibility(View.GONE);
                     if(!server1&&!server2&&!server3&&!server4&&!server5&&!server6) return;
-                    Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي تجربة سيرفر أخر", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "السيرفر غير متاح يرجى تجربة سيرفر آخر", Toast.LENGTH_LONG).show();
                 }
             });
             jresolver.find(episode.getVideo());
@@ -805,4 +820,17 @@ public class ServersActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onGoToStoreClicked(boolean isWatch) {
+        if (isWatch)
+        Config.openExoPlayerOnPlayStore(this);
+        else
+        Config.openDownloaderAppOnPlayStore(this);
+
+    }
+
+    @Override
+    public void onGoToWebsiteClicked() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.website_url))));
+    }
 }

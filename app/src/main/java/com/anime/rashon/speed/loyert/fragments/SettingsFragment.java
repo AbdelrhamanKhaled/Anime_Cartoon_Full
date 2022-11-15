@@ -1,6 +1,7 @@
 package com.anime.rashon.speed.loyert.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -154,6 +155,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                     }
                 })
                 .addListenerButton("إلغاء", getDefaultButtonStyle(Color.BLACK , false), new ColorPicker.OnButtonListener() {
+                    @SuppressLint("SuspiciousIndentation")
                     @Override
                     public void onClick(View v, int position, int color) {
                         colorPicker.getNegativeButton().callOnClick();
@@ -162,6 +164,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                     }
                 })
                 .addListenerButton("الإفتراضي", getDefaultButtonStyle(Color.RED , true), new ColorPicker.OnButtonListener() {
+                    @SuppressLint("SuspiciousIndentation")
                     @Override
                     public void onClick(View v, int position, int color) {
                         colorPicker.dismissDialog();
@@ -215,6 +218,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_Purple)).apply();
         }else if (color == getResources().getColor(R.color.theme_green)) {
             sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_green)).apply();
+        }else if (color == getResources().getColor(R.color.theme_red)) {
+            sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_red)).apply();
+        }else if (color == getResources().getColor(R.color.theme_blue)) {
+            sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_blue)).apply();
+        }else if (color == getResources().getColor(R.color.theme_Gray)) {
+            sharedPreferences.edit().putInt(getString(R.string.THEME_KEY), getResources().getInteger(R.integer.theme_Gray)).apply();
         }
         sharedPreferences.edit().putInt(getString(R.string.CURRENT_COLOR_KEY), color).commit();
         finishSettingsActivity();

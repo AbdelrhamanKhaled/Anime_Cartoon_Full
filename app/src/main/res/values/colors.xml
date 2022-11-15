@@ -40,11 +40,15 @@
     <color name="AnimeTextColor_1" >#6C6C6C</color>
     <color name="episode_date_title_color">#000000</color>
 
-    <color name="theme_Purple">#aa00ff</color>
-    <color name="theme_Deep_Purple">#6200ea</color>
+
 
     <color name="black_theme_color">#0e121a</color>
     <color name="Purple_theme_color">#ECC6FF</color>
+    <color name="red_theme_color">#E76363</color>
+    <color name="Gray_theme_color">#999999</color>
+    <color name="Deep_Purple_color">#e1ccff</color>
+    <color name="blue_theme_color">#5075fb</color>
+    <color name="Green_theme_color">#4ED853</color>
     <color name="defualt_highlight">#1A78DBF3</color>
     <color name="default_header_stroke">#D5D5D5</color>
     <color name="default_episode_date_back_color">#414BCEF0</color>
@@ -54,5 +58,12 @@
     <color name="default_action_icons_color">#3B97C7</color>
     <color name="default_register_msg_color">#000C51</color>
 
-    <color name="theme_green">#559358</color>
+    <color name="theme_Purple">#aa00ff</color>
+    <color name="theme_Deep_Purple">#6200ea</color>
+    <color name="theme_green">#215E23</color>
+    <color name="theme_red">#FF0327</color>
+    <color name="theme_blue">#0539f7</color>
+    <color name="theme_Gray">#595959</color>
+
+
 </resources>

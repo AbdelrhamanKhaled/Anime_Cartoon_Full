@@ -90,7 +90,7 @@ public class OtpVerifyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ;
                 if (binding.code1.getText().toString().trim().isEmpty() || binding.code2.getText().toString().trim().isEmpty() || binding.code3.getText().toString().trim().isEmpty() || binding.code4.getText().toString().trim().isEmpty()) {
-                    showSnackMsg("يرجي إدخال الكود كامل من 4 أرقام");
+                    showSnackMsg("يرجي إدخال رمز التحقق المكون من 4 أرقام");
                     return;
                 }
                 String entered_code_Str = binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() ;
@@ -101,10 +101,10 @@ public class OtpVerifyActivity extends AppCompatActivity {
                         createNewUser();
                     }
                     else {
-                        showSnackMsg("كود التحقق الذي أدخلته غير صحيح");
+                        showSnackMsg("رمز التحقق الذي أدخلته غير صحيح");
                     }
                 } catch (Exception exception) {
-                    showSnackMsg("يرجي إدخال كود صحيح");
+                    showSnackMsg("يرجي إدخال رمز صحيح");
                 }
             }
         });
@@ -177,7 +177,7 @@ public class OtpVerifyActivity extends AppCompatActivity {
                                 binding.retrySend.setEnabled(true);
                                 if (!response.isError()) {
                                     binding.progressBarLayout.setVisibility(View.GONE);
-                                    showSnackMsg("تم إرسال كود التحقق إلي الإيميل الخاص بك");
+                                    showSnackMsg("تم إرسال رمز التحقق إلي الإيميل الخاص بك");
                                     binding.code1.requestFocus();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "حدث خطأ ما يرجي إعادة المحاولة", Toast.LENGTH_SHORT).show();
